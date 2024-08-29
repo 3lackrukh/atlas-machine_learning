@@ -2,7 +2,7 @@
 """ Module defines the cat_matrices2D function"""
 
 
-def cat_matrices2D(mat1, mat2, axis= 0):
+def cat_matrices2D(mat1, mat2, axis=0):
     """ Concatenates two matrices along a given axis """
     if axis == 0:
         if len(mat1[0]) != len(mat2[0]):
