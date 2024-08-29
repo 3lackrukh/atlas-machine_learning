@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-""" Defines three methods for slicing an array """
 arr = [9, 8, 2, 3, 9, 4, 1, 0, 3]
 arr1 =  arr[:2]
 arr2 =  arr[4:]
