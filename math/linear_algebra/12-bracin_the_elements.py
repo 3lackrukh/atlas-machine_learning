@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Module defines elementwise method suite for numpy matrix mathematics"""
+""" Module defines elementwise method for numpy matrix mathematics"""
 
 
 def np_elementwise(mat1, mat2):
