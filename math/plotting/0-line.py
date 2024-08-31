@@ -5,7 +5,9 @@ import numpy as np
 
 
 def line():
-    """ line plot and display """
+    """ line plot generation and display 
+    creates a NumPy array of cubic values to
+    plot against corresponding input values """
     x = np.arange(0, 11)
     y = np.arange(0, 11) ** 3
     plt.figure(figsize=(6.4, 4.8))
