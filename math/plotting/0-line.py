@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
+""" Module demonstrates the creation of a line plot using Matplotlib. """
 import matplotlib.pyplot as plt
 import numpy as np
-""" Module demonstrates the creation of a line plot using Matplotlib. """
 
 
 def line():
