@@ -3,9 +3,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def change_scale():
     """
-    Plots an exponential decay function 
+    Plots an exponential decay function
     with a logaritmic y-axis scale
     to better visualize exponential decay.
     """
