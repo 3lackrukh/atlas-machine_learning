@@ -23,4 +23,3 @@ def scatter():
     plt.title("Men's Height vs Weight")
     plt.scatter(x, y, c='magenta', marker='o')
     plt.show()
-    
