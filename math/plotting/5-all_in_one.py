@@ -77,4 +77,7 @@ def all_in_one():
     plt.subplots_adjust(wspace=0.5, hspace=0.7)
     plt.suptitle('All in One')
     plt.show()
-   
+
+
+if __name__ == "__main__":
+    all_in_one()

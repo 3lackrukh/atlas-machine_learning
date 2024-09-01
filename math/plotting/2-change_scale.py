@@ -23,3 +23,7 @@ def change_scale():
     plt.yscale('log')
     plt.plot(x, y, '-')
     plt.show()
+
+
+if __name__ == "__main__":
+    change_scale()

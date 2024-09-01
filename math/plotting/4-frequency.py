@@ -19,3 +19,7 @@ def frequency():
     plt.xticks(np.arange(0, 101, 10))
     plt.hist(student_grades, bins=range(0, 101, 10), edgecolor='black')
     plt.show()
+
+
+if __name__ == '__main__':
+    frequency()

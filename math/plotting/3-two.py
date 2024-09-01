@@ -26,3 +26,7 @@ def two():
     plt.plot(x, y2, "g-", label="Ra-226")
     plt.legend()
     plt.show()
+
+
+if __name__ == "__main__":
+    two()
