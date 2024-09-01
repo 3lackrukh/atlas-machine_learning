@@ -20,5 +20,6 @@ def gradient():
     plt.title("Mountain Elevation")
     plt.show()
 
+
 if __name__ == "__main__":
     gradient()

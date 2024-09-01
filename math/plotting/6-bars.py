@@ -27,5 +27,6 @@ def bars():
     plt.legend(['apples', 'bananas', 'oranges', 'peaches'])
     plt.show()
 
+
 if __name__ == "__main__":
     bars()
