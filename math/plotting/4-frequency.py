@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 """ Module defines the frequency method """
 
+
 def frequency():
     """
     Plots a histogram of student scores for a project.
