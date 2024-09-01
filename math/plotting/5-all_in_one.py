@@ -59,7 +59,7 @@ def all_in_one():
     ax3.set_xlim(0, 20000)
     ax3.set_ylim(0, 1)
     ax3.plot(x3, y31, 'r--', label='C-14')
-    ax3.plot(x3, y32, 'g-.', label='Ra-226')
+    ax3.plot(x3, y32, 'g-', label='Ra-226')
     ax3.legend(loc='upper right', fontsize='x-small')
 
     # Task 4
