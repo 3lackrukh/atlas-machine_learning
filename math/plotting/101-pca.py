@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Load the data
-lib = np.load("pca.npz.zip")
+lib = np.load("pca.npz")
 data = lib["data"]
 labels = lib["labels"]
 
