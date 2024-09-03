@@ -7,7 +7,7 @@ def summation_i_squared(n):
     try:
         # Typecast n
         n = int(n)
-        if n < 0:
+        if n <= 0:
             return None
         
         # return the sum of squares
