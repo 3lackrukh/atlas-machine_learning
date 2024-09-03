@@ -9,9 +9,9 @@ def summation_i_squared(n):
         n = int(n)
         if n <= 0:
             return None
-        
+    
         # return the sum of squares
-        return(n* (n + 1) * (2 * n + 1) / 6)
+        return (n* (n + 1) * (2 * n + 1) / 6)
 
     # Handle n is not an int or float
     except (ValueError, TypeError):
