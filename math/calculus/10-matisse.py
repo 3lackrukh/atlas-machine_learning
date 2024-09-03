@@ -13,4 +13,6 @@ def poly_derivative(poly):
         if i == 0:
             continue
         derivative.append(i * coeff)
+    if not derivative or all(coeff == 0 for coeff in derivative):
+        return [0]
     return derivative
