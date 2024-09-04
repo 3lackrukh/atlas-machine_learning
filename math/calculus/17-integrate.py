@@ -11,7 +11,12 @@ def poly_integral(poly, C=0):
     integral = [C]
     for i, coeff in enumerate(poly):
         if coeff % (i + 1) == 0:
+            # use integer division to avoid float imprecision
             integral.append(coeff // (i + 1))
         else:
+            # use regular division for fractional coefficient
             integral.append(coeff / (i + 1))
+        # remove trailing zeros
+        if integral[-1] == 0:
+            integral.pop()
     return integral
