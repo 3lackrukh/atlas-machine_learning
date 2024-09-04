@@ -16,7 +16,7 @@ def poly_integral(poly, C=0):
         else:
             # use regular division for fractional coefficient
             integral.append(coeff / (i + 1))
-        # remove trailing zeros
-        if integral[-1] == 0:
-            integral.pop()
+    # remove trailing zeros
+    if integral[-1] == 0:
+        integral.pop()
     return integral
