@@ -1,0 +1,1 @@
+This folder contains files created to practice principles of probability in Python with NumPy.
