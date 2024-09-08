@@ -28,3 +28,4 @@ class Poisson:
         for i in range(1, k + 1):
             factorial *= i
         return (e**(-self.lambtha) * (self.lambtha**k)) / factorial
+    
