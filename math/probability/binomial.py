@@ -27,7 +27,10 @@ class Binomial:
             self.p = mean / self.n
 
     def pmf(self, k):
-        """ Calculates the value of the PMF for a given number of 'successes' """
+        """ 
+            Calculates the value of the PMF for
+            a given number of 'successes' 
+        """
         if not isinstance(k, int):
             k = int(k)
         if k < 0 or k > self.n:
@@ -36,3 +39,4 @@ class Binomial:
         for i in range(k):
             coefficient *= (self.n - i) / (i + 1)
         return coefficient * (self.p ** k) * ((1 - self.p) ** (self.n - k))
+    
