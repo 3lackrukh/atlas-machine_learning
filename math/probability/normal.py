@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """ Module defines the Normal Class """
+e = 2.7182818285
+pi = 3.1415926536
 
 
 class Normal:
@@ -31,8 +33,6 @@ class Normal:
 
     def pdf(self, x):
         """ Calculates the value of the Probability Density Function at x """
-        e = 2.7182818285
-        pi = 3.1415926536
         return (e ** (-((x - self.mean) ** 2) / (2 * self.stddev ** 2))) / (
             self.stddev * ((2 * pi) ** 0.5)
         )
