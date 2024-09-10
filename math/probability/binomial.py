@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Module defines the Binomial Class """
-
+pi = 3.141592653589793
+e = 2.718281828459045
 
 class Binomial:
     """ Class defines a Binomial distribution """
@@ -24,3 +25,14 @@ class Binomial:
             self.p = 1 - (variance / mean)
             self.n = round(mean / self.p)
             self.p = mean / self.n
+
+    def pmf(self, k):
+        """ Calculates the value of the PMF for a given number of 'successes' """
+        if not isinstance(k, int):
+            k = int(k)
+        if k < 0 or k > self.n:
+            return 0
+        coefficient = 1
+        for i in range(k):
+            coefficient *= (self.n - i) / (i + 1)
+        return coefficient * (self.p ** k) * ((1 - self.p) ** (self.n - k))
