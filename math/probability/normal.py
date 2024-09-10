@@ -43,5 +43,4 @@ class Normal:
         t = (x - self.mean) / (self.stddev * (2 ** 0.5))
         erf = 2 / (pi ** 0.5) * (t - (t ** 3) / 3 + (t ** 5) / 10 -
                                  (t ** 7) / 42 + (t ** 9) / 216)
-        
         return 0.5 * (1 + erf)
