@@ -28,3 +28,11 @@ class Normal:
     def x_value(self, z):
         """ Calculates the x-value of a given z-score """
         return self.mean + (self.stddev * z)
+
+    def pdf(self, x):
+        """ Calculates the value of the Probability Density Function at x """
+        e = 2.7182818285
+        pi = 3.1415926536
+        return (e ** (-((x - self.mean) ** 2) / (2 * self.stddev ** 2))) / (
+            self.stddev * ((2 * pi) ** 0.5)
+        )
