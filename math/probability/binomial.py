@@ -3,6 +3,7 @@
 pi = 3.141592653589793
 e = 2.718281828459045
 
+
 class Binomial:
     """ Class defines a Binomial distribution """
 
@@ -27,9 +28,9 @@ class Binomial:
             self.p = mean / self.n
 
     def pmf(self, k):
-        """ 
+        """
             Calculates the value of the PMF for
-            a given number of 'successes' 
+            a given number of 'successes'
         """
         if not isinstance(k, int):
             k = int(k)
