@@ -12,7 +12,7 @@ class Binomial:
                 raise ValueError("n must be a positive value")
             self.n = int(n)
             if p <= 0 or p >= 1:
-                raise ValueError("p must be between 0 and 1")
+                raise ValueError("p must be greater than 0 and less than 1")
             self.p = float(p)
         else:
             if not isinstance(data, list):
