@@ -40,4 +40,3 @@ class Binomial:
         for i in range(k):
             coefficient *= (self.n - i) / (i + 1)
         return coefficient * (self.p ** k) * ((1 - self.p) ** (self.n - k))
-    
