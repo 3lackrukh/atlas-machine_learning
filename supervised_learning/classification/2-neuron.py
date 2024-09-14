@@ -29,7 +29,7 @@ class Neuron:
 
     def forward_prop(self, X):
         """
-        Calculates the forward propagation of the neuron 
+        Calculates the forward propagation of the neuron
 
         parameters:
             X: numpy.ndarray with shape (nx, m) that contains the input data
