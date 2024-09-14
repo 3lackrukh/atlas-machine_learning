@@ -26,16 +26,16 @@ class Neuron:
     @property
     def A(self):
         return self.__A
-    
+
     def forward_prop(self, X):
         """
         Calculates the forward propagation of the neuron 
-        
+
         parameters:
             X: numpy.ndarray with shape (nx, m) that contains the input data
             nx: number of input features
             m: number of examples
-        
+
         returns: The output of the neuron self.__A
         """
         # Calculate the weighted sum
