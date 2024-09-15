@@ -151,15 +151,16 @@ class Neuron:
 
         # Forward propagate and gradient descent x iterations
         self.__A = 0
-        for i in range(iterations):
+        for i in range(iterations + 1):
             self.forward_prop(X)
             self.gradient_descent(X, Y, self.__A, alpha)
-            if verbose and i % step == 0:
-                print(f"Cost after {i} iterations: {self.cost(Y, self.__A)}")
-            if graph and i % step == 0:
-                graph_matrix[0].append(i)
-                graph_matrix[1].append(self.cost(Y, self.__A))
-
+            if i % step == 0 or i == iterations:
+                if verbose:
+                    print(f"Cost after {i} iterations: {self.cost(Y, self.__A)}")
+                if graph:
+                    graph_matrix[0].append(i)
+                    graph_matrix[1].append(self.cost(Y, self.__A))
+            
         # Graph requested results
         if graph:
             plt.plot(graph_matrix[0], graph_matrix[1])
