@@ -137,10 +137,10 @@ class NeuralNetwork:
         """
         # Retrieve number of examples
         m = Y.shape[1]
-        # Calculate the gradient of the cost function for layer 1
+        # Calculate the gradient of the cost function layer 1
         dz2 = A2 - Y
 
-        # Calculate the gradient of the weight and bias for layer 1
+        # Calculate the gradient of the weight and bias layer 1
         dw2 = 1 / m * np.dot(dz2, A1.T)
         db2 = 1 / m * np.sum(dz2, axis=1, keepdims=True)
 
