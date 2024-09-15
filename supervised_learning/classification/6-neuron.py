@@ -122,7 +122,7 @@ class Neuron:
                 m: number of examples
             Y: numpy.ndarray with shape (1, m) that contains the correct labels
             for the input data
-            iterations: number of iterations to train the neuron (default: 5000)
+            iterations: how many times to train (default: 5000)
             alpha: step-size of descent (default: 0.05)
 
         updates the private attributes __W, __b, and __A
