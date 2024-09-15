@@ -129,7 +129,7 @@ class NeuralNetwork:
                 m: number of examples
             Y: numpy.ndarray with shape (1, m) that contains the correct labels
             for the input data
-            A1 and A2: numpy.ndarray with shape (1, m) contains activated output
+            A1, A2: numpy.ndarray with shape (1, m) contains activated output
             of the respective layer for each example
             alpha: step-size of descent (default: 0.05)
 
