@@ -60,6 +60,6 @@ class Neuron:
         # Retrieve number of examples
         m = Y.shape[1]
         # Calculate average cost over all examples (-1/m)
-        # using cross-entropy loss algorithm for logistic regression
+        # using cross-entropy loss algorithm of logistic regression
         cost = -1 / m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
         return cost
