@@ -68,12 +68,12 @@ class NeuralNetwork:
 
         returns: The output of the neuron self.__A
         """
-        # Calculate the weighted sum for layer 1
+        # Calculate the weighted sum layer 1
         z1 = np.dot(self.__W1, X) + self.__b1
         # Apply sigmoid activation function
         self.__A1 = 1 / (1 + np.exp(-z1))
 
-        # Calculate the weighted sum for layer 2
+        # Calculate the weighted sum layer 2
         # Layer 1 Activation as input
         z2 = np.dot(self.__W2, self.__A1) + self.__b2
         # Apply sigmoid activation function
