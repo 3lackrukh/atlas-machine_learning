@@ -4,10 +4,10 @@ import numpy as np
 
 
 class DeepNeuralNetwork:
-    """ 
+    """
     Class defines a deep neural network
         performing binary classification
-    
+
         Properties:
             L (int): number of network layers
             cache (dict): intermediate values of the network
@@ -20,7 +20,7 @@ class DeepNeuralNetwork:
             Inputs:
                 nx (int): number of input features
                 layers (list): number of nodes in each layer of the network
-            
+
             Sets: instance properties
                 L, cache, and weights
         """
@@ -38,7 +38,7 @@ class DeepNeuralNetwork:
         # Set the input layer size from nx
         layers.insert(0, nx)
 
-        #Initialize memory dictionaries
+        # Initialize memory dictionaries
         self.cache = {}
         self.weights = {}
 
