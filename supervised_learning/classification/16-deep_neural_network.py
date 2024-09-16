@@ -19,7 +19,7 @@ class DeepNeuralNetwork:
         self.cache = {}
         self.weights = {}
 
-        # Initialize weights and biases for each layer
+        # Initialize weights and biases in each layer
         for l in range(self.L):
             if layers[l] < 1:
                 raise TypeError("layers must be a list of positive integers")
