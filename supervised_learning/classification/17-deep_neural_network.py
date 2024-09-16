@@ -15,10 +15,10 @@ class DeepNeuralNetwork:
             raise TypeError("layers must be a list of positive integers")
 
         # Initialize attributes
-        self.L = len(layers)
+        self.__L = len(layers)
         layers.insert(0, nx)
-        self.cache = {}
-        self.weights = {}
+        self.__cache = {}
+        self.__weights = {}
 
         # Initialize weights and biases in each layer
         for l in range(self.L):
