@@ -16,6 +16,7 @@ class DeepNeuralNetwork:
 
         # Initialize attributes
         self.L = len(layers)
+        layers.insert(0, nx)
         self.cache = {}
         self.weights = {}
 
@@ -23,11 +24,9 @@ class DeepNeuralNetwork:
         for l in range(self.L):
             if layers[l] < 1:
                 raise TypeError("layers must be a list of positive integers")
-            if l == 0:
-                self.weights[f"W{l+1}"] = np.random.randn(layers[l], nx) * np.sqrt(2 / nx)
-            else:
-                self.weights[f"W{l+1}"] = np.random.randn(layers[l], layers[l-1]) * np.sqrt(2 / layers[l-1])
-            self.weights[f"b{l+1}"] = np.zeros((layers[l], 1))
+            he = np.sqrt(2 / layers[l-1])
+            self.weights[f"W{l}"] = he * np.sqrt(2.0 / (layers[l - 1]))
+            self.weights[f"b{l}"] = np.zeros((layers[l], 1))
 
     @property
     def L(self):
