@@ -81,20 +81,15 @@ class DeepNeuralNetwork:
             cache (dict): intermediate values of the network
         """
         self.__cache["A0"] = X
-        for layer in range(1, self.__L + 1):
-            W = self.__weights[f"W{layer}"]
-            b = self.__weights[f"b{layer}"]
-            A_prev = self.__cache[f"A{layer - 1}"]
+        for layer in range(self.__L):
+            W = self.__weights[f"W{layer + 1}"]
+            b = self.__weights[f"b{layer + 1}"]
 
             # Calculate ourput current layer
-            print(f"layer {layer}:")
-            print(f"W shape: {W.shape}")
-            print(f" A_prev shape: {A_prev.shape}")
-            print(f" b shape: {b.shape}")
-            z = np.matmul(W, A_prev) + b
+            z = np.matmul(W, self.__cache[f"A{layer}"]) + b
             A = 1 / (1 + np.exp(-z))
 
             # Cache output current layer
-            self.__cache[f"A{layer}"] = A
+            self.__cache[f"A{layer + 1}"] = A
         return A, self.__cache
             
