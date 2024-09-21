@@ -43,12 +43,12 @@ class DeepNeuralNetwork:
         self.__weights = {}
 
         # Initialize weights and biases in each layer
-        for layer in range(1, self.L + 1):
+        for layer in range(1, self.__L + 1):
             if layers[layer] < 1:
                 raise TypeError("layers must be a list of positive integers")
             he = np.random.randn(layers[layer], layers[layer - 1])
-            self.__weights[f"W{layer}"] = he * np.sqrt(2.0 / (layers[layer - 1]))
-            self.__weights[f"b{layer}"] = np.zeros((layers[layer], 1))
+            self.weights[f"W{layer}"] = he * np.sqrt(2.0 / (layers[layer - 1]))
+            self.weights[f"b{layer}"] = np.zeros((layers[layer], 1))
 
     @property
     def L(self):
@@ -73,7 +73,7 @@ class DeepNeuralNetwork:
 
         updates:
             __cache (dict): the activated outputs of each layer
-                key: A{0} where {0} is the input layer output
+                key: A0 where input values are stored
                 key: A{layer} where {layer} is the hidden layer output belongs to
 
         Returns:
@@ -81,13 +81,16 @@ class DeepNeuralNetwork:
             cache (dict): intermediate values of the network
         """
         self.__cache["A0"] = X
-
         for layer in range(1, self.__L + 1):
             W = self.__weights[f"W{layer}"]
             b = self.__weights[f"b{layer}"]
             A_prev = self.__cache[f"A{layer - 1}"]
 
-            z = np.dot(W, A_prev) + b
+            # Calculate ourput for current layer
+            z = np.matmul(W, A_prev) + b
             A = 1 / (1 + np.exp(-z))
+
+            # Cache output for current layer
             self.__cache[f"A{layer}"] = A
-        return A, self.cache
+        return A, self.__cache
+            
