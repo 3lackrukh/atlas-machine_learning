@@ -83,5 +83,5 @@ class DeepNeuralNetwork:
         self.__cache["A0"] = X
         for layer in range(1, self.__L + 1):
             z = np.matmul(self.__weights[f"W{layer}"], self.__cache[f"A{layer - 1}"]) + self.__weights[f"b{layer}"]
-            self.cache[f"A{layer}"] = 1 / (1 + np.exp(-z))
-        return self.cache[f"A{self.L}"], self.cache
+            self.__cache[f"A{layer}"] = 1 / (1 + np.exp(-z))
+        return self.__cache[f"A{self.L}"], self.__cache
