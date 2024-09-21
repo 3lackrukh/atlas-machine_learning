@@ -86,11 +86,11 @@ class DeepNeuralNetwork:
             b = self.__weights[f"b{layer}"]
             A_prev = self.__cache[f"A{layer - 1}"]
 
-            # Calculate ourput for current layer
+            # Calculate ourput current layer
             z = np.matmul(W, A_prev) + b
             A = 1 / (1 + np.exp(-z))
 
-            # Cache output for current layer
+            # Cache output current layer
             self.__cache[f"A{layer}"] = A
         return A, self.__cache
             
