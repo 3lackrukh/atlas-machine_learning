@@ -82,13 +82,13 @@ class DeepNeuralNetwork:
             self.__cache: updated cache dictionary
         """
         self.__cache["A0"] = X
+        A = X
         for layer in range(1, self.__L + 1):
             W = self.__weights[f"W{layer}"]
             b = self.__weights[f"b{layer}"]
-            A_prev = self.__cache[f"A{layer - 1}"]
 
-            # Calculate ourput current layer
-            z = np.dot(W, A_prev) + b
+            # Calculate output current layer
+            z = np.dot(W, A) + b[0]
             A = 1 / (1 + np.exp(-z))
 
             # Cache output current layer
