@@ -1,13 +1,30 @@
 #!/usr/bin/env python3
-"""Module for DeepNeuralNetwork"""
+""" Module defines the Class DeepNeuralNetwork """
 import numpy as np
 
 
 class DeepNeuralNetwork:
-    """class for DeepNeuralNetwork"""
+    """
+    Class defines a deep neural network
+        performing binary classification
+
+        Properties:
+            L (int): number of network layers
+            cache (dict): intermediate values of the network
+            weights (dict): all weights and biases of the network
+    """
 
     def __init__(self, nx, layers):
-        """Constructor"""
+        """
+        Class Constructor
+            Inputs:
+                nx (int): number of input features
+                layers (list): number of nodes in each layer of the network
+
+            Sets: instance properties
+                __L, __cache, and __weights
+        """
+        # Validate input
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
@@ -15,53 +32,66 @@ class DeepNeuralNetwork:
         if not isinstance(layers, list) or not layers:
             raise TypeError("layers must be a list of positive integers")
 
+        # Architecture length
         self.__L = len(layers)
 
+        # Set the input layer size from nx
+        layers.insert(0, nx)
+
+        # Initialize memory dictionaries
         self.__cache = {}
         self.__weights = {}
 
-        for i in range(1, self.__L + 1):
-            if not isinstance(layers[i-1], int) or layers[i-1] <= 0:
+        # Initialize weights and biases in each layer
+        for layer in range(1, self.__L + 1):
+            if layers[layer] < 1:
                 raise TypeError("layers must be a list of positive integers")
-
-            layer_size = layers[i - 1]
-
-            prev_layer_size = nx if i == 1 else layers[i - 2]
-
-            self.weights['W' + str(i)] = (
-                np.random.randn(layer_size, prev_layer_size) *
-                np.sqrt(2 / prev_layer_size)
-            )
-
-            self.weights['b' + str(i)] = np.zeros((layer_size, 1))
+            he = np.random.randn(layers[layer], layers[layer - 1])
+            self.__weights[f"W{layer}"] = he * np.sqrt(2.0 / (layers[layer - 1]))
+            self.__weights[f"b{layer}"] = np.zeros((layers[layer], 1))
 
     @property
     def L(self):
-        """Getter for L"""
         return self.__L
 
     @property
     def cache(self):
-        """Getter for cache"""
         return self.__cache
 
     @property
     def weights(self):
-        """Getter for weights"""
         return self.__weights
 
     def forward_prop(self, X):
-        """Calculates forward propagation of the neural network"""
-        self.__cache['A0'] = X
+        """
+        Calculates forward propagation through the network
 
-        for i in range(1, self.__L + 1):
-            W = self.weights['W' + str(i)]
-            b = self.weights['b' + str(i)]
-            A_prev = self.__cache['A' + str(i - 1)]
+        parameters:
+            X: numpy.ndarray with shape (nx, m) that contains the input data
+            nx: number of input features
+            m: number of examples
 
+        updates:
+            __cache (dict): the activated outputs of each layer
+                key: A0 where input values are stored
+                key: A{layer} where {layer} is the hidden layer output belongs to
+
+        Returns:
+            tuple: (A, self.__cache)
+            A: output of the neural network
+            self.__cache: updated cache dictionary
+        """
+        self.__cache["A0"] = X
+        for layer in range(1, self.__L + 1):
+            W = self.__weights[f"W{layer}"]
+            b = self.__weights[f"b{layer}"]
+            A_prev = self.__cache[f"A{layer - 1}"]
+
+            # Calculate ourput current layer
             z = np.dot(W, A_prev) + b
             A = 1 / (1 + np.exp(-z))
 
-            self.__cache[f'A{i}'] = A
-
+            # Cache output current layer
+            self.__cache[f"A{layer}"] = A
         return A, self.__cache
+            
