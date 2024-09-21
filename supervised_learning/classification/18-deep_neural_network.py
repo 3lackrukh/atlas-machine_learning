@@ -47,8 +47,8 @@ class DeepNeuralNetwork:
             if layers[layer] < 1:
                 raise TypeError("layers must be a list of positive integers")
             he = np.random.randn(layers[layer], layers[layer - 1])
-            self.weights[f"W{layer}"] = he * np.sqrt(2.0 / (layers[layer - 1]))
-            self.weights[f"b{layer}"] = np.zeros((layers[layer], 1))
+            self.__weights[f"W{layer}"] = he * np.sqrt(2.0 / (layers[layer - 1]))
+            self.__weights[f"b{layer}"] = np.zeros((layers[layer], 1))
 
     @property
     def L(self):
@@ -87,6 +87,10 @@ class DeepNeuralNetwork:
             A_prev = self.__cache[f"A{layer - 1}"]
 
             # Calculate ourput current layer
+            print(f"layer {layer}:")
+            print(f"W shape: {W.shape}")
+            print(f" A_prev shape: {A_prev.shape}")
+            print(f" b shape: {b.shape}")
             z = np.matmul(W, A_prev) + b
             A = 1 / (1 + np.exp(-z))
 
