@@ -88,7 +88,7 @@ class DeepNeuralNetwork:
             b = self.__weights[f"b{layer}"]
 
             # Calculate output current layer
-            z = np.dot(W, A) + b[0]
+            z = np.matmul(W, A) + b[0]
             A = 1 / (1 + np.exp(-z))
 
             # Cache output current layer
@@ -153,9 +153,9 @@ class DeepNeuralNetwork:
             A_prev = cache[f"A{layer - 1}"]
 
             # Calculate gradients
-            dW = 1 / m * np.dot(dz, A_prev.T)
+            dW = 1 / m * np.matmul(dz, A_prev.T)
             db = 1 / m * np.sum(dz, axis=1, keepdims=True)
-            dA_prev = np.dot(self.__weights[f"W{layer}"].T, dz)
+            dA_prev = np.matmul(self.__weights[f"W{layer}"].T, dz)
             dz = dA_prev * A_prev * (1 - A_prev)
 
             # Update weights and biases
