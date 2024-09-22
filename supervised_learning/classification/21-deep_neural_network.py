@@ -144,19 +144,20 @@ class DeepNeuralNetwork:
         Returns:
             None (updates the weights and biases in-place)
         """
+        # Retrieve number of examples
         m = Y.shape[1]
+        # Calculate the gradient of the cost fuction layer 1
+        dz = cache[f"A{self.__L}"] - Y
+
         for layer in range(self.__L, 0, -1):
             A_prev = cache[f"A{layer - 1}"]
-            A_curr = cache[f"A{layer}"]
-            W_curr = self.__weights[f"W{layer}"]
-            b_curr = self.__weights[f"b{layer}"]
 
             # Calculate gradients
-            dz = A_curr - Y
             dW = 1 / m * np.dot(dz, A_prev.T)
             db = 1 / m * np.sum(dz, axis=1, keepdims=True)
+            dA_prev = np.dot(self.__weights[f"W{layer}"].T, dz)
+            dz = dA_prev * A_prev * (1 - A_prev)
 
             # Update weights and biases
             self.__weights[f"W{layer}"] -= alpha * dW
             self.__weights[f"b{layer}"] -= alpha * db
-        return None
