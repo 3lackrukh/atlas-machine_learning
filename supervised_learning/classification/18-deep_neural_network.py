@@ -47,8 +47,8 @@ class DeepNeuralNetwork:
             if layers[layer] < 1:
                 raise TypeError("layers must be a list of positive integers")
             he = np.random.randn(layers[layer], layers[layer - 1])
-            self.__weights[f"W{layer}"] = he * np.sqrt(2.0 / (layers[layer - 1]))
-            self.__weights[f"b{layer}"] = np.zeros((layers[layer], 1))
+            self.weights[f"W{layer}"] = he * np.sqrt(2.0 / (layers[layer - 1]))
+            self.weights[f"b{layer}"] = np.zeros((layers[layer], 1))
 
     @property
     def L(self):
@@ -74,7 +74,7 @@ class DeepNeuralNetwork:
         updates:
             __cache (dict): the activated outputs of each layer
                 key: A0 where input values are stored
-                key: A{layer} where {layer} is the hidden layer output belongs to
+                key: A{layer} 
 
         Returns:
             tuple: (A, self.__cache)
@@ -94,4 +94,3 @@ class DeepNeuralNetwork:
             # Cache output current layer
             self.__cache[f"A{layer}"] = A
         return A, self.__cache
-            
