@@ -74,7 +74,7 @@ class DeepNeuralNetwork:
         updates:
             __cache (dict): the activated outputs of each layer
                 key: A0 where input values are stored
-                key: A{layer} 
+                key: A{layer}
 
         Returns:
             tuple: (A, self.__cache)
