@@ -122,7 +122,7 @@ class DeepNeuralNetwork:
 
         Returns:
             tuple: (predictions, cost)
-                predictions: numpy.ndarray with shape (1, m) holding predictions
+                predictions: numpy.ndarray with shape (1, m) holds predictions
                 cost: the cross-entropy cost of the network
         """
         A, _ = self.forward_prop(X)
