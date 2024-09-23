@@ -163,7 +163,8 @@ class DeepNeuralNetwork:
             self.__weights[f"W{layer}"] -= alpha * dW
             self.__weights[f"b{layer}"] -= alpha * db
 
-    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
+    def train(self, X, Y, iterations=5000, alpha=0.05,
+              verbose=True, graph=True, step=100):
         """
         Trains the deep neural network
 
@@ -190,9 +191,9 @@ class DeepNeuralNetwork:
             if not isinstance(step, int):
                 raise TypeError("step must be an integer")
             if step <= 0 or step > iterations:
-                    raise ValueError("step must be positive and <= iterations")
+                raise ValueError("step must be positive and <= iterations")
             # Initialize graphing matrix for each step
-            graph_matrix = [[],[]]
+            graph_matrix = [[], []]
 
         # Forward propagate and gradient descent x iterations
         for i in range(iterations + 1):
