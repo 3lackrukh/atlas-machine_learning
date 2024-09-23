@@ -44,10 +44,10 @@ class DeepNeuralNetwork:
 
         # Initialize weights and biases in each layer
         for layer in range(1, self.__L + 1):
-            if layers[layer] < 1:
+            if not isinstance(layers[layer], int) or layers[layer] <= 0:
                 raise TypeError("layers must be a list of positive integers")
             he = np.random.randn(layers[layer], layers[layer - 1])
-            self.weights[f"W{layer}"] = he * np.sqrt(2.0 / (layers[layer - 1]))
+            self.weights[f"W{layer}"] = he * np.sqrt(2 / (layers[layer - 1]))
             self.weights[f"b{layer}"] = np.zeros((layers[layer], 1))
 
     @property
@@ -187,7 +187,7 @@ class DeepNeuralNetwork:
             raise ValueError("alpha must be positive")
 
         for i in range(iterations):
-            A, self.__cache = self.forward_prop(X)
-            self.gradient_descent(Y, self.__cache, alpha)
-        
+            A, cache = self.forward_prop(X)
+            self.gradient_descent(Y, cache, alpha)
+
         return self.evaluate(X, Y)
