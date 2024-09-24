@@ -69,7 +69,7 @@ class DeepNeuralNetwork:
     @property
     def weights(self):
         return self.__weights
-    
+
     @property
     def activation(self):
         return self.__activation
@@ -127,7 +127,8 @@ class DeepNeuralNetwork:
         """
         if not isinstance(Y, np.ndarray) or len(Y.shape) != 1:
             return None
-        if not isinstance(classes, int) or classes < 2 or classes < Y[max(Y-1)]:
+        if not isinstance(classes,
+                          int) or classes < 2 or classes < Y[max(Y-1)]:
             return None
 
         try:
