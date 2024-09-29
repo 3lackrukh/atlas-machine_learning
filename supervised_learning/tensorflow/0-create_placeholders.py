@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ This module defines the create_placeholders method """
-import tensorflow.compact.v1 as tf
+import tensorflow.compat.v1 as tf
 
 
 def create_placeholders(nx, classes):
