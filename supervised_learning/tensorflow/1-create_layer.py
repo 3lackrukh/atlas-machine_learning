@@ -6,7 +6,7 @@ import tensorflow.compat.v1 as tf
 def create_layer(prev, n, activation):
     """
     Creates a new layer of a neural network where
-    
+
     Parameters:
         prev: tensor ourput of the previous layer
         n: the number of nodes in the layer to create
