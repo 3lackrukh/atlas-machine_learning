@@ -6,12 +6,12 @@ import tensorflow.compat.v1 as tf
 def forward_prop(x, layer_sizes=[], activations=[]):
     """"
     Creates the forward propagation graph for the neural network.
-    
+
     Parameters:
         x: placeholder for the input data
         layer_sizes: list containing the number of nodes in each layer
         activations: list containing the activation functions for each layer
-    
+
     Returns:
         The prediction of the network in tensor form
     """
