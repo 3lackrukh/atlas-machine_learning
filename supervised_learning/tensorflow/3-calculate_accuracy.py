@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ Module defines the calculate_accuracy method """
-import tenorflow.compat.v1 as tf
+import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
 
 
