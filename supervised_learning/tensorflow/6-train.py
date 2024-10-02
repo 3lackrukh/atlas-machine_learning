@@ -38,7 +38,7 @@ def train(X_train, y_train, X_valid, y_valid, layer_sizes, activations, alpha,
     # Create training operation
     train_op = create_train_op(loss, alpha)
 
-    # Add important operations to the graph's collection
+    # Add operations to the graph's collection
     tf.add_to_collection('x', x)
     tf.add_to_collection('y', y)
     tf.add_to_collection('y_pred', y_pred)
