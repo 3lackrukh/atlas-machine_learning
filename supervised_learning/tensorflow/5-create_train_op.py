@@ -7,7 +7,7 @@ def create_train_op(loss, alpha):
     """
     Creates the training operation for the given loss and alpha.
 
-    Args:
+    Parameters:
         loss (tf.Tensor): The loss tensor.
         alpha (float): The learning rate.
 
