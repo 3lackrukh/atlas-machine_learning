@@ -2,6 +2,7 @@
 """ Module defines create_mini_batches method """
 shuffle_data = __import__('2-shuffle_data').shuffle_data
 
+
 def create_mini_batches(X, Y, batch_size):
     """
     Creates mini-batches to be used for training a neural network.
