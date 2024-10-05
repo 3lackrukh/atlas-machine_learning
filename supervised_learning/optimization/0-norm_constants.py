@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """ Module defines the normalization_constants method """
 import numpy as np
-import tensorflow as tf
 
 
 def normalization_constants(X):
