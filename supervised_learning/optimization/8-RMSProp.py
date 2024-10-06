@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """ Module defines the create_RMSProp_op method"""
-import numpy as np
 import tensorflow as tf
 
 
