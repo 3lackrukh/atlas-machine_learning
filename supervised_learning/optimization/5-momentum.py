@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ Module defines the update_variables_momentum method """
 import numpy as np
 import tensorflow as tf
