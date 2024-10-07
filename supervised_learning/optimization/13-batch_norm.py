@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
-import numpy as np
-import numpy as np
+
+
 """ Module defines the batch_norm method """
 
 
