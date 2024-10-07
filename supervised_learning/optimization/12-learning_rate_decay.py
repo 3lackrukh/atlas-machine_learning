@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """ Module defines the learning_rate_decay mehtod """
 import tensorflow as tf
-import time
 
 
 def learning_rate_decay(alpha, decay_rate, decay_step):
