@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
-import numpy as np
-
-
 """ Module defines the batch_norm method """
+import numpy as np
 
 
 def batch_norm(Z, gamma, beta, epsilon):
