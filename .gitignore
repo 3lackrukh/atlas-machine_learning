@@ -4,3 +4,6 @@ supervised_learning/classification/27-output.pkl
 supervised_learning/classification/28-output.pkl
 supervised_learning/optimization/MNIST.npz
 supervised_learning/optimization/Binary_train.npz
+supervised_learning/error_analysis/labels_logits.npz
+supervised_learning/error_analysis/confusion.npz
+*.pyc
