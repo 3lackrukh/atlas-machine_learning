@@ -17,6 +17,9 @@ def sensitivity(confusion):
         numpy.ndarray of shape (classes,)
             containing the sensitivity of each class
     """
+    # Extract true positives and sum false negatives
     true_positives = np.diag(confusion)
     false_negatives = np.sum(confusion, axis=1) - true_positives
+    
+    # Calculate and return sensitivities for each class
     return true_positives / (true_positives + false_negatives)

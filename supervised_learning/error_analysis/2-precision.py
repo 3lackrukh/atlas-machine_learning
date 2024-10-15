@@ -17,6 +17,9 @@ def precision(confusion):
         numpy.ndarray of shape (classes,)
             containing the precision of each class
     """
+    # Extract true_positives and calculate false positives
     true_positives = np.diag(confusion)
     false_positives = np.sum(confusion, axis=0) - true_positives
+    
+    # calculate and return precision
     return true_positives / (true_positives + false_positives)
