@@ -23,7 +23,8 @@ def specificity(confusion):
     false_negatives = np.sum(confusion, axis=1) - true_positives
 
     # Calculate true_negatives for each class
-    true_negatives = total_samples - (false_positives + false_negatives + true_positives)
+    true_negatives = total_samples \
+        - (false_positives + false_negatives + true_positives)
 
     # Calculate and return specificity of classes
     return true_negatives / (true_negatives + false_positives)
