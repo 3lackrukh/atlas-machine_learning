@@ -18,11 +18,11 @@ def l2_reg_cost(cost, lambtha, weights, L, m):
         l2_cost: floating point cost with L2 regularization
     """
     W_square_sum = 0
-    
+
     # Calculate sum of squares of all weights
     for i in range(1, L + 1):
         W_square_sum += np.sum(np.square(weights['W' + str(i)]))
-    
+
     # Add regularization to cost
-    l2_cost = cost + (lambtha /(2 *m)) * W_square_sum
+    l2_cost = cost + (lambtha / (2 * m)) * W_square_sum
     return l2_cost
