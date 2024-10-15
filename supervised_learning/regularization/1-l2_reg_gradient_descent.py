@@ -7,6 +7,8 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
     """
     Updates the weights and biases of a neural network using
     gradient descent with L2 regularization.
+    
+    Uses tanh activation for hidden layers and softmax for output layer
 
     Parameters:
         Y: One-hot numpy.ndarray of shape (classes, m)
@@ -22,20 +24,23 @@ def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
     # Retrieve number of examples
     m = Y.shape[1]
 
-    # Calculate cost of layer 1
-    dz = cache[f'A{L}'] - Y
+    # Softmax for output layer
+    dZ = cache[f'A{L}'] - Y
 
     for layer in range(L, 0, -1):
         A_prev = cache[f'A{layer - 1}']
 
         # Calculate gradients
-        dW = np.matmul(dz, A_prev.T) / m
+        dW = np.matmul(dZ, A_prev.T) / m
+        # Add regularization term
         dW += (lambtha / m) * weights[f'W{layer}']
-        db = np.sum(dz, axis=1, keepdims=True) / m
-        dA_prev = np.matmul(weights[f'W{layer}'].T, dz)
+        
+        db = np.sum(dZ, axis=1, keepdims=True) / m
+        dA_prev = np.matmul(weights[f'W{layer}'].T, dZ)
 
         # Update dz for the next iteration
-        dz = dA_prev * A_prev * (1 - A_prev)
+        if layer > 1:
+            dZ = dA_prev * (1 - A_prev ** 2)
 
         # Update weights and biases
         weights[f'W{layer}'] -= alpha * dW
