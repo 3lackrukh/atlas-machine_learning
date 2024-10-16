@@ -19,10 +19,10 @@ def l2_reg_cost(cost, model):
     # Start with the original cost
     l2_costs = []
 
-    for l in model.layers:
-        if isinstance(l, tf.keras.layers.Dense) and l.kernel_regularizer:
+    for lay in model.layers:
+        if isinstance(lay, tf.keras.layers.Dense) and lay.kernel_regularizer:
             # Calculate L2 regularization for this layer
-            l2_cost = l.kernel_regularizer(l.kernel)
+            l2_cost = lay.kernel_regularizer(lay.kernel)
             # Add the L2 regularization loss to the original cost
             l2_costs.append(l2_cost)
 
