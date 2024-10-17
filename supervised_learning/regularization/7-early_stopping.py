@@ -7,8 +7,8 @@ def early_stopping(cost, opt_cost, threshold, patience, count):
     Determines if you should stop gradient descent early.
 
     Parameters:
-        cost: floating point current validation cost of the neural network.
-        opt_cost: floating point lowest recorded validation cost of the neural network.
+        cost: floating point current validation cost of the NN.
+        opt_cost: floating point lowest recorded validation cost of NN.
         threshold: threshold used for early stopping.
         patience: integer count used for early stopping.
         count: integer of how long the validation cost has not improved.
