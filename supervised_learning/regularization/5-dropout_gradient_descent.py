@@ -33,14 +33,7 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
     for layer in range(L, 0, -1):
         A_prev = cache[f'A{layer - 1}']
 
-        # Calculate gradients
-        dW = np.matmul(dz, A_prev.T) / m
-        db = np.sum(dz, axis=1, keepdims=True) / m
-
-        # Update weights and biases
-        weights[f'W{layer}'] -= alpha * dW
-        weights[f'b{layer}'] -= alpha * db
-
+        # Apply dropout before gradient descent
         if layer > 1:
             # For hidden layers (tanh activation with dropout)
             dA = np.matmul(weights[f'W{layer}'].T, dz)
@@ -50,5 +43,14 @@ def dropout_gradient_descent(Y, weights, cache, alpha, keep_prob, L):
                 dA *= cache[f'D{layer-1}']  # Apply dropout mask
                 dA /= keep_prob  # Scale the values
 
+        # Calculate gradients
+        dW = np.matmul(dz, A_prev.T) / m
+        db = np.sum(dz, axis=1, keepdims=True) / m
+
+        # Update weights and biases
+        weights[f'W{layer}'] -= alpha * dW
+        weights[f'b{layer}'] -= alpha * db
+
+        if layer > 1:
             # Derivative of tanh activation
             dz = dA * (1 - (A_prev ** 2))
