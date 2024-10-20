@@ -9,3 +9,4 @@ supervised_learning/error_analysis/confusion.npz
 *.h5
 *.pyc
 *.keras
+*.json
