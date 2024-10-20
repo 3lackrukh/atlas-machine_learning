@@ -7,7 +7,7 @@ def train_model(network, data, labels, batch_size, epochs,
                 validation_data=None, early_stopping=False,
                 patience=0, verbose=True, shuffle=False):
     """
-    Trains a given neural network model using 
+    Trains a given neural network model using
     mini-batch gradient descent and early stopping
 
     Parameters:
