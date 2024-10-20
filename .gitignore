@@ -8,3 +8,4 @@ supervised_learning/error_analysis/labels_logits.npz
 supervised_learning/error_analysis/confusion.npz
 *.h5
 *.pyc
+*.keras
