@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-""" Module defines the convolve_grayscale_same method """
+""" Module defines the convolve_grayscale_padding method """
 import numpy as np
 
 
-def convolve_grayscale_same(images, kernel):
+def convolve_grayscale_padding(images, kernel, padding):
     """
     Performs a same convolution on grayscale images.
 
@@ -16,6 +16,9 @@ def convolve_grayscale_same(images, kernel):
         convolution.
             kh: integer height of the kernel
             kw: integer width of the kernel
+        padding: tuple of (ph, pw)
+            ph: integer padding height
+            pw: integer padding width
 
     Returns:
         A numpy.ndarray containing the convolved images.
@@ -26,13 +29,9 @@ def convolve_grayscale_same(images, kernel):
     # Initialize the output array
     output = np.zeros((m, h, w))
 
-    # calculate padding
-    pad_h = kh // 2
-    pad_w = kw // 2
-
     # pad images
     padded = np.pad(images,
-                    ((0, 0), (pad_h, pad_h), (pad_w, pad_w)),
+                    ((0, 0), (padding[0], padding[0]), (padding[1], padding[1])),
                     mode='constant')
 
     # Perform convolution
