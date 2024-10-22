@@ -30,7 +30,7 @@ def convolve_grayscale_padding(images, kernel, padding):
     # Calculate the output dimensions
     output_h = h + 2 * ph - kh + 1
     output_w = w + 2 * pw - kw + 1
-    
+
     # Initialize the output array
     output = np.zeros((m, output_h, output_w))
 
