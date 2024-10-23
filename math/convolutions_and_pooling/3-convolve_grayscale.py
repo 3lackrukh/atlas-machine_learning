@@ -31,7 +31,7 @@ def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
     m, h, w = images.shape
     kh, kw = kernel.shape
     sh, sw = stride
-    
+
     # Calculate padding dimensions
     if isinstance(padding, tuple):
         ph, pw = padding
@@ -44,7 +44,7 @@ def convolve_grayscale(images, kernel, padding='same', stride=(1, 1)):
     # Update dimensions for output array
     output_h = (h + 2 * ph - kh) // sh + 1
     output_w = (w + 2 * pw - kw) // sw + 1
-    
+
     # Initialize the output array
     output = np.zeros((m, output_h, output_w))
 
