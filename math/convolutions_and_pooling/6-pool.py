@@ -8,7 +8,7 @@ def pool(images, kernel, stride=(1, 1), mode='max'):
     Performs a same convolution on grayscale images.
 
     Parameters:
-        images: numpy.ndarray of shape (m, h, w, c) containing grayscale images.
+        images: numpy.ndarray of shape (m, h, w, c) containing images.
             m: integer of images
             h: integer height in pixels
             w: integer width in pixels
@@ -30,11 +30,11 @@ def pool(images, kernel, stride=(1, 1), mode='max'):
     m, h, w, c = images.shape
     kh, kw = kernel
     sh, sw = stride
-    
+
     # Update dimensions for output array
     output_h = (h - kh) // sh + 1
     output_w = (w - kw) // sw + 1
-    
+
     # Initialize the output array
     output = np.zeros((m, output_h, output_w, c))
 
