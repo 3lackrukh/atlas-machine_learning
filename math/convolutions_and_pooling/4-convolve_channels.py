@@ -8,7 +8,7 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
     Performs a same convolution on images with channels.
 
     Parameters:
-        images: numpy.ndarray of shape (m, h, w, c) containing grayscale images.
+        images: numpy.ndarray of shape (m, h, w, c) contains grayscale images.
             m: integer of images
             h: integer height in pixels
             w: integer width in pixels
@@ -33,11 +33,11 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
     m, h, w, c = images.shape
     kh, kw, kc = kernel.shape
     sh, sw = stride
-    
+
     # confirm kernel dimensions
     if kc != c:
         raise ValueError("kernel channels must match image channels")
-    
+
     # Calculate padding dimensions
     if isinstance(padding, tuple):
         ph, pw = padding
@@ -50,7 +50,7 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
     # Update dimensions for output array
     output_h = (h + 2 * ph - kh) // sh + 1
     output_w = (w + 2 * pw - kw) // sw + 1
-    
+
     # Initialize the output array
     output = np.zeros((m, output_h, output_w))
 
