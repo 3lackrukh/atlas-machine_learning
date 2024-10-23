@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-""" Module defines the convolve_channels method """
+""" Module defines the convolve method """
 import numpy as np
 
 
-def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
+def convolve(images, kernels, padding='same', stride=(1, 1)):
     """
     Performs a same convolution on images with channels.
 
@@ -13,11 +13,12 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
             h: integer height in pixels
             w: integer width in pixels
             c: integer channels in the image
-        kernel: numpy.ndarray of shape (kh, kw) containing the kernel for the
+        kernels: numpy.ndarray of shape (kh, kw) containing the kernel for the
         convolution.
             kh: integer height of the kernel
             kw: integer width of the kernel
-            kc: integer channels in the image
+            kc: integer number of channels in the kernel
+            nk: integer number of kernels
         padding: either a tuple of (ph, pw), or string 'same' or 'valid'.
             ph: integer padding height
             pw: integer padding width
@@ -31,12 +32,12 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
         A numpy.ndarray containing the convolved images.
     """
     m, h, w, c = images.shape
-    kh, kw, kc = kernel.shape
+    kh, kw, kc, nk = kernels.shape
     sh, sw = stride
 
-    # confirm kernel dimensions
+    # confirm kernel channel depth
     if kc != c:
-        raise ValueError("kernel channels must match image channels")
+        raise ValueError("kernels channels must match image channels")
 
     # Calculate padding dimensions
     if isinstance(padding, tuple):
@@ -52,7 +53,7 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
     output_w = (w + 2 * pw - kw) // sw + 1
 
     # Initialize the output array
-    output = np.zeros((m, output_h, output_w))
+    output = np.zeros((m, output_h, output_w, kc))
 
     # pad images
     padded = np.pad(images,
@@ -63,9 +64,11 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
     # Perform convolution
     for i in range(output_h):
         for j in range(output_w):
-            # get current window
-            window = padded[:, i*sh:i*sh+kh, j*sw:j*sw+kw, :]
-            # apply kernel
-            output[:, i, j] = np.sum(window * kernel, axis=(1, 2, c))
+            for k in range(nk):
+                # get current window
+                window = padded[:, i*sh:i*sh+kh, j*sw:j*sw+kw, :]
+                # apply kernel
+                output[:, i, j, k] = np.sum(window * kernels[..., k],
+                                            axis=(1, 2, c))
 
     return output
