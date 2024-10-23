@@ -13,8 +13,8 @@ def convolve(images, kernels, padding='same', stride=(1, 1)):
             h: integer height in pixels
             w: integer width in pixels
             c: integer channels in the image
-        kernels: numpy.ndarray of shape (kh, kw) containing the kernel for the
-        convolution.
+        kernels: numpy.ndarray of shape (kh, kw, kc, nk) containing the kernel
+        dimensions for the convolution.
             kh: integer height of the kernel
             kw: integer width of the kernel
             kc: integer number of channels in the kernel
