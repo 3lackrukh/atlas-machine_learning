@@ -43,6 +43,7 @@ def conv_backward(dZ, A_prev, W, b, padding='same', stride=(1, 1)):
         db: numpy.ndarray of shape (1, 1, 1, c_new)
         containing the biases applied to the convolution
     """
+    # Get input dimensions
     m, h_new, w_new, c_new = dZ.shape
     m, h_prev, w_prev, _ = A_prev.shape
     kh, kw, _, _ = W.shape
@@ -55,28 +56,37 @@ def conv_backward(dZ, A_prev, W, b, padding='same', stride=(1, 1)):
     else:
         ph, pw = 0, 0
 
+    # Pad input activations to match forward pass padding
     A_prev_padded = np.pad(A_prev,
                            ((0, 0), (ph, ph),
                             (pw, pw), (0, 0)),
                            mode='constant')
 
+    # Initialize gradient matrices
     dA_prev = np.zeros_like(A_prev_padded)
     dW = np.zeros_like(W)
     db = np.sum(dZ, axis=(0, 1, 2), keepdims=True)
 
+    # Iterate over each example, position, and channel
     for i in range(m):
         for h in range(h_new):
             for w in range(w_new):
                 for c in range(c_new):
+
+                    # Update gradient for previous layer by chain rule
                     dA_prev[i, h*sh:h*sh+kh, w*sw:w*sw+kw,
                             :] += W[:, :, :, c] * dZ[i, h, w, c]
+
+                    # Update gradient for kernel weights by chain rule
                     dW[:, :, :, c] += A_prev_padded[i,
                                                     h*sh:h*sh+kh, w*sw:w*sw+kw,
                                                     :] * dZ[i, h, w, c]
 
+    # Remove padding from gradient if needed
     if padding == 'same':
         dA_prev = dA_prev[:, ph:-ph, pw:-pw, :]
     else:
         dA_prev = dA_prev[:, :h_prev, :w_prev, :]
 
+    # Return gradients for previous layer, weights, and biases
     return dA_prev, dW, db
