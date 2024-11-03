@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Module defines the inception_network method """
 from tensorflow import keras as K
+inception_block = __import__('0-inception_block').inception_block
 
 
 def inception_network():
@@ -8,8 +9,6 @@ def inception_network():
     Builds the inception network as described in
     Going Deeper with Convolutions (2014)
     """
-    inception_block = __import__('0-inception_block').inception_block
-
     init = K.initializers.he_normal()
     inputs = K.Input(shape=(224, 224, 3))
 
