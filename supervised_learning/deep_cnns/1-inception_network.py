@@ -38,7 +38,7 @@ def inception_network():
                                      kernel_initializer=init)(convolution_2a)
 
     max_pool_2 = K.layers.MaxPooling2D(pool_size=(3, 3),
-                                       gstrides=(2, 2),
+                                       strides=(2, 2),
                                        padding='same')(convolution_2b)
 
     inception_3a = inception_block(max_pool_2, [64, 96, 128, 16, 32, 32])
