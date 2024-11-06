@@ -25,7 +25,7 @@ def densenet121(growth_rate=32, compression=1.0):
 
     # Stage 1: Initial convolution with pre-activation
     bn1 = K.layers.BatchNormalization(axis=3)(inputs)
-    relu1 = K.layers.Activation('relu')(bn1)
+    relu1 = K.layers.ReLU()(bn1)
     conv1 = K.layers.Conv2D(filters=filters,
                             kernel_size=(7, 7),
                             strides=(2, 2),

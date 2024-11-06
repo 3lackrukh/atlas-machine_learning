@@ -21,7 +21,7 @@ def transition_layer(x, nb_filters, compression):
 
     # Stage 1: Compress feature maps
     batch_norm = K.layers.BatchNormalization()(x)
-    relu = K.layers.Activation('relu')(batch_norm)
+    relu = K.layers.ReLU()(batch_norm)
     convolution = K.layers.Conv2D(filters=int(nb_filters*compression),
                                   kernel_size=1,
                                   padding='same',

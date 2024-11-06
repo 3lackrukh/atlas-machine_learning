@@ -24,7 +24,7 @@ def dense_block(x, nb_filters, growth_rate, layers):
         # Stage 1: bottleneck layer (1x1 convolution)
         # Reduces input dimensionality before 3x3 convolution
         batch_norm_1 = K.layers.BatchNormalization()(x)
-        relu_1 = K.layers.Activation('relu')(batch_norm_1)
+        relu_1 = K.layers.ReLU()(batch_norm_1)
         convolution_1 = K.layers.Conv2D(filters=4*growth_rate,
                                         kernel_size=1,
                                         padding='same',
@@ -33,7 +33,7 @@ def dense_block(x, nb_filters, growth_rate, layers):
         # Stage 2: Main transformation (3x3 convolution)
         # Yields growth_rate and new feature maps
         batch_norm_2 = K.layers.BatchNormalization()(convolution_1)
-        relu_2 = K.layers.Activation('relu')(batch_norm_2)
+        relu_2 = K.layers.ReLU()(batch_norm_2)
         convolution_2 = K.layers.Conv2D(filters=growth_rate,
                                         kernel_size=3,
                                         padding='same',
