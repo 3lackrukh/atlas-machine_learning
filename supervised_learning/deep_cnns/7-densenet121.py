@@ -47,8 +47,7 @@ def densenet121(growth_rate=32, compression=1.0):
             x_stage, filters = transition_layer(x_stage, filters, compression)
 
     # Classification layer
-    global_avg_pool = K.layers.AveragePooling2D(
-                                               padding='same')(x_stage)
+    global_avg_pool = K.layers.AveragePooling2D(pool_size=(7, 7))(x_stage)
 
     # Fully connected layer
     softmax = K.layers.Dense(units=1000,
