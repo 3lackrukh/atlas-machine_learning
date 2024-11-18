@@ -187,6 +187,11 @@ class TrivialAugment:
             'rotate', 'translate_x', 'translate_y', 'brightness', 
             'contrast', 'zoom', 'shear', 'sharpness', 'flip'
         ]
+        # All K.layers defaults:
+        #  fill_mode='reflect'
+        #       options: constant, nearest, wrap
+        #  interpolation='bilinear'
+        #       options: nearest, bicubic
         
         # Initialize layers with specific ranges
         self.rotate = K.layers.RandomRotation(30/360)  # 30 degrees
@@ -227,7 +232,6 @@ class TrivialAugment:
             return self.flip(image, training=True)
         
         return image
-
 
 
 def preprocess_data(X, Y, training_set=False):
