@@ -180,72 +180,54 @@ def plot_class_accuracy(y_true, y_pred):
     plt.savefig('class_accuracy.png')
     plt.close()
 
-
 class TrivialAugment:
     def __init__(self):
-        # Define available operations and their ranges
-        self.operations = {
-            'rotate': (0, 30),          # Degrees
-            'translate_x': (-0.3, 0.3),  # Fraction of width
-            'translate_y': (-0.3, 0.3),  # Fraction of height
-            'brightness': (0.1, 1.9),    # Factor
-            'contrast': (0.1, 1.9),      # Factor
-            'zoom': (0.8, 1.2),          # Factor
-        }
-        # Initialize Keras image processing layers    
-        # Using default behaviors unless we specifically want to change them
-        self.rotate = K.layers.RandomRotation(1.0)  # Uses defaults
-        self.translate = K.layers.RandomTranslation(1.0, 1.0)  # Uses defaults
-        self.zoom = K.layers.RandomZoom(1.0)  # Uses defaults
+        # Initialize Keras preprocessing layers with conservative ranges
+        self.operations = [
+            'rotate', 'translate_x', 'translate_y', 'brightness', 
+            'contrast', 'zoom', 'shear', 'sharpness', 'flip'
+        ]
         
-        # If we want to change from defaults, we should be explicit:
-        # self.rotate = K.layers.RandomRotation(
-        #     1.0,
-        #     fill_mode='nearest',     # Different from default 'reflect'
-        #     interpolation='bicubic' # Different from default 'bilinear'
-        # )
+        # Initialize layers with specific ranges
+        self.rotate = K.layers.RandomRotation(30/360)  # 30 degrees
+        self.translate = K.layers.RandomTranslation(0.3, 0.3)  # 30% movement
+        self.brightness = K.layers.RandomBrightness(0.9)  # Factor of 0.1 to 1.9
+        self.contrast = K.layers.RandomContrast(0.9)     # Factor of 0.1 to 1.9
+        self.zoom = K.layers.RandomZoom(0.2)            # 0.8 to 1.2 zoom
+        self.shear = K.layers.RandomShear(0.3)          # 30% shear
+        self.sharpness = K.layers.RandomSharpness(0.95) # 0.1 to 2.0 range
+        self.flip = K.layers.RandomFlip('horizontal')
         
     def __call__(self, image):
         # Select random operation
-        op_name = np.random.choice(list(self.operations.keys()))
-        # Random magnitude between 0 and 1
-        magnitude = np.random.random()
+        op_name = np.random.choice(self.operations)
         
-        # Scale magnitude to operation's range
-        op_range = self.operations[op_name]
-        scaled_magnitude = op_range[0] + (op_range[1] - op_range[0]) * magnitude
+        # Ensure image is tensor
+        if isinstance(image, np.ndarray):
+            image = K.utils.img_to_array(image)
         
         # Apply the selected operation
-        return self.apply_op(image, op_name, scaled_magnitude)
-    
-    def apply_op(self, image, op_name, magnitude):
-        """Apply the selected operation with given magnitude"""
-        if isinstance(image, np.ndarray):
-            image = K.ops.convert_to_tensor(image)
-        
-        # Expand dimensions if needed
-        if len(image.shape) == 3:
-            image = K.ops.expand_dims(image, 0)
-            
         if op_name == 'rotate':
-            return self.rotate(image, [magnitude/30.0])  # Normalize to [-1,1]
-        
+            return self.rotate(image, training=True)
         elif op_name == 'translate_x':
-            return self.translate(image, [magnitude, 0])
-            
+            return self.translate(image, training=True)
         elif op_name == 'translate_y':
-            return self.translate(image, [0, magnitude])
-            
+            return self.translate(image, training=True)
         elif op_name == 'brightness':
-            return K.image.adjust_brightness(image, magnitude - 1.0)
-            
+            return self.brightness(image, training=True)
         elif op_name == 'contrast':
-            return K.image.adjust_contrast(image, magnitude)
-            
+            return self.contrast(image, training=True)
         elif op_name == 'zoom':
-            return self.zoom(image, [magnitude-1.0])
+            return self.zoom(image, training=True)
+        elif op_name == 'shear':
+            return self.shear(image, training=True)
+        elif op_name == 'sharpness':
+            return self.sharpness(image, training=True)
+        elif op_name == 'flip':
+            return self.flip(image, training=True)
         
         return image
+
 
 
 def preprocess_data(X, Y, training_set=False):
