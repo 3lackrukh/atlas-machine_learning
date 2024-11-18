@@ -1,0 +1,61 @@
+
+Loading and preprocessing data...
+Initializing Resizer: bicubic interpolation
+Initializing base_model: EfficientNetV2S ...
+Creating key_model for feature extraction ...
+Freezing key_model layers
+Extracting features ...
+Saved features detected. Checking for missing feature maps.
+checking train features
+checking test features
+All features computed and saved!
+Loading features from disk.
+Creating and training top_model ...
+top_model compiled!
+Training top_model on extracted features in batches
+2024-11-15 11:01:58.219927: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 23592960 exceeds 10% of free system memory.
+Epoch 1/10
+2024-11-15 11:01:59.578621: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 23592960 exceeds 10% of free system memory.
+2024-11-15 11:01:59.604124: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 23592960 exceeds 10% of free system memory.
+2024-11-15 11:01:59.611991: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 23592960 exceeds 10% of free system memory.
+2024-11-15 11:01:59.618436: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 23592960 exceeds 10% of free system memory.
+1562/1562 [==============================] - ETA: 0s - loss: 0.3550 - accuracy: 0.8849/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+1562/1562 [==============================] - 180s 114ms/step - loss: 0.3550 - accuracy: 0.8849 - val_loss: 0.2475 - val_accuracy: 0.9184
+Epoch 2/10
+1562/1562 [==============================] - 184s 118ms/step - loss: 0.2447 - accuracy: 0.9190 - val_loss: 0.2299 - val_accuracy: 0.9229
+Epoch 3/10
+1562/1562 [==============================] - 188s 120ms/step - loss: 0.2035 - accuracy: 0.9310 - val_loss: 0.2313 - val_accuracy: 0.9243
+Epoch 4/10
+1562/1562 [==============================] - 183s 117ms/step - loss: 0.1734 - accuracy: 0.9412 - val_loss: 0.2278 - val_accuracy: 0.9282
+Epoch 5/10
+1562/1562 [==============================] - 180s 115ms/step - loss: 0.1419 - accuracy: 0.9520 - val_loss: 0.2452 - val_accuracy: 0.9269
+Epoch 6/10
+1562/1562 [==============================] - 181s 116ms/step - loss: 0.1151 - accuracy: 0.9597 - val_loss: 0.2451 - val_accuracy: 0.9274
+Epoch 7/10
+1562/1562 [==============================] - 181s 116ms/step - loss: 0.0908 - accuracy: 0.9678 - val_loss: 0.2656 - val_accuracy: 0.9274
+Epoch 8/10
+1562/1562 [==============================] - 190s 122ms/step - loss: 0.0756 - accuracy: 0.9733 - val_loss: 0.2920 - val_accuracy: 0.9264
+Epoch 9/10
+1562/1562 [==============================] - 187s 120ms/step - loss: 0.0647 - accuracy: 0.9777 - val_loss: 0.3143 - val_accuracy: 0.9274
+
+Generating predictions and visualization...
+313/313 [==============================] - 23s 74ms/step
+
+Classification Report:
+              precision    recall  f1-score   support
+
+    airplane       0.88      0.95      0.92      1000
+  automobile       0.96      0.94      0.95      1000
+        bird       0.94      0.92      0.93      1000
+         cat       0.85      0.87      0.86      1000
+        deer       0.95      0.90      0.92      1000
+         dog       0.89      0.91      0.90      1000
+        frog       0.95      0.95      0.95      1000
+       horse       0.96      0.95      0.95      1000
+        ship       0.94      0.94      0.94      1000
+       truck       0.95      0.94      0.94      1000
+
+    accuracy                           0.93     10000
+   macro avg       0.93      0.93      0.93     10000
+weighted avg       0.93      0.93      0.93     10000

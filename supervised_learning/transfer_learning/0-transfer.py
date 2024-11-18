@@ -3,6 +3,7 @@
     using a pre-built Keras Application for transfer learning """
 from tensorflow import keras as K
 import h5py
+import time
 import os
 
 import matplotlib.pyplot as plt
@@ -136,34 +137,183 @@ def preprocess_data(X, Y):
     return X_p, Y_p
 
 
-if __name__ == '__main__':
-    
-    # Add callbacks for early stopping and model checkpoint
-    callbacks = [
-        K.callbacks.EarlyStopping(
-            monitor='val_accuracy',
-            min_delta=0.001,
-            patience=5,
-            mode='max'
-        ),
-        K.callbacks.ModelCheckpoint(
-            'cifar10.h5',
-            monitor='val_accuracy',
-            save_best_only=True,
-            mode='max'
-        )
-    ]
 
-    # Load and pre-process CIFAR-10 dataset
-    print('Loading and preprocessing data...')
-    (X_train, Y_train), (X_test, Y_test) = K.datasets.cifar10.load_data()
-    X_train_p, Y_train_p = preprocess_data(X_train, Y_train)
-    X_test_p, Y_test_p = preprocess_data(X_test, Y_test)
+
+### REFACTOR THIS TO JUST BATCH PROCESS 
+### THEN YOU CAN CALL IT FOR EXTRACTION AND FOR TRAINING
+def batch_extract(key_model, X_train_p, X_test_p, Y_train_p, Y_test_p, shuffle_idx, batch_size=10):
+    """Process features in batches and save directly to disk""" 
+    import time
+    from datetime import datetime, timedelta
+
+    if os.path.exists('cifar10_features.h5'):
+
+        with h5py.File('cifar10_features.h5', 'r') as f:
+            last_train_idx = f['train_features'].shape[0]
+            last_test_idx = f['test_features'].shape[0]
+            f.close()
+
+            
+            # Check for missing features
+            print('  Checking for missing features...')
+            missing_train = X_train_p.shape[0] - last_train_idx
+            missing_test = X_test_p.shape[0] - last_test_idx
+            if missing_test or missing_train :
+                
+                print(f'{missing_train} missing training features')
+                print(f'{missing_test} missing test features')
+                with h5py.File('cifar10_features.h5', 'a') as f:
+                    for i in range(last_train_idx, X_train_p.shape[0], batch_size):
+                        end_idx = min(i + batch_size, X_train_p.shape[0])
+                        
+                        # process and immediately save batch
+                        print(f'extracting missing training features batch {i//batch_size + 1}/{X_train_p.shape[0]//batch_size + 1}')
+                        batch_features = key_model.predict(X_train_p[i:end_idx], verbose=1)
+
+                        print(f'Saving training features batch {i//batch_size + 1}')                        
+                        f['train_features'][i:end_idx] = batch_features
+                    
+                    print('All training features computed and saved!')
+            
+                    for i in range(last_test_idx, X_test_p.shape[0], batch_size):
+                        end_idx = min(i + batch_size, X_test_p.shape[0])
+                        
+                        # Process and immediately save batch
+                        print(f'Computing test features batch {i//batch_size + 1}/{X_test_p.shape[0]//batch_size + 1}')
+                        batch_features = key_model.predict(X_test_p[i:end_idx], verbose=2)
+                        
+                        print(f'Saving test features batch {i//batch_size + 1}')
+                        f['test_features'][i:end_idx] = batch_features
+
+                    print('All test features computed and saved!')
+                    f.close()
+
+
+    else:
+        print('No saved features detected.')
+        print('Shuffling training dataset')
+        shuffle_idx = np.random.permutation(len(X_train))
+        X_train_p = X_train_p[shuffle_idx]
+        Y_train_p = Y_train_p[shuffle_idx]
+        start_time = time.time()
+
+        # Create h5py file and datasets
+        with h5py.File('cifar10_features.h5', 'w') as f:
+            # Create datasets with full size
+            f.create_dataset('train_features', shape=(X_train_p.shape[0], 12, 12, 1280), dtype='float32')
+            f.create_dataset('test_features', shape=(X_test_p.shape[0], 12, 12, 1280), dtype='float32')
+            f.create_dataset('train_labels', data=Y_train_p)
+            f.create_dataset('test_labels', data=Y_test_p)
+            f.create_dataset('shuffle_idx', data=shuffle_idx)
+
+            # Process training data
+            for i in range(0, X_train_p.shape[0], batch_size):
+                batch_start = time.time()
+                end_idx = min(i + batch_size, X_train_p.shape[0])
+                print(f'Processing training batch {i//batch_size + 1}/{X_train_p.shape[0]//batch_size + 1}')
+            
+                # Process and immediately save batch
+                batch_features = key_model.predict(X_train_p[i:end_idx], verbose=0)
+                f['train_features'][i:end_idx] = batch_features
+            
+                batch_time = time.time() - batch_start
+                remaining = (X_train_p.shape[0] - end_idx) / batch_size
+                eta = remaining * batch_time
+                print(f'Batch time: {batch_time:.2f}s, ETA: {eta/60:.2f}m')
+
+            # Process test data
+            for i in range(0, X_test_p.shape[0], batch_size):
+                batch_start = time.time()
+                end_idx = min(i + batch_size, X_test_p.shape[0])
+                print(f'Processing test batch {i//batch_size + 1}/{X_test_p.shape[0]//batch_size + 1}')
+            
+                # Process and immediately save batch
+                batch_features = key_model.predict(X_test_p[i:end_idx], verbose=0)
+                f['test_features'][i:end_idx] = batch_features
+            
+                batch_time = time.time() - batch_start
+                remaining = (X_test_p.shape[0] - end_idx) / batch_size
+                eta = remaining * batch_time
+                print(f'Batch time: {batch_time:.2f}s, ETA: {eta/60:.2f}m')
+
+            total_time = time.time() - start_time
+            hours, remainder = divmod(total_time, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            print(f'\nTotal time: {int(hours)}h {int(minutes)}m {int(seconds)}s')
+
+    # Return the features
+
+
+def batch_feature_data(collection, features_file='cifar10_features.h5',
+                       batch_size=32, predict=False):
+    """
+    Divides features saved to disk into batches for training or prediction
+
+    parameters:
+        collection: string name of collection to train from
+        features_file: string filepath for saved features
+                       Defaults to 'cifar10_features.h5'
+        batch_size: integer batch_size for training
+                    Defaults to 30.
+        predict: boolean for prediction
+                 Defaults to False
     
-    # Resize layer for input images
+    Yields:
+        tuple of (features, labels) for each batch
+        or features only during prediction
+    """
+    
+    with h5py.File(features_file, 'r') as f:        
+        samples = f[f'{collection}_features'].shape[0]
+        
+        while True:
+            for i in range(0, samples, batch_size):
+                end_idx = min(i + batch_size, samples)
+                if predict:
+                    yield f[f'{collection}_features'][i:end_idx]
+                else:
+                    yield (f[f'{collection}_features'][i:end_idx],
+                           f[f'{collection}_labels'][i:end_idx])
+        
+
+def attention_based_dropout(x, attention_weights, threshold=0.5, drop_rate=0.2):
+    """
+    Drops neurons in regions where attention_weights < threshold
+    x: input features
+    attention_weights: from CBAM
+    threshold: attention value below which to apply dropout
+    drop_rate: probability of dropping neurons in low-attention regions
+    """
+    import tensorflow as tf
+    
+    # Create binary mask for low-attention regions
+    low_attention_mask = K.backend.cast(attention_weights < threshold, 'float32')
+    
+    # Generate random dropout mask for those regions
+    random_mask = K.backend.random_uniform(K.backend.shape(x)) > drop_rate
+    random_mask = K.backend.cast(random_mask, 'float32')
+    
+    # Only apply dropout to low-attention regions
+    dropout_mask = K.backend.ones_like(x) * (1 - low_attention_mask) + random_mask * low_attention_mask
+    
+    # Count dropped neurons
+    total_neurons = K.backend.cast(K.backend.prod(K.backend.shape(dropout_mask)), 'float32')
+    dropped_neurons = total_neurons - K.backend.sum(dropout_mask)
+    dropout_rate = dropped_neurons / total_neurons
+    
+    # Log statistics
+    #tf.print("Total neurons:", total_neurons)
+    #tf.print("Dropped neurons:", dropped_neurons)
+    #tf.print("Dropout rate:", dropout_rate)
+    
+    return x * dropout_mask
+
+
+if __name__ == '__main__':
+     # Resize layer for input images
     # Attempt 1 using bicubic interpolation
     # Chosen for balanced detail preservation vs speed
-    print('Initializing Resizer: bicubic interpolation')
+    print('Initializing Resizer input layer: bicubic interpolation')
     Resizer = K.layers.Resizing(384, 384, interpolation='bicubic')
 
     # Create base model for transfer learning
@@ -184,15 +334,69 @@ if __name__ == '__main__':
     )
 
     # Create model with resizer
-    print('Creating key_model for feature extraction ...')
+    print('Compiling Resizer and base_model into key_model ...')
     key_model = K.Sequential([
         Resizer,
         base_model
     ])
-
-    # Freeze the base model layers
+    
+     # Freeze the base model layers
     print('Freezing key_model layers')
     key_model.trainable = False
+    
+    # Add callbacks for early stopping and model checkpoint
+    callbacks = [
+        K.callbacks.EarlyStopping(
+            monitor='val_accuracy',
+            min_delta=0.001,
+            patience=5,
+            mode='max'
+        ),
+        K.callbacks.ModelCheckpoint(
+            'cifar10.h5',
+            monitor='val_accuracy',
+            save_best_only=True,
+            mode='max'
+        )
+    ]
+    
+    # Load and pre-process CIFAR-10 dataset
+    print('Loading CIFAR-10 dataset ...')    
+    (X_train, Y_train), (X_test, Y_test) = K.datasets.cifar10.load_data()
+
+    print('  Preprocessing training and test data ...')
+    X_train_p, Y_train_p = preprocess_data(X_train, Y_train)
+    X_test_p, Y_test_p = preprocess_data(X_test, Y_test)
+    
+    # Check for saved features
+    print('Checking for saved features...')
+    if os.path.exists('cifar_features.h5'):
+
+        print('Saved features detected. Validating ...')
+        print('  Indexing training images to match features order')
+        with h5py.File('cifar10_features.h5', 'r') as f:
+            shuffle_idx = f['shuffle_idx']
+            X_train_p = X_train_p[shuffle_idx]
+            Y_train_p = Y_train_p[shuffle_idx]
+            f.close()
+    
+    else:
+        print('No features detected...')
+        
+        # Shuffle training data
+        print('  Shuffling training data...')
+        # Create shuffled index to maintain matching shuffle order
+        shuffle_idx = np.random.permutation(len(X_train))
+        # Shuffle training images and labels 
+        x_train = X_train[shuffle_idx]
+        y_train = Y_train[shuffle_idx]
+        
+        print('  Extracting features ...')
+        
+    batch_extract(key_model, X_train_p, X_test_p, Y_train_p, Y_test_p, batch_size=10, shuffle_idx=shuffle_idx)
+   
+
+   
     
     def cbam_spatial_attention(x):
         """
@@ -217,41 +421,23 @@ if __name__ == '__main__':
         channel_attention = mlp(avg_pool) + mlp(max_pool)
         x_chan = x_reshape * channel_attention
         
-        avg_spatial = K.layers.Lambda(lambda x: K.mean(x, axis=-1, keepdims=True))(x_chan)
-        max_spatial = K.layers.Lambda(lambda x: K.max(x, axis=-1, keepdims=True))(x_chan)
+        avg_spatial = K.layers.Lambda(lambda x: K.backend.mean(x, axis=-1, keepdims=True))(x_chan)
+        max_spatial = K.layers.Lambda(lambda x: K.backend.max(x, axis=-1, keepdims=True))(x_chan)
         spatial_concat = K.layers.Concatenate(axis=-1)([avg_spatial, max_spatial])
+        
         
         spatial_attention = K.layers.Conv2D(1, 7, padding='same', activation='sigmoid')(spatial_concat)
         x_spatial = x_chan * spatial_attention
+        
+        #x_dropout = K.layers.Lambda(
+         #   lambda x: attention_based_dropout(x[0], x[1], threshold=0.05, drop_rate=0.75)
+          #  )([x_spatial, spatial_attention])
         
         x_flat = K.layers.GlobalAveragePooling2D()(x_spatial)
         
         return x_flat
     
-
-    # Check for saved features
-    if os.path.exists('cifar10_features.h5'):
-        print('Loading saved features ...')
-        with h5py.File('cifar10_features.h5', 'r') as f:
-            train_features = f['train_features'][:]
-            test_features = f['test_features'][:]
-            train_labels = f['train_labels'][:]
-            test_labels = f['test_labels'][:]
-        print('Features loaded!')
-    else:
-        # Compute and save features from frozen layers
-        print('Computing features ...')
-        train_features = key_model.predict(X_train_p)
-        test_features = key_model.predict(X_test_p)
     
-        # Save features for later use
-        print('Saving features ...')
-        with h5py.File('cifar10_features.h5', 'w') as f:
-            f.create_dataset('train_features', data=train_features)
-            f.create_dataset('test_features', data=test_features)
-            f.create_dataset('train_labels', data=Y_train_p)
-            f.create_dataset('test_labels', data=Y_test_p)
-        print('Features saved!')
     
 
     # Create new top model
@@ -287,11 +473,13 @@ if __name__ == '__main__':
     
     # Attention Layer
     attention_layer = cbam_spatial_attention(feature_input)
+    dropout = K.layers.Dropout(0.3)(attention_layer)
+
     
     # Classification layers
-    dense = K.layers.Dense(256, activation='relu')(attention_layer)
+    dense = K.layers.Dense(256, activation='relu')(dropout)
     bn = K.layers.BatchNormalization()(dense)
-    dropout = K.layers.Dropout(0.2)(bn)
+    dropout = K.layers.Dropout(0.4)(bn)
     
     # Classification output layer
     outputs = K.layers.Dense(10, activation='softmax')(dropout)
@@ -304,19 +492,30 @@ if __name__ == '__main__':
     top_model.compile(optimizer=optimizer,
                       loss='categorical_crossentropy',
                       metrics=['accuracy'])
+    print("top_model compiled!")
+    
     # Train the top model
-   
+    print('Training top_model on extracted features in batches')
     history = top_model.fit(
-    train_features, Y_train_p,
-    validation_data=(test_features, Y_test_p),
-    epochs=10, batch_size=32,
-    callbacks=callbacks,
-    verbose=2
+        batch_feature_data('train'),
+        validation_data=batch_feature_data('test', batch_size=32),
+        batch_size=32,
+        epochs=10,
+        steps_per_epoch=X_train_p.shape[0] // 32,
+        validation_steps=X_test_p.shape[0] // 32,
+        callbacks=callbacks,
+        verbose=1
     )
+
 
     # Get predictions on test set
     print("\nGenerating predictions and visualization...")
-    test_predictions = top_model.predict(test_features)
+    test_predictions = top_model.predict(
+        batch_feature_data('test', predict=True),
+        steps=X_test_p.shape[0] // 32 + 1,
+        verbose=1
+        
+    )
 
     # Generate all visualizations
     plot_training_history(history)

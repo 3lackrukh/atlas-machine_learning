@@ -1,0 +1,69 @@
+Initializing Resizer input layer: bicubic interpolation
+Initializing base_model: EfficientNetV2S ...
+Compiling Resizer and base_model into key_model ...
+Freezing key_model layers
+Loading CIFAR-10 dataset ...
+  Preprocessing training and test data ...
+Checking for saved features...
+No features detected...
+  Shuffling training data...
+  Extracting features ...
+No saved features detected. Creating new feature file...
+
+Training Feature Extraction: |██████████████████████████████████████████████████| 50000/50000 (100.0%) [time elapsed:2:18:47<remaining:0:00:00>, 6.0 samples/s]
+
+Testing Feature Extraction: |██████████████████████████████████████████████████| 10000/10000 (100.0%) [time elapsed:0:27:40<remaining:0:00:00>, 6.0 samples/s]
+
+Creating and training top_model ...
+top_model compiled!
+Training top_model on extracted features in batches
+Epoch 1/10
+1562/1562 [==============================] - ETA: 0s - loss: 0.3312 - accuracy: 0.8918/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+1562/1562 [==============================] - 179s 114ms/step - loss: 0.3312 - accuracy: 0.8918 - val_loss: 0.2501 - val_accuracy: 0.9182
+Epoch 2/10
+1562/1562 [==============================] - 170s 109ms/step - loss: 0.2273 - accuracy: 0.9235 - val_loss: 0.2309 - val_accuracy: 0.9246
+Epoch 3/10
+1562/1562 [==============================] - 171s 109ms/step - loss: 0.1837 - accuracy: 0.9383 - val_loss: 0.2488 - val_accuracy: 0.9220
+Epoch 4/10
+1562/1562 [==============================] - 168s 107ms/step - loss: 0.1489 - accuracy: 0.9485 - val_loss: 0.2529 - val_accuracy: 0.9233
+Epoch 5/10
+1562/1562 [==============================] - 168s 107ms/step - loss: 0.1163 - accuracy: 0.9613 - val_loss: 0.2659 - val_accuracy: 0.9248
+Epoch 6/10
+1562/1562 [==============================] - 174s 111ms/step - loss: 0.0844 - accuracy: 0.9702 - val_loss: 0.2881 - val_accuracy: 0.9251
+Epoch 7/10
+1562/1562 [==============================] - 169s 108ms/step - loss: 0.0661 - accuracy: 0.9768 - val_loss: 0.3073 - val_accuracy: 0.9267
+Epoch 8/10
+1562/1562 [==============================] - 169s 108ms/step - loss: 0.0512 - accuracy: 0.9817 - val_loss: 0.3581 - val_accuracy: 0.9244
+Epoch 9/10
+1562/1562 [==============================] - 169s 108ms/step - loss: 0.0470 - accuracy: 0.9827 - val_loss: 0.3354 - val_accuracy: 0.9269
+Epoch 10/10
+1562/1562 [==============================] - 169s 108ms/step - loss: 0.0383 - accuracy: 0.9858 - val_loss: 0.3414 - val_accuracy: 0.9276
+
+Generating predictions and visualization...
+313/313 [==============================] - 21s 67ms/step
+
+Classification Report:
+              precision    recall  f1-score   support
+
+    airplane       0.94      0.91      0.92      1000
+  automobile       0.97      0.94      0.95      1000
+        bird       0.96      0.91      0.93      1000
+         cat       0.85      0.88      0.86      1000
+        deer       0.92      0.93      0.93      1000
+         dog       0.88      0.89      0.89      1000
+        frog       0.94      0.95      0.95      1000
+       horse       0.96      0.96      0.96      1000
+        ship       0.91      0.96      0.94      1000
+       truck       0.95      0.95      0.95      1000
+
+    accuracy                           0.93     10000
+   macro avg       0.93      0.93      0.93     10000
+weighted avg       0.93      0.93      0.93     10000
+
+
+Visualization files have been saved!
+Creating and saving full model...
+/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+Model saved successfully!

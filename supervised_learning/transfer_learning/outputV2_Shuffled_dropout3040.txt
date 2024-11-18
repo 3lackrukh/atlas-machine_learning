@@ -1,0 +1,55 @@
+Initializing Resizer input layer: bicubic interpolation
+Initializing base_model: EfficientNetV2S ...
+Compiling Resizer and base_model into key_model ...
+Freezing key_model layers
+Loading CIFAR-10 dataset ...
+  Preprocessing training and test data ...
+Checking for saved features...
+Saved features detected. Validating ...
+  Indexing training images to match features order
+Creating and training top_model ...
+top_model compiled!
+Training top_model on extracted features in batches
+Epoch 1/10
+1562/1562 [==============================] - ETA: 0s - loss: 0.3892 - accuracy: 0.8750/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+1562/1562 [==============================] - 134s 85ms/step - loss: 0.3892 - accuracy: 0.8750 - val_loss: 0.2650 - val_accuracy: 0.9106
+Epoch 2/10
+1562/1562 [==============================] - 134s 86ms/step - loss: 0.2857 - accuracy: 0.9035 - val_loss: 0.2413 - val_accuracy: 0.9186
+Epoch 3/10
+1562/1562 [==============================] - 139s 89ms/step - loss: 0.2468 - accuracy: 0.9175 - val_loss: 0.2316 - val_accuracy: 0.9197
+Epoch 4/10
+1562/1562 [==============================] - 140s 89ms/step - loss: 0.2258 - accuracy: 0.9241 - val_loss: 0.2679 - val_accuracy: 0.9166
+Epoch 5/10
+1562/1562 [==============================] - 140s 90ms/step - loss: 0.2056 - accuracy: 0.9296 - val_loss: 0.2144 - val_accuracy: 0.9298
+Epoch 6/10
+1562/1562 [==============================] - 142s 91ms/step - loss: 0.1868 - accuracy: 0.9363 - val_loss: 0.2236 - val_accuracy: 0.9283
+Epoch 7/10
+1562/1562 [==============================] - 142s 91ms/step - loss: 0.1652 - accuracy: 0.9433 - val_loss: 0.2251 - val_accuracy: 0.9304
+Epoch 8/10
+1562/1562 [==============================] - 143s 92ms/step - loss: 0.1521 - accuracy: 0.9483 - val_loss: 0.2206 - val_accuracy: 0.9319
+Epoch 9/10
+1562/1562 [==============================] - 148s 94ms/step - loss: 0.1356 - accuracy: 0.9528 - val_loss: 0.2268 - val_accuracy: 0.9300
+Epoch 10/10
+1562/1562 [==============================] - 146s 94ms/step - loss: 0.1225 - accuracy: 0.9573 - val_loss: 0.2260 - val_accuracy: 0.9316
+
+Generating predictions and visualization...
+313/313 [==============================] - 18s 59ms/step
+
+Classification Report:
+              precision    recall  f1-score   support
+
+    airplane       0.91      0.94      0.92      1000
+  automobile       0.96      0.94      0.95      1000
+        bird       0.94      0.92      0.93      1000
+         cat       0.91      0.84      0.87      1000
+        deer       0.92      0.92      0.92      1000
+         dog       0.90      0.92      0.91      1000
+        frog       0.94      0.96      0.95      1000
+       horse       0.96      0.96      0.96      1000
+        ship       0.94      0.95      0.95      1000
+       truck       0.93      0.96      0.95      1000
+
+    accuracy                           0.93     10000
+   macro avg       0.93      0.93      0.93     10000
+weighted avg       0.93      0.93      0.93     10000
