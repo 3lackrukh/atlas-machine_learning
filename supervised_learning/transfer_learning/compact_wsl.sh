@@ -37,6 +37,27 @@
 ####
 
 
+# compact_wsl.sh
+# This script is designed to compact the WSL disk on Windows.
+
+echo "Starting WSL cleanup..."
+
+# Delete .pyc files and __pycache__ directories
+find . -type f -name "*.pyc" -delete
+find . -type d -name "__pycache__" -exec rm -r {} +
+
+# Clear pip cache (optional)
+pip cache purge
+
+# Empty trash if exists
+rm -rf ~/.local/share/Trash/*
+
+# Clean temp files
+rm -rf /tmp/*
+
+# Cleanup complete
+echo "WSL cleanup completed"
+
 #Path to the PowerShell script on Windows
 POWERSHELL_SCRIPT="/mnt/c/Scripts/compact_wsl.ps1"  # Adjust this path as needed
 
@@ -49,5 +70,8 @@ WINDOWS_PATH=$(wslpath -w "$POWERSHELL_SCRIPT")
 # Execute the PowerShell script using powershell.exe
 powershell.exe -Command "Start-Process powershell -ArgumentList '-ExecutionPolicy Bypass -File $WINDOWS_PATH' -Verb RunAs"
 
-echo "Compaction process initiated. The WSL instance will shut down."
+echo "Compaction process initiated.\nThe WSL instance will shut down."
 echo "Please wait for the PowerShell window to complete the operation."
+# Shutdown WSL
+echo "Shutting down WSL..."
+wsl.exe --shutdown
