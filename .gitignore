@@ -7,7 +7,7 @@ supervised_learning/optimization/Binary_train.npz
 supervised_learning/error_analysis/labels_logits.npz
 supervised_learning/error_analysis/confusion.npz
 *.h5
-!supervised_learning/transfer_learning/V3/*.h5
+!supervised_learning/transfer_learning/*.h5
 *.pyc
 *.keras
 *.json
