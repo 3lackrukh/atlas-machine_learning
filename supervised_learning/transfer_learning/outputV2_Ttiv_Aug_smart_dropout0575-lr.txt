@@ -1,0 +1,60 @@
+Augmenting |██████████████████████████████████████████████████| 50000/50000 (100.0%) [time elapsed:0:04:19<remaining:0:00:00>, 192.9 samples/s]
+  Preprocessing testing data ...
+Checking for saved features...
+Saved features detected. Validating ...
+  Indexing training images to match features order
+training data is of type: <class 'numpy.ndarray'>
+trainig data shape: (50000, 32, 32, 3)
+Creating and training top_model ...
+top_model compiled!
+Training top_model on extracted features in batches
+Epoch 1/10
+1562/1562 [==============================] - ETA: 0s - loss: 0.6316 - accuracy: 0.7879/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+1562/1562 [==============================] - 187s 118ms/step - loss: 0.6316 - accuracy: 0.7879 - val_loss: 0.2729 - val_accuracy: 0.9091 - lr: 0.0010
+Epoch 2/10
+1562/1562 [==============================] - 170s 109ms/step - loss: 0.4971 - accuracy: 0.8295 - val_loss: 0.2458 - val_accuracy: 0.9164 - lr: 0.0010
+Epoch 3/10
+1562/1562 [==============================] - 170s 109ms/step - loss: 0.4418 - accuracy: 0.8471 - val_loss: 0.2967 - val_accuracy: 0.9095 - lr: 0.0010
+Epoch 4/10
+1562/1562 [==============================] - 171s 109ms/step - loss: 0.3998 - accuracy: 0.8603 - val_loss: 0.2890 - val_accuracy: 0.9073 - lr: 0.0010
+Epoch 5/10
+1562/1562 [==============================] - 164s 105ms/step - loss: 0.3471 - accuracy: 0.8797 - val_loss: 0.2618 - val_accuracy: 0.9169 - lr: 0.0010
+Epoch 6/10
+1562/1562 [==============================] - 166s 107ms/step - loss: 0.2614 - accuracy: 0.9094 - val_loss: 0.2358 - val_accuracy: 0.9259 - lr: 5.0000e-04
+Epoch 7/10
+1562/1562 [==============================] - 170s 109ms/step - loss: 0.2116 - accuracy: 0.9284 - val_loss: 0.2518 - val_accuracy: 0.9262 - lr: 5.0000e-04
+Epoch 8/10
+1562/1562 [==============================] - 179s 114ms/step - loss: 0.1739 - accuracy: 0.9421 - val_loss: 0.2650 - val_accuracy: 0.9234 - lr: 5.0000e-04
+Epoch 9/10
+1562/1562 [==============================] - 174s 111ms/step - loss: 0.1444 - accuracy: 0.9521 - val_loss: 0.2766 - val_accuracy: 0.9259 - lr: 5.0000e-04
+Epoch 10/10
+1562/1562 [==============================] - 173s 111ms/step - loss: 0.1178 - accuracy: 0.9612 - val_loss: 0.2823 - val_accuracy: 0.9277 - lr: 2.5000e-04
+
+Generating predictions and visualization...
+313/313 [==============================] - 23s 72ms/step
+
+Classification Report:
+              precision    recall  f1-score   support
+
+    airplane       0.93      0.93      0.93      1000
+  automobile       0.94      0.95      0.95      1000
+        bird       0.94      0.91      0.93      1000
+         cat       0.89      0.84      0.87      1000
+        deer       0.92      0.92      0.92      1000
+         dog       0.88      0.92      0.90      1000
+        frog       0.95      0.96      0.95      1000
+       horse       0.94      0.96      0.95      1000
+        ship       0.94      0.95      0.94      1000
+       truck       0.96      0.94      0.95      1000
+
+    accuracy                           0.93     10000
+   macro avg       0.93      0.93      0.93     10000
+weighted avg       0.93      0.93      0.93     10000
+
+
+Visualization files have been saved!
+Creating and saving full model...
+/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+Model saved successfully!

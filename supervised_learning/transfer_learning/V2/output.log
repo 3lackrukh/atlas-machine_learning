@@ -1,0 +1,112 @@
+ARCHITECTURE
+    KEY MODEL
+        - Resizing(384, 384, interpolation='bicubic')
+        - base_model(EfficientNetV2S, input_shape=(384, 384, 3),
+                     include_top=False, weights='imagenet',
+                     pooling='none', include_preprocessing=True)
+        - key_model.trainable = False
+
+    TOP MODEL
+        - Cbam_spatial_attention
+            -- input = Reshape(12, 12, 1280)
+
+            -- AveragePooling2D(input)
+            -- MaxPooling2d(input)
+
+            -- MLP (sequential([
+                Dense(1280 // 16, relu),
+                Dense(1280, sigmoid)
+                )]
+            
+            -- Channel Attention = MLP(AveragePooling) + MLP(MaxPooling)
+            -- x_chan = input * Channel Attention
+
+            -- avg_spatial(backend.mean(x_chan, axis=-1)
+            -- max_spatial(backend.max(x_chan, axis=-1)
+            -- spatial_concat = Concatenate(axis=-1([avg_spatial, max_spatial])
+
+            -- Spatial Attention = Conv2D(1, 7,)(spatial_concat)
+            -- Spatial Activation('sigmoid')(Spatial Attention)
+            -- x_spatial = input * Spatial Activation
+
+            -- x_attn = x_chan + x_spatial
+            Return x_attn
+        
+        - AveragePooling2D
+        - dropout 0.2
+        - output = Dense(10, activation='softmax')(pooled)
+
+
+Initializing Resizer input layer: bicubic interpolation
+Initializing base_model: EfficientNetV2S ...
+Compiling Resizer and base_model into key_model ...
+Freezing key_model layers
+Loading CIFAR-10 dataset ...
+  Preprocessing training data ...
+Applying TrivialAugment to training data...
+Augmenting |██████████████████████████████████████████████████| 50000/50000 (100.0%) [time elapsed:0:04:35<remaining:0:00:00>, 181.6 samples/s]
+  Preprocessing testing data ...
+Checking for saved features...
+No features detected...
+  Shuffling training data...
+  Extracting features ...
+training data is of type: <class 'numpy.ndarray'>
+trainig data shape: (50000, 32, 32, 3)
+No saved features detected. Creating new feature file...
+Training Feature Extraction: |██████████████████████████████████████████████████| 50000/50000 (100.0%) [time elapsed:2:17:21<remaining:0:00:00>, 6.1 samples/s]
+
+Testing Feature Extraction: |██████████████████████████████████████████████████| 10000/10000 (100.0%) [time elapsed:0:26:45<remaining:0:00:00>, 6.2 samples/s]
+
+Creating and training top_model ...
+top_model compiled!
+Training top_model on extracted features in batches
+Epoch 1/10
+1562/1562 [==============================] - ETA: 0s - loss: 0.6298 - accuracy: 0.7864/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+1562/1562 [==============================] - 144s 92ms/step - loss: 0.6298 - accuracy: 0.7864 - val_loss: 0.2766 - val_accuracy: 0.9072 - lr: 0.0010
+Epoch 2/10
+1562/1562 [==============================] - 142s 91ms/step - loss: 0.5135 - accuracy: 0.8230 - val_loss: 0.2554 - val_accuracy: 0.9150 - lr: 0.0010
+Epoch 3/10
+1562/1562 [==============================] - 144s 92ms/step - loss: 0.4716 - accuracy: 0.8362 - val_loss: 0.2416 - val_accuracy: 0.9186 - lr: 0.0010
+Epoch 4/10
+1562/1562 [==============================] - 147s 94ms/step - loss: 0.4368 - accuracy: 0.8485 - val_loss: 0.2352 - val_accuracy: 0.9217 - lr: 0.0010
+Epoch 5/10
+1562/1562 [==============================] - 147s 94ms/step - loss: 0.4076 - accuracy: 0.8571 - val_loss: 0.2307 - val_accuracy: 0.9243 - lr: 0.0010
+Epoch 6/10
+1562/1562 [==============================] - 148s 95ms/step - loss: 0.3788 - accuracy: 0.8671 - val_loss: 0.2286 - val_accuracy: 0.9246 - lr: 0.0010
+Epoch 7/10
+1562/1562 [==============================] - 148s 95ms/step - loss: 0.3560 - accuracy: 0.8759 - val_loss: 0.2261 - val_accuracy: 0.9268 - lr: 0.0010
+Epoch 8/10
+1562/1562 [==============================] - 148s 95ms/step - loss: 0.3375 - accuracy: 0.8821 - val_loss: 0.2366 - val_accuracy: 0.9256 - lr: 0.0010
+Epoch 9/10
+1562/1562 [==============================] - 147s 94ms/step - loss: 0.3157 - accuracy: 0.8894 - val_loss: 0.2403 - val_accuracy: 0.9224 - lr: 0.0010
+Epoch 10/10
+1562/1562 [==============================] - 147s 94ms/step - loss: 0.3051 - accuracy: 0.8935 - val_loss: 0.2452 - val_accuracy: 0.9249 - lr: 0.0010
+
+Generating predictions and visualization...
+313/313 [==============================] - 21s 67ms/step
+
+Classification Report:
+              precision    recall  f1-score   support
+
+    airplane       0.91      0.94      0.92      1000
+  automobile       0.97      0.93      0.95      1000
+        bird       0.95      0.91      0.93      1000
+         cat       0.91      0.81      0.86      1000
+        deer       0.93      0.91      0.92      1000
+         dog       0.89      0.91      0.90      1000
+        frog       0.94      0.96      0.95      1000
+       horse       0.88      0.98      0.92      1000
+        ship       0.95      0.94      0.95      1000
+       truck       0.92      0.97      0.94      1000
+
+    accuracy                           0.92     10000
+   macro avg       0.93      0.92      0.92     10000
+weighted avg       0.93      0.92      0.92     10000
+
+
+Visualization files have been saved!
+Creating and saving full model...
+/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+Model saved successfully!

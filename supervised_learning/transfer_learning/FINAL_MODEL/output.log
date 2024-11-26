@@ -1,0 +1,378 @@
+ARCHITECTURE
+    KEY MODEL
+        - Resizing(224, 224, interpolation='bicubic')
+        - base_model(EfficientNetV2S, input_shape=(384, 384, 3),
+                     include_top=False, weights='imagenet',
+                     pooling='none', include_preprocessing=True)
+        - key_model.trainable = True
+        - freeze all but final 9 layers
+
+    TOP MODEL
+        - Cbam_spatial_attention
+            -- input = Reshape(12, 12, 1280)
+
+            -- AveragePooling2D(input)
+            -- MaxPooling2d(input)
+
+            -- MLP (sequential([
+                Dense(1280 // 16, relu),
+                Dense(1280, sigmoid)
+                )]
+            
+            -- Channel Attention = MLP(AveragePooling) + MLP(MaxPooling)
+            -- x_chan = input * Channel Attention
+
+            -- avg_spatial(backend.mean(x_chan, axis=-1)
+            -- max_spatial(backend.max(x_chan, axis=-1)
+            -- spatial_concat = Concatenate(axis=-1([avg_spatial, max_spatial])
+
+            -- Spatial Attention = Conv2D(1, 7,)(spatial_concat)
+              --- Activation('sigmoid')(Spatial Attention)
+            -- x_spatial = input * Spatial Attention
+              --- attention_based_dropout 0.3, 0.75
+
+            -- x_attn = x_chan + x_spatial
+            Return x_attn
+
+        - dense 256 relu
+        - batch normalization
+        - dropout 0.2
+        - AveragePooling
+        - output = Dense(10, activation='softmax')(pooled)
+
+    TRAINING
+      - batch_size 25
+      - epochs 10
+      - Loss='categorical_crossentropy'
+      - metrics=['accuracy]
+      - Adam optimization
+      - Lr decay = linear
+        -- initial_lr=0.001
+        -- final_lr=0.00039
+        -- decay every batch 
+
+
+  File "/home/blackrukh/atlas-machine_learning/supervised_learning/transfer_learning/./CV4_transfer.py", line 390
+    kernel_regularizer=K.regularizers.l2(0.01),
+    ^
+SyntaxError: invalid syntax
+2024-11-23 06:07:39.086949: I external/local_tsl/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+2024-11-23 06:07:39.123406: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2024-11-23 06:07:39.123456: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2024-11-23 06:07:39.124403: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2024-11-23 06:07:39.129150: I external/local_tsl/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+2024-11-23 06:07:39.129386: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-11-23 06:07:39.858522: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+Loading CIFAR-10 dataset...
+Training samples: 50000
+Test samples: 10000
+CBAM input shape: (None, 7, 7, 1280)
+After reshape: (None, 7, 7, 1280)
+Pool shapes - avg: (None, 1, 1, 1280), max: (None, 1, 1, 1280)
+Channel attention shape: (None, 1, 1, 1280)
+After channel attention multiply: (None, 7, 7, 1280)
+Spatial attention shapes - avg: (None, 7, 7, 1), max: (None, 7, 7, 1)
+After spatial concat: (None, 7, 7, 2)
+Spatial attention shape after Conv2D(1, 7): (None, 7, 7, 1)
+x_spatial shape after spatial attention multiply: (None, 7, 7, 1280)
+x_attn shape after addition: (None, 7, 7, 1280)
+shape after first Dense(256): (None, 256)
+Final output class_probs shape: (None, 10)
+
+Initializing data generators...
+
+Starting training...
+
+DEBUG - First 5 raw samples:
+Image shape: (32, 32, 3), Label: [3]
+Image shape: (32, 32, 3), Label: [6]
+Image shape: (32, 32, 3), Label: [6]
+Image shape: (32, 32, 3), Label: [4]
+Image shape: (32, 32, 3), Label: [1]
+
+DEBUG - First 5 preprocessed samples:
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 1. 0. 0. 0. 0. 0. 0.], Class: 3
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 1. 0. 0. 0.], Class: 6
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 1. 0. 0. 0.], Class: 6
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 1. 0. 0. 0. 0. 0.], Class: 4
+Image shape: (32, 32, 3), One-hot label: [0. 1. 0. 0. 0. 0. 0. 0. 0. 0.], Class: 1
+
+DEBUG - Feature shape: (25, 7, 7, 1280)
+DEBUG - Feature values range: min=-0.27846455574035645, max=11.173460960388184
+Epoch 1/10
+
+   
+2000/2000 [==============================] - ETA: 0s - loss: 1.0057 - accuracy: 0.8222/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+
+DEBUG - First 5 raw samples:
+Image shape: (32, 32, 3), Label: [3]
+Image shape: (32, 32, 3), Label: [8]
+Image shape: (32, 32, 3), Label: [8]
+Image shape: (32, 32, 3), Label: [0]
+Image shape: (32, 32, 3), Label: [6]
+
+DEBUG - First 5 preprocessed samples:
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 1. 0. 0. 0. 0. 0. 0.], Class: 3
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 0. 0. 1. 0.], Class: 8
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 0. 0. 1. 0.], Class: 8
+Image shape: (32, 32, 3), One-hot label: [1. 0. 0. 0. 0. 0. 0. 0. 0. 0.], Class: 0
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 1. 0. 0. 0.], Class: 6
+
+DEBUG - Feature shape: (25, 7, 7, 1280)
+DEBUG - Feature values range: min=-0.27846455574035645, max=11.331892013549805
+
+2000/2000 [==============================] - 3412s 2s/step - loss: 1.0057 - accuracy: 0.8222 - val_loss: 0.5219 - val_accuracy: 0.9092 - lr: 0.0010
+Epoch 2/10
+2000/2000 [==============================] - 3393s 2s/step - loss: 0.6853 - accuracy: 0.8436 - val_loss: 0.4801 - val_accuracy: 0.9044 - lr: 0.0010
+Epoch 3/10 
+1517/2000 [=====================>........] - ETA: 11:29 - loss: 0.6241 - accuracy: 0.8555
+
+
+
+
+
+WITH BILINEAR INTERPOLATION L2=.005
+Epoch 1/10
+
+   1/2000 [..............................] - ETA: 40:48 - loss: 5.0907 - accuracy: 0.1200
+   2/2000 [..............................] - ETA: 36:05 - loss: 4.8497 - accuracy: 0.2200
+   3/2000 [..............................] - ETA: 37:41 - loss: 4.7337 - accuracy: 0.2267
+   4/2000 [..............................] - ETA: 38:35 - loss: 4.6070 - accuracy: 0.2800
+   5/2000 [..............................] - ETA: 39:03 - loss: 4.5285 - accuracy: 0.3040
+   6/2000 [..............................] - ETA: 38:35 - loss: 4.4594 - accuracy: 0.3400
+   7/2000 [..............................] - ETA: 38:55 - loss: 4.3417 - accuracy: 0.3771
+   8/2000 [..............................] - ETA: 40:02 - loss: 4.2689 - accuracy: 0.4050
+   9/2000 [..............................] - ETA: 41:14 - loss: 4.1932 - accuracy: 0.4267
+  10/2000 [..............................] - ETA: 42:05 - loss: 4.1242 - accuracy: 0.4480
+  11/2000 [..............................] - ETA: 42:37 - loss: 4.0722 - accuracy: 0.4655
+  12/2000 [..............................] - ETA: 42:59 - loss: 4.0183 - accuracy: 0.4867
+  13/2000 [..............................] - ETA: 43:11 - loss: 3.9604 - accuracy: 0.5077
+  14/2000 [..............................] - ETA: 43:23 - loss: 3.8961 - accuracy: 0.5286
+  15/2000 [..............................] - ETA: 43:52 - loss: 3.8724 - accuracy: 0.5360
+  16/2000 [..............................] - ETA: 44:05 - loss: 3.8295 - accuracy: 0.5475
+  17/2000 [..............................] - ETA: 44:02 - loss: 3.7845 - accuracy: 0.5600
+  18/2000 [..............................] - ETA: 44:09 - loss: 3.7636 - accuracy: 0.5711
+  19/2000 [..............................] - ETA: 44:14 - loss: 3.7316 - accuracy: 0.5811
+  20/2000 [..............................] - ETA: 44:18 - loss: 3.7031 - accuracy: 0.5860
+  21/2000 [..............................] - ETA: 44:29 - loss: 3.6693 - accuracy: 0.5981
+  22/2000 [..............................] - ETA: 44:30 - loss: 3.6435 - accuracy: 0.6018
+  23/2000 [..............................] - ETA: 44:37 - loss: 3.6194 - accuracy: 0.6087
+  24/2000 [..............................] - ETA: 44:51 - loss: 3.5843 - accuracy: 0.6183
+  25/2000 [..............................] - ETA: 45:08 - loss: 3.5632 - accuracy: 0.6208
+  26/2000 [..............................] - ETA: 45:20 - loss: 3.5610 - accuracy: 0.6169
+  27/2000 [..............................] - ETA: 45:25 - loss: 3.5326 - accuracy: 0.6237
+  28/2000 [..............................] - ETA: 45:38 - loss: 3.5039 - accuracy: 0.6343
+  29/2000 [..............................] - ETA: 46:01 - loss: 3.4819 - accuracy: 0.6414
+  30/2000 [..............................] - ETA: 46:07 - loss: 3.4589 - accuracy: 0.6480
+  31/2000 [..............................] - ETA: 46:18 - loss: 3.4392 - accuracy: 0.6542
+  32/2000 [..............................] - ETA: 46:15 - loss: 3.4365 - accuracy: 0.6550
+  33/2000 [..............................] - ETA: 46:13 - loss: 3.4200 - accuracy: 0.6594
+  34/2000 [..............................] - ETA: 46:08 - loss: 3.4153 - accuracy: 0.6576
+  35/2000 [..............................] - ETA: 46:15 - loss: 3.3979 - accuracy: 0.6617
+  36/2000 [..............................] - ETA: 46:25 - loss: 3.3889 - accuracy: 0.6633
+  37/2000 [..............................] - ETA: 46:24 - loss: 3.3818 - accuracy: 0.6616
+  38/2000 [..............................] - ETA: 46:28 - loss: 3.3671 - accuracy: 0.6653
+  39/2000 [..............................] - ETA: 46:28 - loss: 3.3508 - accuracy: 0.6677
+  40/2000 [..............................] - ETA: 46:26 - loss: 3.3351 - accuracy: 0.6710
+  41/2000 [..............................] - ETA: 46:25 - loss: 3.3194 - accuracy: 0.6741
+  42/2000 [..............................] - ETA: 46:21 - loss: 3.3182 - accuracy: 0.6714
+  43/2000 [..............................] - ETA: 46:19 - loss: 3.3052 - accuracy: 0.6744
+  44/2000 [..............................] - ETA: 46:15 - loss: 3.2851 - accuracy: 0.6800
+  45/2000 [..............................] - ETA: 46:11 - loss: 3.2788 - accuracy: 0.6809
+  46/2000 [..............................] - ETA: 46:08 - loss: 3.2665 - accuracy: 0.6826
+  47/2000 [..............................] - ETA: 46:08 - loss: 3.2521 - accuracy: 0.6860
+  48/2000 [..............................] - ETA: 46:03 - loss: 3.2431 - accuracy: 0.6867
+  49/2000 [..............................] - ETA: 46:02 - loss: 3.2317 - accuracy: 0.6906
+  50/2000 [..............................] - ETA: 45:57 - loss: 3.2148 - accuracy: 0.6944
+  51/2000 [..............................] - ETA: 45:56 - loss: 3.2062 - accuracy: 0.6973
+  52/2000 [..............................] - ETA: 45:54 - loss: 3.1983 - accuracy: 0.6992
+  53/2000 [..............................] - ETA: 45:52 - loss: 3.1835 - accuracy: 0.7026
+  54/2000 [..............................] - ETA: 45:51 - loss: 3.1736 - accuracy: 0.7044
+  55/2000 [..............................] - ETA: 45:54 - loss: 3.1652 - accuracy: 0.7040
+  56/2000 [..............................] - ETA: 46:04 - loss: 3.1460 - accuracy: 0.7086
+  57/2000 [..............................] - ETA: 46:04 - loss: 3.1353 - accuracy: 0.7088
+  58/2000 [..............................] - ETA: 46:03 - loss: 3.1306 - accuracy: 0.7069
+  59/2000 [..............................] - ETA: 46:02 - loss: 3.1216 - accuracy: 0.7085
+  60/2000 [..............................] - ETA: 45:59 - loss: 3.1138 - accuracy: 0.7087
+  61/2000 [..............................] - ETA: 46:03 - loss: 3.1004 - accuracy: 0.7102
+  2000/2000 [==============================] - ETA: 0s - loss: 0.9228 - accuracy: 0.8198/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+
+DEBUG - First 5 raw samples:
+Image shape: (32, 32, 3), Label: [3]
+Image shape: (32, 32, 3), Label: [8]
+Image shape: (32, 32, 3), Label: [8]
+Image shape: (32, 32, 3), Label: [0]
+Image shape: (32, 32, 3), Label: [6]
+
+DEBUG - First 5 preprocessed samples:
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 1. 0. 0. 0. 0. 0. 0.], Class: 3
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 0. 0. 1. 0.], Class: 8
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 0. 0. 1. 0.], Class: 8
+Image shape: (32, 32, 3), One-hot label: [1. 0. 0. 0. 0. 0. 0. 0. 0. 0.], Class: 0
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 1. 0. 0. 0.], Class: 6
+
+DEBUG - Feature shape: (25, 7, 7, 1280)
+DEBUG - Feature values range: min=-0.27846458554267883, max=12.019372940063477
+
+2000/2000 [==============================] - 3463s 2s/step - loss: 0.9228 - accuracy: 0.8198 - val_loss: 0.4983 - val_accuracy: 0.9059 - lr: 0.0010
+Epoch 2/10
+
+   1/2000 [..............................] - ETA: 1:43 - loss: 0.4501 - accuracy: 0.8400
+   2/2000 [..............................] - ETA: 1:45 - loss: 0.5453 - accuracy: 0.8600
+   3/2000 [..............................] - ETA: 1:49 - loss: 0.5836 - accuracy: 0.8533
+   4/2000 [..............................] - ETA: 16:36 - loss: 0.5886 - accuracy: 0.8600
+   5/2000 [..............................] - ETA: 23:40 - loss: 0.6304 - accuracy: 0.8480
+   240/2000 [==>...........................] - ETA: 42:29 - loss: 0.6718 - accuracy: 0.8417
+   241/2000 [==>...........................] - ETA: 42:26 - loss: 0.6724 - accuracy: 0.8413
+
+
+
+   BICUBIC L2.005 SPATIAL ATTENTION BASED DROPOUT .3 .75
+ 
+Epoch 1/10
+
+   1/2000 [..............................] - ETA: 49:55 - loss: 4.9876 - accuracy: 0.2000
+   2/2000 [..............................] - ETA: 44:40 - loss: 4.9036 - accuracy: 0.1800
+   3/2000 [..............................] - ETA: 47:06 - loss: 4.7437 - accuracy: 0.2533
+   4/2000 [..............................] - ETA: 48:14 - loss: 4.6481 - accuracy: 0.3100
+   5/2000 [..............................] - ETA: 48:11 - loss: 4.5395 - accuracy: 0.3760
+   6/2000 [..............................] - ETA: 48:58 - loss: 4.4534 - accuracy: 0.4000
+   7/2000 [..............................] - ETA: 48:52 - loss: 4.3618 - accuracy: 0.4229
+   8/2000 [..............................] - ETA: 48:59 - loss: 4.2768 - accuracy: 0.4600
+   9/2000 [..............................] - ETA: 48:49 - loss: 4.1934 - accuracy: 0.4889
+  10/2000 [..............................] - ETA: 48:57 - loss: 4.1074 - accuracy: 0.5200
+  1999/2000 [============================>.] - ETA: 1s - loss: 0.9024 - accuracy: 0.8270
+  2000/2000 [==============================] - ETA: 0s - loss: 0.9023 - accuracy: 0.8269/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+2000/2000 [==============================] - 3655s 2s/step - loss: 0.9023 - accuracy: 0.8269 - val_loss: 0.5139 - val_accuracy: 0.9000 - lr: 0.0010
+
+Epoch 2/10
+2000/2000 [==============================] - 3608s 2s/step - loss: 0.6458 - accuracy: 0.8463 - val_loss: 0.4575 - val_accuracy: 0.9074 - lr: 0.0010
+Epoch 3/10
+2000/2000 [==============================] - 3600s 2s/step - loss: 0.5900 - accuracy: 0.8588 - val_loss: 0.4334 - val_accuracy: 0.9103 - lr: 0.0010
+Epoch 4/10
+2000/2000 [==============================] - 3599s 2s/step - loss: 0.5487 - accuracy: 0.8673 - val_loss: 0.3916 - val_accuracy: 0.9204 - lr: 0.0010
+Epoch 5/10
+2000/2000 [==============================] - 3708s 2s/step - loss: 0.5108 - accuracy: 0.8744 - val_loss: 0.3824 - val_accuracy: 0.9192 - lr: 0.0010
+Epoch 6/10
+2000/2000 [==============================] - 3834s 2s/step - loss: 0.4819 - accuracy: 0.8795 - val_loss: 0.3447 - val_accuracy: 0.9272 - lr: 0.0010
+Epoch 7/10
+2000/2000 [==============================] - ETA: 0s - loss: 0.4573 - accuracy: 0.8843
+2000/2000 [==============================] - 3877s 2s/step - loss: 0.4573 - accuracy: 0.8843 - val_loss: 0.3469 - val_accuracy: 0.9202 - lr: 0.0010
+Epoch 8/10
+1933/2000 [===========================>..] - ETA: 1:45 - loss: 0.4454 - accuracy: 0.8879
+
+
+
+BICUBIC L2=0.001 DROPOUT .2 ATTN DROPOUT .3 .75  DENSE256 RELU BN DENSE128 RELU BN
+
+Epoch 1/10
+
+   1/2000 [..............................] - ETA: 48:43 - loss: 2.5636 - accuracy: 0.0400
+   2/2000 [..............................] - ETA: 36:31 - loss: 2.4950 - accuracy: 0.1200
+   3/2000 [..............................] - ETA: 36:45 - loss: 2.3408 - accuracy: 0.2133
+   4/2000 [..............................] - ETA: 36:38 - loss: 2.2233 - accuracy: 0.2800
+   5/2000 [..............................] - ETA: 36:08 - loss: 2.0586 - accuracy: 0.3680
+   6/2000 [..............................] - ETA: 36:06 - loss: 1.9649 - accuracy: 0.4133
+   7/2000 [..............................] - ETA: 36:48 - loss: 1.9017 - accuracy: 0.4514
+   8/2000 [..............................] - ETA: 38:08 - loss: 1.8544 - accuracy: 0.4650
+   9/2000 [..............................] - ETA: 38:51 - loss: 1.7973 - accuracy: 0.4889
+  10/2000 [..............................] - ETA: 39:51 - loss: 1.7665 - accuracy: 0.4960
+2000/2000 [==============================] - ETA: 0s - loss: 0.5391 - accuracy: 0.8488/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+
+
+
+BICUBIC NO REGULARIZATION ATTN DROPOUT .3 .75  DENSE256 RELU BN DROPOUT.2 LRDECAY LINEAR .001 - .00039
+
+
+2000/2000 [==============================] - ETA: 0s - loss: 0.4448 - accuracy: 0.8488/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+2000/2000 [==============================] - 3460s 2s/step - loss: 0.4448 - accuracy: 0.8488 - val_loss: 0.2081 - val_accuracy: 0.9319 - lr: 3.9031e-04
+Epoch 2/10
+1208/2000 [=================>............] - ETA: 20:11 - loss: 0.3237 - accuracy: 0.8908
+
+
+LR DECAY STEPS UPDATED INITIAL=0.001 FINAL@STEP2000 E10=0.00039
+Loading CIFAR-10 dataset...
+Training samples: 50000
+Test samples: 10000
+Trainable Layers:
+resizing : 0 parameters
+efficientnetv2-s : 20331360 parameters
+CBAM input shape: (None, 7, 7, 1280)
+After reshape: (None, 7, 7, 1280)
+Pool shapes - avg: (None, 1, 1, 1280), max: (None, 1, 1, 1280)
+Channel attention shape: (None, 1, 1, 1280)
+After channel attention multiply: (None, 7, 7, 1280)
+Spatial attention shapes - avg: (None, 7, 7, 1), max: (None, 7, 7, 1)
+After spatial concat: (None, 7, 7, 2)
+Spatial attention shape after Conv2D(1, 7): (None, 7, 7, 1)
+x_spatial shape after spatial attention multiply: (None, 7, 7, 1280)
+x_attn shape after addition: (None, 7, 7, 1280)
+shape after first Dense(256): (None, 256)
+Final output class_probs shape: (None, 10)
+
+Initializing data generators...
+
+Starting training...
+
+DEBUG - First 5 raw samples:
+Image shape: (32, 32, 3), Label: [2]
+Image shape: (32, 32, 3), Label: [6]
+Image shape: (32, 32, 3), Label: [8]
+Image shape: (32, 32, 3), Label: [8]
+Image shape: (32, 32, 3), Label: [9]
+
+DEBUG - First 5 preprocessed samples:
+Image shape: (32, 32, 3), One-hot label: [0. 0. 1. 0. 0. 0. 0. 0. 0. 0.], Class: 2
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 1. 0. 0. 0.], Class: 6
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 0. 0. 1. 0.], Class: 8
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 0. 0. 1. 0.], Class: 8
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 0. 0. 0. 1.], Class: 9
+
+DEBUG - Feature shape: (25, 7, 7, 1280)
+DEBUG - Feature values range: min=-0.27846458554267883, max=12.556111335754395
+Epoch 1/10
+2000/2000 [==============================] - ETA: 0s - loss: 0.4503 - accuracy: 0.8501/home/blackrukh/.local/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+
+DEBUG - First 5 raw samples:
+Image shape: (32, 32, 3), Label: [3]
+Image shape: (32, 32, 3), Label: [8]
+Image shape: (32, 32, 3), Label: [8]
+Image shape: (32, 32, 3), Label: [0]
+Image shape: (32, 32, 3), Label: [6]
+
+DEBUG - First 5 preprocessed samples:
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 1. 0. 0. 0. 0. 0. 0.], Class: 3
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 0. 0. 1. 0.], Class: 8
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 0. 0. 1. 0.], Class: 8
+Image shape: (32, 32, 3), One-hot label: [1. 0. 0. 0. 0. 0. 0. 0. 0. 0.], Class: 0
+Image shape: (32, 32, 3), One-hot label: [0. 0. 0. 0. 0. 0. 1. 0. 0. 0.], Class: 6
+
+DEBUG - Feature shape: (25, 7, 7, 1280)
+DEBUG - Feature values range: min=-0.27846455574035645, max=11.331892013549805
+2000/2000 [==============================] - 3641s 2s/step - loss: 0.4503 - accuracy: 0.8501 - val_loss: 0.2281 - val_accuracy: 0.9262 - lr: 9.3903e-04
+Epoch 2/10
+2000/2000 [==============================] - 3641s 2s/step - loss: 0.3435 - accuracy: 0.8836 - val_loss: 0.1960 - val_accuracy: 0.9344 - lr: 8.7803e-04
+Epoch 3/10
+2000/2000 [==============================] - 3693s 2s/step - loss: 0.2903 - accuracy: 0.9003 - val_loss: 0.1839 - val_accuracy: 0.9380 - lr: 8.1703e-04
+Epoch 4/10
+2000/2000 [==============================] - 3684s 2s/step - loss: 0.2559 - accuracy: 0.9108 - val_loss: 0.1887 - val_accuracy: 0.9351 - lr: 7.5603e-04
+Epoch 5/10
+2000/2000 [==============================] - 3742s 2s/step - loss: 0.2175 - accuracy: 0.9249 - val_loss: 0.1822 - val_accuracy: 0.9391 - lr: 6.9503e-04
+Epoch 6/10
+2000/2000 [==============================] - 3540s 2s/step - loss: 0.1957 - accuracy: 0.9327 - val_loss: 0.1769 - val_accuracy: 0.9407 - lr: 6.3403e-04
+Epoch 7/10
+2000/2000 [==============================] - 3539s 2s/step - loss: 0.1773 - accuracy: 0.9391 - val_loss: 0.1794 - val_accuracy: 0.9422 - lr: 5.7303e-04
+Epoch 8/10
+2000/2000 [==============================] - 3582s 2s/step - loss: 0.1554 - accuracy: 0.9462 - val_loss: 0.1769 - val_accuracy: 0.9447 - lr: 5.1203e-04
+Epoch 9/10
+2000/2000 [==============================] - 3388s 2s/step - loss: 0.1362 - accuracy: 0.9538 - val_loss: 0.1709 - val_accuracy: 0.9473 - lr: 4.5103e-04
+Epoch 10/10
+2000/2000 [==============================] - 3411s 2s/step - loss: 0.1252 - accuracy: 0.9563 - val_loss: 0.1786 - val_accuracy: 0.9473 - lr: 3.9003e-04
+2024-11-24 09:04:32.248590: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 2508800000 exceeds 10% of free system memory.
