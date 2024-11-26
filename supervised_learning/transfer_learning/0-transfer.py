@@ -82,8 +82,6 @@ def cbam_spatial_attention(x):
     max_spatial = K.layers.Lambda(
         lambda x: K.backend.max(x, axis=-1, keepdims=True)
         )(x_chan)
-    print(f"Spatial attention shapes - avg: {avg_spatial.shape},
-          max: {max_spatial.shape}")
 
     spatial_concat = K.layers.Concatenate(axis=-1)([avg_spatial, max_spatial])
     print(f"After spatial concat: {spatial_concat.shape}")

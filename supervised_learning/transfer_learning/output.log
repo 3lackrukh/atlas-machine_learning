@@ -67,3 +67,5 @@ Saving full model...
 
 Process completed successfully!
 
+RUNNING MAIN FILE
+79/79 [==============================] - 597s 8s/step - loss: 0.1779 - accuracy: 0.9448
