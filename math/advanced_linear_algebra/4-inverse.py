@@ -66,7 +66,6 @@ def inverse(matrix):
     - list of lists: cofactor matrix of the matrix
     """
     if not isinstance(matrix, list)\
-            or matrix == []\
             or not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
 
@@ -77,7 +76,7 @@ def inverse(matrix):
         raise ValueError("matrix must be a non-empty square matrix")
 
     if n == 1:
-        return [[1]]
+        return [[1 / matrix[0][0]]]
 
     cofactor_matrix = [[0 for _ in range(n)] for _ in range(n)]
     for i in range(n):
