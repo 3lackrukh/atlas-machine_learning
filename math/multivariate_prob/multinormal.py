@@ -53,7 +53,7 @@ class MultiNormal():
         inv = np.linalg.inv(self.cov)
         
         # Calculate deviations from mean
-        dev = x - self.mean
+        dev = float(x - self.mean)
         
         # Calculate quadratic and normalization
         quad = np.dot(np.dot(dev.T, inv), dev)
