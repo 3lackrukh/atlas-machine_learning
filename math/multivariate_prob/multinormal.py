@@ -58,5 +58,5 @@ class MultiNormal():
         norm = 1 / np.sqrt((2 * np.pi) ** d * det)
 
         # Probability Density Function
-        pdf = float(norm * np.exp(-0.5 * quad))
+        pdf = (norm * np.exp(-0.5 * quad)).astype(np.float64)
         return pdf
