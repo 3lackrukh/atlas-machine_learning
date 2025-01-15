@@ -41,7 +41,7 @@ class MultiNormal():
         """
         if type(x) is not np.ndarray:
             raise TypeError("x must be a numpy.ndarray")
-        if len(x.shape) != 2 or x.shape[0] != self.cov.shape[1]:
+        if x.shape != (self.mean.shape[0], 1):
             raise ValueError(f"x must have the shape ({self.cov.shape[0]}, 1)")
 
         d = self.cov.shape[1]
@@ -51,12 +51,12 @@ class MultiNormal():
         inv = np.linalg.inv(self.cov)
 
         # Calculate deviations from mean
-        dev = (x - self.mean).astype(np.float64)
+        dev = x - self.mean
 
         # Calculate quadratic and normalization
         quad = np.dot(np.dot(dev.T, inv), dev)
         norm = 1 / np.sqrt((2 * np.pi) ** d * det)
 
         # Probability Density Function
-        pdf = (norm * np.exp(-0.5 * quad)).astype(np.float64)
+        pdf = float(norm * np.exp(-0.5 * quad))
         return pdf
