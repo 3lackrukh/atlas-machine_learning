@@ -17,7 +17,7 @@ class MultiNormal():
             raise TypeError("data must be a 2D numpy.ndarray")
         if data.shape[1] < 2:
             raise ValueError("data must contain multiple data points")
-        
+
         self.data = data
 
         # Calculate mean along each dimension
