@@ -27,20 +27,23 @@ def definiteness(matrix):
 
         definiteness_map = {
             (True, False, False, False): "Positive definite",
-            (True, True, False, False): "Positive semi-definite",
+            (False, True, False, False): "Positive semi-definite",
             (False, False, True, False): "Negative definite",
-            (False, False, True, True): "Negative semi-definite"
+            (False, False, False, True): "Negative semi-definite"
         }
 
         conditions = (
             np.all(eigenvalues > 0),
-            np.all(eigenvalues >= 0),
+            np.all(eigenvalues >= 0) and not np.all(eigenvalues > 0),
             np.all(eigenvalues < 0),
-            np.all(eigenvalues <= 0)
+            np.all(eigenvalues <= 0) and not np.all(eigenvalues < 0)
         )
 
-        return definiteness_map.get(conditions, "Indefinite"
-                                    if validity else None)
+        result_map = {
+            True: "Indefinite",
+            False: None
+        }
+        return definiteness_map.get(conditions, result_map[validity])
 
     except AttributeError:
         raise TypeError("matrix must be a numpy.ndarray")
