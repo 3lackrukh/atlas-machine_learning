@@ -1,6 +1,9 @@
 #!/usr/bin/env
 import numpy as np
-""" Module defines the definiteness method """
+"""
+Module defines the definiteness method
+determining the definiteness of a matrix without conditionals
+"""
 
 
 def definiteness(matrix):
