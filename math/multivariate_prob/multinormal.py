@@ -55,10 +55,10 @@ class MultiNormal():
         # Calculate deviations from mean
         dev = x - self.mean
         
-        # Calculate exponential term
-        exp = np.dot(np.dot(dev.T, inv), dev)
-        num = np.exp(-0.5 * exp)
+        # Calculate quadratic and normalization
+        quad = np.dot(np.dot(dev.T, inv), dev)
+        norm = 1 / np.sqrt((2 * np.pi) ** d * det)
         
         # Probability Density Function
-        pdf = float(num / np.sqrt((2 * np.pi) ** d * det))
+        pdf = float(norm * np.exp(-0.5 * quad))
         return pdf
