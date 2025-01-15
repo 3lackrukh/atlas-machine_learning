@@ -37,21 +37,23 @@ def determinant(matrix):
 
     return det
 
+
 def submatrix(matrix, i, j):
     """
     Creates a submatrix by removing the specified row and column.
 
     Parameters:
     - matrix: list of lists representing the input matrix
-    - i: row index to remove 
+    - i: row index to remove
     - j: column index to remove
 
     Returns:
     - list of lists: submatrix with row and column removed
     """
-    return [[matrix[r][c] 
+    return [[matrix[r][c]
             for c in range(len(matrix)) if c != j]
             for r in range(len(matrix)) if r != i]
+
 
 def minor(matrix):
     """
