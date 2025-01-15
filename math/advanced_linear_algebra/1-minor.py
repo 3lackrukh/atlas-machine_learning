@@ -13,6 +13,7 @@ def minor(matrix):
     - list of lists: minor matrix of the matrix
     """
     if not isinstance(matrix, list)\
+            or matrix == []\
             or not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
 
