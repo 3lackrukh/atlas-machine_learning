@@ -21,9 +21,16 @@ def mean_cov(X):
     if X.shape[0] < 2:
         raise ValueError("X must contain multiple data points")
 
+    # Get input dimensions
     n, d = X.shape
+    
+    # Calculate mean along each dimension
     mean = np.mean(X, axis=0, keepdims=True)
+    
+    # Calculate deviations from mean
     dev = X - mean
+    
+    # Covariance matrix using n-1 for unbiased estimation
     cov = np.dot(dev.T, dev) / (n - 1)
 
     return mean, cov
