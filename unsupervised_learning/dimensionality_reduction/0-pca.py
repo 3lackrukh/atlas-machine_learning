@@ -6,13 +6,14 @@ import numpy as np
 def pca(X, var=0.95):
     """
     Performs PCA on a dataset
-    
+
     Parameters:
         X: numpy.ndarray of shape n, d
             n: int of data points
             d: int of dimensions in each point
                 All dimensions have a mean of 0 across all data points
-        var: float the fraction of the variance that the PCA transformation should maintain
+        var: float the fraction of the variance that the PCA transformation
+             should maintain
 
     Returns:
         W: numpy.ndarray weight matrix of shape d, nd
