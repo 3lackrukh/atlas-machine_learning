@@ -16,7 +16,7 @@ def pca(X, var=0.95):
              should maintain
 
     Returns:
-        W: numpy.ndarray weight matrix of shape d, nd
+        numpy.ndarray weight matrix of shape d, nd
         maintaining var fraction of X's original variance.
             nd: new dimensionality of transformed X
     """
