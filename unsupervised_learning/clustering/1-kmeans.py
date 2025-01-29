@@ -10,7 +10,7 @@ def kmeans(X, k, iterations=1000):
     Parameters:
         X: numpy.ndarray of shape (n, d) containing the dataset
             n: int of data points
-            d: int dimensions of each data point
+            d: int coordinates of each data point
         k: of clusters
         iterations: int maximum number of iterations
 
@@ -29,15 +29,27 @@ def kmeans(X, k, iterations=1000):
         return None, None
 
     # Initialize centroids
+    #  C shape (k, d) number of points and their coordinates
     C = np.random.uniform(low=np.min(X, axis=0),
                           high=np.max(X, axis=0),
                           size=(k, X.shape[1]))
     clss = None
     for i in range(iterations):
 
-        # Assign each point to nearest centroid
-        D = np.sqrt(((X - C[:, np.newaxis])**2).sum(axis=2))
-        clss = np.argmin(D, axis=0)
+        # ASSIGN EACH POINT TO NEAREST CENTROID
+        #   newaxis creates new X dimension (n, 1, d)
+        #       to hold 2D distances from each centroid
+        #   numpy broadcasting expands C before subtraction
+        #       to the left  shape (1, k, d)
+        #   New shape (n, k, d) encoding 2d distance between
+        #   each point and each centroid
+        #   .norm reduces 2d distances to 1d euclidian distances
+        #   AKA an array of (n, k) hypotenuses
+        #   .argmin selects the centroid with shortest hypotenuse
+        D = np.linalg.norm(X[:, np.newaxis] - C, axis=-1)
+        clss = np.argmin(D, axis=1)
+
+        # Copy current centroid coordinates to compare against update
         new_C = np.copy(C)
 
         # Update centroids
@@ -49,7 +61,7 @@ def kmeans(X, k, iterations=1000):
                                              high=np.max(X, axis=0),
                                              size=(1, X.shape[1]))
 
-            # Move centroids to mean of assigned points
+            # Move centroids to center of assigned points
             else:
                 new_C[j] = np.mean(X[clss == j], axis=0)
 
@@ -57,4 +69,5 @@ def kmeans(X, k, iterations=1000):
         if (new_C == C).all():
             break
         C = new_C
+
     return C, clss
