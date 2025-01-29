@@ -37,41 +37,52 @@ def kmeans(X, k, iterations=1000):
     for i in range(iterations):
 
         # ASSIGN EACH POINT TO NEAREST CENTROID
-        #   newaxis creates new X dimension (n, 1, d)
-        #       to hold 2D distances from each centroid
-        #   numpy broadcasting expands C before subtraction
-        #       to the left  shape (1, k, d)
-        #   New shape (n, k, d) encoding component-wise
-        #       differences between each point and each centroid
-        #   Square differences
-        #   Sum across components = squared Euclidian distances
-        #       NOT taking the square root avoids float errors
-        #   Reduces dimensionality to (n, k)
-        #   .argmin selects nearest centroid by index
-        D = np.sum((X[:, np.newaxis] - C) ** 2, axis=-1)
+        #   Compute squared L2 norm of centroids
+        squared_norm_C = np.sum(C ** 2, axis=1)
+
+        # Compute dot product between X and centroids
+        D = np.dot(X, C.T)
+        D *= -2
+
+        # Add squared norms to get squared distance
+        D += squared_norm_C
+
+        # Add squared norms of X broadcasting across columns
+        D += np.sum(X ** 2, axis=1)[:, np.newaxis]
+
+        # Add small epsilon to break ties consistently
+        D += np.arange(k) * 1e-12
+
+        # Assign points to nearest centroid
         clss = np.argmin(D, axis=1)
 
-        # Copy current centroid coordinates to compare against update
+        # Copy current centroids to compare against update
         new_C = np.copy(C)
 
         # Update centroids
         for j in range(k):
 
             # randomize centroids with no point assignments
-            if np.sum(clss == j) == 0:
+            points = X[clss == j]
+            if len(points) == 0:
                 new_C[j] = np.random.uniform(low=np.min(X, axis=0),
                                              high=np.max(X, axis=0),
                                              size=(1, X.shape[1]))
 
             # Move centroids to center of assigned points
             else:
-                new_C[j] = np.mean(X[clss == j], axis=0)
+                new_C[j] = np.mean(points, axis=0)
 
         # Stop when all centroids stabilize
         #   Use approximate equality to mitigate float errors
         if np.allclose(new_C, C):
             # Recalculate the final assignments
-            D = np.sum((X[:, np.newaxis] - new_C) ** 2, axis=-1)
+            squared_norm_C = np.sum(new_C ** 2, axis=1)
+            D = np.dot(X, new_C.T)
+            D *= -2
+            D += squared_norm_C
+            D += np.sum(X ** 2, axis=1)[:, np.newaxis]
+            D += np.arange(k) * 1e-12
             clss = np.argmin(D, axis=1)
             break
 
