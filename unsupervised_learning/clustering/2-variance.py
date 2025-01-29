@@ -5,12 +5,12 @@ import numpy as np
 
 def variance(X, C):
     """
-    Calculates the total intra-cluster variance for the data set
+    Calculates the total intra-cluster variance of the data set
 
     Parameters:
         X: numpy.ndarray of shape (n, d) containing the data set
-        C: numpy.ndarray of shape (k, d) containing the centroid means
-           for each cluster
+        C: numpy.ndarray of shape (k, d) containing the centroid mean
+           of each cluster
     Returns:
         var: the intra-cluster variance
     """
@@ -25,7 +25,7 @@ def variance(X, C):
         # Assign points to nearest centroid
         D = np.min(np.sum((X[:, np.newaxis] - C) ** 2, axis=2), axis=1)
 
-        # Sum all distances for total variance
+        # Sum all distances
         return np.sum(D)
 
     except Exception:
