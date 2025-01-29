@@ -22,19 +22,11 @@ def variance(X, C):
         return None
 
     try:
-        # Calculate the distance between each data point and nearest centroid
-        distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
+        # Assign points to nearest centroid
+        D = np.min(np.sum((X[:, np.newaxis] - C) ** 2, axis=2), axis=1)
 
-        # Find the index of the nearest centroid for each data point
-        cluster_indices = np.argmin(distances, axis=1)
-
-        # Calculate the distance between each data point and its centroid
-        cluster_distances = distances[np.arange(X.shape[0]), cluster_indices]
-
-        # Calculate the total intra-cluster variance
-        var = np.sum(cluster_distances ** 2)
-
-        return var
+        # Sum all distances for total variance
+        return np.sum(D)
 
     except Exception:
         return None
