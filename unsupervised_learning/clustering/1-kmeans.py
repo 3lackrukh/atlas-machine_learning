@@ -44,7 +44,7 @@ def kmeans(X, k, iterations=1000):
         for j in range(k):
 
             # randomize centroids with no point assignments
-            if len(X[j == clss]) == 0:
+            if np.sum(clss == j) == 0:
                 new_C[j] = np.random.uniform(low=np.min(X, axis=0),
                                              high=np.max(X, axis=0),
                                              size=(1, X.shape[1]))
