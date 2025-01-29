@@ -65,8 +65,9 @@ def kmeans(X, k, iterations=1000):
             else:
                 new_C[j] = np.mean(X[clss == j], axis=0)
 
-        # Stop when all centroids fixed
-        if (new_C == C).all():
+        # Stop when all centroids stabilize
+        #   Use approximate equality to mitigate float errors
+        if np.allclose(new_C, C):
             break
         C = new_C
 
