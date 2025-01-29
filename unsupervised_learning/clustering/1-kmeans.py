@@ -51,7 +51,7 @@ def kmeans(X, k, iterations=1000):
 
             # Move centroids to mean of assigned points
             else:
-                new_C[j] = (X[j == clss].mean(axis=0))
+                new_C[j] = (X[clss == j].mean(axis=0))
 
         # Stop when all centroids fixed
         if (new_C == C).all():
