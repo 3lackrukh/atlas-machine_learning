@@ -41,12 +41,14 @@ def kmeans(X, k, iterations=1000):
         #       to hold 2D distances from each centroid
         #   numpy broadcasting expands C before subtraction
         #       to the left  shape (1, k, d)
-        #   New shape (n, k, d) encoding 2d distance between
-        #   each point and each centroid
-        #   .norm reduces 2d distances to 1d euclidian distances
-        #   AKA an array of (n, k) hypotenuses
-        #   .argmin selects the centroid with shortest hypotenuse
-        D = np.linalg.norm(X[:, np.newaxis] - C, axis=-1)
+        #   New shape (n, k, d) encoding component-wise
+        #       differences between each point and each centroid
+        #   Square differences
+        #   Sum across components = squared Euclidian distances
+        #       NOT taking the square root avoids float errors
+        #   Reduces dimensionality to (n, k)
+        #   .argmin selects nearest centroid by index
+        D = np.sum((X[:, np.newaxis] - C) ** 2, axis=-1)
         clss = np.argmin(D, axis=1)
 
         # Copy current centroid coordinates to compare against update
@@ -68,7 +70,11 @@ def kmeans(X, k, iterations=1000):
         # Stop when all centroids stabilize
         #   Use approximate equality to mitigate float errors
         if np.allclose(new_C, C):
+            # Recalculate the final assignments
+            D = np.sum((X[:, np.newaxis] - new_C) ** 2, axis=-1)
+            clss = np.argmin(D, axis=1)
             break
-        C = new_C
+
+        C = new_C.copy()
 
     return C, clss
