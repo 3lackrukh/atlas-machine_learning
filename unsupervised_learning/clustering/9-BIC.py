@@ -15,19 +15,19 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         kmax: int maximum clusters to check (inclusive)
     """
     if type(X) is not np.ndarray or len(X.shape) != 2:
-        return None, None, None, None, None
+        return None, None, None, None
     if type(kmin) is not int or kmin < 1:
-        return None, None, None, None, None
+        return None, None, None, None
     if kmax is None or kmax >= X.shape[0]:
         kmax = X.shape[0]
     if type(kmax) is not int or kmax <= kmin:
-        return None, None, None, None, None
+        return None, None, None, None
     if type(iterations) is not int or iterations < 1:
-        return None, None, None, None, None
+        return None, None, None, None
     if type(tol) is not float or tol < 0:
-        return None, None, None, None, None
+        return None, None, None, None
     if type(verbose) is not bool:
-        return None, None, None, None, None
+        return None, None, None, None
 
     n, d = X.shape
     bic = []
