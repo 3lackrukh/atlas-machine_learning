@@ -6,7 +6,7 @@ expectation_maximization = __import__('8-EM').expectation_maximization
 
 def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     """
-    Finds the best number of clusters for a GMM using
+    Finds the best number of clusters fr a GMM using
         Bayesian Information Criterion
 
     Parameters:
@@ -34,7 +34,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     L = []
     pi, m, S = [], [], []
 
-    # Calculate EM for each number of clusters
+    # Calculate EM fr each number of clusters
     for k in range(kmin, kmax + 1):
         pi_k, m_k, S_k, g_k, L_k = expectation_maximization(
             X, k, iterations, tol, verbose)
