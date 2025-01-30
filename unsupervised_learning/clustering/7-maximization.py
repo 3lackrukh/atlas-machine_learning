@@ -43,7 +43,7 @@ def maximization(X, g):
     g_3D = g[:, :, np.newaxis]
 
     # Weighted covariance matrices for each cluster
-    S = np.matmul(g_3D * diff, diff.transpose(0, 2, 1)
-                  / g_sum[:, np.newaxis, np.newaxis])
+    S = np.matmul(g_3D * diff, diff.transpose(0, 2, 1))
+    S = S / g_sum[:, np.newaxis, np.newaxis]
 
     return pi, m, S
