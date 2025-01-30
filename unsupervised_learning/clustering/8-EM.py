@@ -49,11 +49,9 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
         if verbose and i % 10 == 0:
             print(f'Log Likelihood after {i} iterations: {L_new:.5f}')
 
-        if i > 0 and abs(L - L_new) <= tol:
+        if abs(L - L_new) <= tol or i == iterations:
             if verbose:
                 print(f'Log Likelihood after {i} iterations: {L_new:.5f}')
             return pi, m, S, g, L_new
 
         L = L_new
-    # Return final values after max iterations
-    return pi, m, S, g, L
