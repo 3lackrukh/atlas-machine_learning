@@ -28,12 +28,12 @@ def maximization(X, g):
     n, d = X.shape
     k = g.shape[0]
 
-    if not np.allclose(g.sum(axis=0), np.ones(n)):
+    if not np.allclose(g.sum( axis=0), np.ones(n)):
         return None, None, None
 
     # Calculate new priors
     resp = g.sum(axis=1)
-    if np.any(resp <= 0):
+    if np.any(resp == 0):
         return None, None, None
 
     pi = resp / n
