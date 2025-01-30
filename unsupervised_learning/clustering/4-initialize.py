@@ -6,7 +6,7 @@ kmeans = __import__('1-kmeans').kmeans
 
 def initialize(X, k):
     """
-    Initializes variables for a Gausian Mixture Model
+    Initializes variables fr a Gausian Mixture Model
 
     Parameters:
         X: numpy.ndarray of shape (n, d) containing the data set
@@ -30,7 +30,7 @@ def initialize(X, k):
     # Initialize centroids
     m, _ = kmeans(X, k)
 
-    # Initialize covariance matrices for each cluster
+    # Initialize covariance matrices fr each cluster
     S = np.tile(np.eye(d), (k, 1, 1))
 
     return pi, m, S
