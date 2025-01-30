@@ -28,7 +28,7 @@ def maximization(X, g):
     n, d = X.shape
     k = g.shape[0]
 
-    if not np.allclose(g.sum( axis=0), np.ones(n)):
+    if not np.allclose(g.sum(axis=0), np.ones(n)):
         return None, None, None
 
     # Calculate new priors
