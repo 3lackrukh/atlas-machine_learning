@@ -18,7 +18,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         return None, None, None, None, None
     if type(kmin) is not int or kmin < 1:
         return None, None, None, None, None
-    if kmax is None:
+    if kmax is None or kmax >= X.shape[0]:
         kmax = X.shape[0]
     if type(kmax) is not int or kmax <= kmin:
         return None, None, None, None, None
@@ -37,7 +37,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     # Calculate EM fr each number of clusters
     for k in range(kmin, kmax + 1):
         pi_k, m_k, S_k, g_k, L_k = expectation_maximization(
-            X, k, iterations, tol, verbose)
+            X, k, iterations, tol=tol, verbose=verbose)
 
         # Store results
         pi.append(pi_k)
