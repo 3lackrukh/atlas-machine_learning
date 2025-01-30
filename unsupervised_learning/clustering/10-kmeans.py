@@ -11,8 +11,7 @@ def kmeans(X, k):
         X: numpy.ndarray of shape (n, d) containing the dataset
         k: int number of clusters
     """
-    kmeans = sklearn.cluster.KMeans(n_clusters=k)
-    kmeans.fit(X)
-    C = kmeans.cluster_centers_
-    clss = kmeans.labels_
+    k_means = sklearn.cluster.KMeans(k).fit(X)
+    C = k_means.cluster_centers_
+    clss = k_means.labels_
     return C, clss
