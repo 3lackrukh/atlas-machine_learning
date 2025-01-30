@@ -54,5 +54,6 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     # Determine best k value
     bic = np.array(bic)
     L = np.array(L)
-    best_k = np.argmin(bic) + kmin
-    return best_k, (pi[best_k], m[best_k], S[best_k]), L, bic
+    idx = np.argmin(bic)
+    best_k = idx + kmin
+    return best_k, (pi[idx], m[idx], S[idx]), L, bic
