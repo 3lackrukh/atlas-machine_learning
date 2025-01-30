@@ -28,22 +28,24 @@ def maximization(X, g):
     n, d = X.shape
     k = g.shape[0]
 
+    if not np.allclose(g.sum(axis=0), np.ones(n)):
+        return None, None, None
+
     # Calculate new priors
-    pi = np.sum(g, axis=1) / n
+    resp = g.sum(axis=1)
+    if np.any(resp <= 0):
+        return None, None, None
+
+    pi = resp / n
 
     # Calculate new means
-    g_sum = np.sum(g, axis=1)
-    m = np.dot(g, X) / g_sum[:, np.newaxis]
+    m = np.dot(g, X) / resp[:, np.newaxis]
 
     # Calculate new covariance matrices
-    # Expand dimensions and subtract mean
-    diff = X - m[:, np.newaxis, :]
-
-    # Weight differences by posterior probabilities
-    g_3D = g[:, :, np.newaxis]
-
-    # Weighted covariance matrices for each cluster
-    S = np.matmul(g_3D * diff, diff.transpose(0, 2, 1))
-    S = S / g_sum[:, np.newaxis, np.newaxis]
+    S = np.zeros((k, d, d))
+    for j in range(k):
+        diff = X - m[j]
+        weighted_diff = g[j, :, np.newaxis] * diff
+        S[j] = np.dot(weighted_diff.T, diff) / resp[j]
 
     return pi, m, S
