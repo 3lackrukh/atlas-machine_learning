@@ -56,3 +56,5 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
             return pi, m, S, g, L_new
 
         L = L_new
+    # Return final values after max iterations
+    return pi, m, S, g, L
