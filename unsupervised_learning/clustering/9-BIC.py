@@ -35,7 +35,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     pi, m, S = [], [], []
 
     # Calculate EM fr each number of clusters
-    for k in range(kmin, kmax + 1):
+    for k in range(kmin, kmax):
         pi_k, m_k, S_k, g_k, L_k = expectation_maximization(
             X, k, iterations, tol, verbose)
 
