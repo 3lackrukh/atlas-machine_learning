@@ -32,14 +32,18 @@ def maximization(X, g):
     pi = np.sum(g, axis=1) / n
 
     # Calculate new means
-    m = np.zeros((k, d))
-    for i in range(k):
-        m[i] = np.sum(g[i, :, np.newaxis] * X, axis=0) / np.sum(g[i])
+    g_sum = np.sum(g, axis=1)
+    m = np.dot(g, X) / g_sum[:, np.newaxis]
 
     # Calculate new covariance matrices
-    S = np.zeros((k, d, d))
-    for i in range(k):
-        diff = X - m[i]
-        S[i] = np.dot((g[i, :, np.newaxis] * diff).T, diff) / np.sum(g[i])
+    # Expand dimensions and subtract mean
+    diff = X - m[:, np.newaxis, :]
+
+    # Weight differences by posterior probabilities
+    g_3D = g[:, :, np.newaxis]
+
+    # Weighted covariance matrices for each cluster
+    S = np.matmul(g_3D * diff, diff.transpose(0, 2, 1)
+                  / g_sum[:, np.newaxis, np.newaxis])
 
     return pi, m, S
