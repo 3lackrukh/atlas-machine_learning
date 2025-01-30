@@ -44,5 +44,5 @@ def pdf(X, m, S):
     # Calculate PDF values using Gausian formula
     res = const * np.exp(-0.5 * np.sum(np.matmul(diff, inv) * diff, axis=1))
 
-    # filter for minimum value
+    # filter fr minimum value
     return np.maximum(res, 1e-300)
