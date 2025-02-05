@@ -73,6 +73,6 @@ def viterbi(Observation, Emission, Transition, Initial):
 
         # Return probability of best path and the path
         P = np.max(V[:, T-1])
-        return path, P
+        return path.tolist(), P
     except Exception:
         return None
