@@ -27,18 +27,18 @@ def backward(Observation, Emission, Transition, Initial):
     try:
         if not isinstance(Observation, np.ndarray) or \
                 len(Observation.shape) != 1:
-            return None
+            return None, None
         T = Observation.shape[0]
         if not isinstance(Emission, np.ndarray) or \
                 len(Emission.shape) != 2:
-            return None
+            return None, None
         N, _ = Emission.shape
         if not isinstance(Transition, np.ndarray) or \
                 Transition.shape != (N, N):
-            return None
+            return None, None
         if not isinstance(Initial, np.ndarray) or \
                 Initial.shape != (N, 1):
-            return None
+            return None, None
 
         # Create backward matrix size states x time-steps
         # (probability for each state and time)
@@ -59,4 +59,4 @@ def backward(Observation, Emission, Transition, Initial):
         P = np.sum(Initial.T * Emission[:, Observation[0]] * B[:, 0])
         return P, B
     except Exception:
-        return None
+        return None, None

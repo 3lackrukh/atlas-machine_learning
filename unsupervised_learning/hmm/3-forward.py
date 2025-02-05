@@ -28,18 +28,18 @@ def forward(Observation, Emission, Transition, Initial):
     try:
         if not isinstance(Observation, np.ndarray) or \
                 len(Observation.shape) != 1:
-            return None
+            return None, None
         T = Observation.shape[0]
         if not isinstance(Emission, np.ndarray) or \
                 len(Emission.shape) != 2:
-            return None
+            return None, None
         N, _ = Emission.shape
         if not isinstance(Transition, np.ndarray) or \
                 Transition.shape != (N, N):
-            return None
+            return None, None
         if not isinstance(Initial, np.ndarray) or \
                 Initial.shape != (N, 1):
-            return None
+            return None, None
 
         # Create forward matrix size states x time-steps
         # (probability for each forward state and time)
@@ -58,4 +58,4 @@ def forward(Observation, Emission, Transition, Initial):
         P = np.sum(F[:, T-1])
         return P, F
     except Exception:
-        return None
+        return None, None

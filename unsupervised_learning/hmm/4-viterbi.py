@@ -29,18 +29,18 @@ def viterbi(Observation, Emission, Transition, Initial):
     try:
         if not isinstance(Observation, np.ndarray) or \
                 len(Observation.shape) != 1:
-            return None
+            return None, None
         T = Observation.shape[0]
         if not isinstance(Emission, np.ndarray) or \
                 len(Emission.shape) != 2:
-            return None
+            return None, None
         N, _ = Emission.shape
         if not isinstance(Transition, np.ndarray) or \
                 Transition.shape != (N, N):
-            return None
+            return None, None
         if not isinstance(Initial, np.ndarray) or \
                 Initial.shape != (N, 1):
-            return None
+            return None, None
 
         # Create Viterbi matrix and backpointer matrix
         V = np.zeros((N, T))
@@ -75,4 +75,4 @@ def viterbi(Observation, Emission, Transition, Initial):
         P = np.max(V[:, T-1])
         return path.tolist(), P
     except Exception:
-        return None
+        return None, None
