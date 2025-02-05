@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module defines the 3-forward method"""
+"""Module defines the forward method"""
 import numpy as np
 
 
@@ -33,7 +33,7 @@ def forward(Observation, Emission, Transition, Initial):
         if not isinstance(Emission, np.ndarray) or \
                 len(Emission.shape) != 2:
             return None
-        N, M = Emission.shape
+        N, _ = Emission.shape
         if not isinstance(Transition, np.ndarray) or \
                 Transition.shape != (N, N):
             return None
