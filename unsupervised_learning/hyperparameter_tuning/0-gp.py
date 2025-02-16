@@ -45,7 +45,10 @@ class GaussianProcess:
             The covariance kernel matrix as a numpy.ndarray of shape (m, n)
         """
         # Square distance formula: ||X1||² + ||X2||² - 2 * X1 * X2
-        sqdist = (np.sum(X1**2, 1).reshape(-1, 1) + np.sum(X2**2, 1) -
-                  2 * np.dot(X1, X2.T))
+        sqdist = (
+            np.sum(X1**2, 1).reshape(-1, 1)
+            + np.sum(X2**2, 1)
+            - 2 * np.dot(X1, X2.T)
+            )
         # RBF kernel formula: K(X1, X2) = σ² * exp(-||X1_i - X2_j||²/(2l²))
         return self.sigma_f**2 * np.exp(-0.5 / self.l**2 * sqdist)
