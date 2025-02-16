@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module defines the 0-gp method"""
+""" Module defines class GaussianProcess """
 import numpy as np
 
 
