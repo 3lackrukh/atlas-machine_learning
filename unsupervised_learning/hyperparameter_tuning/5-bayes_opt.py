@@ -62,7 +62,8 @@ class BayesianOptimization:
             gamma = y_best - mu - self.xsi
 
             # improvements in standard deviations
-            Z = gamma / sigma
+            # Add small epsion to avoid division by zero
+            Z = gamma / (sigma + 1e-10)
 
             # Expected improvement:
             #   probability of improvement weighted by uncertainty
@@ -90,13 +91,13 @@ class BayesianOptimization:
             X_next, _ = self.acquisition()
 
             # If the point has been sampled, stop
-            if np.any(np.abs(X_next - self.gp.X) <= 1e-10):
+            if any(np.array_equal(X_next, x_prev) for x_prev in self.gp.X):
                 break
 
             # Otherwise, evaluate it
             Y_next = self.f(X_next)
             # Update the Gaussian Process
-            self.gp.update(X_next.reshape(-1, 1), Y_next.reshape(-1, 1))
+            self.gp.update(X_next, Y_next)
 
         # Find the best sample
         if self.minimize:
@@ -105,4 +106,3 @@ class BayesianOptimization:
             idx = np.argmax(self.gp.Y)
 
         return self.gp.X[idx], self.gp.Y[idx]
-    
