@@ -1,0 +1,329 @@
+Bayesian Optimization Report
+==========================
+
+Best hyperparameters found after 30 iterations:
+Learning rate: 0.005193
+First layer units: 32
+Second layer units: 32
+Dropout rate: 0.130
+L2 weight: 0.007348
+Batch size: 128
+
+Best validation accuracy: 0.9912
+
+Optimization history:
+Iteration 1:
+  Learning rate: 0.003404
+  First layer units: 128
+  Second layer units: 128
+  Dropout rate: 0.475
+  L2 weight: 0.000170
+  Batch size: 64
+  Validation accuracy: 0.9737
+
+Iteration 2:
+  Learning rate: 0.001514
+  First layer units: 256
+  Second layer units: 16
+  Dropout rate: 0.100
+  L2 weight: 0.000328
+  Batch size: 64
+  Validation accuracy: 0.9649
+
+Iteration 3:
+  Learning rate: 0.006544
+  First layer units: 32
+  Second layer units: 16
+  Dropout rate: 0.497
+  L2 weight: 0.005295
+  Batch size: 64
+  Validation accuracy: 0.9825
+
+Iteration 4:
+  Learning rate: 0.000658
+  First layer units: 128
+  Second layer units: 64
+  Dropout rate: 0.347
+  L2 weight: 0.004059
+  Batch size: 64
+  Validation accuracy: 0.9737
+
+Iteration 5:
+  Learning rate: 0.007248
+  First layer units: 128
+  Second layer units: 32
+  Dropout rate: 0.345
+  L2 weight: 0.000562
+  Batch size: 128
+  Validation accuracy: 0.9737
+
+Iteration 6:
+  Learning rate: 0.000100
+  First layer units: 32
+  Second layer units: 16
+  Dropout rate: 0.100
+  L2 weight: 0.000100
+  Batch size: 64
+  Validation accuracy: 0.6404
+
+Iteration 7:
+  Learning rate: 0.005340
+  First layer units: 32
+  Second layer units: 128
+  Dropout rate: 0.287
+  L2 weight: 0.009125
+  Batch size: 128
+  Validation accuracy: 0.9825
+
+Iteration 8:
+  Learning rate: 0.008281
+  First layer units: 32
+  Second layer units: 128
+  Dropout rate: 0.284
+  L2 weight: 0.006511
+  Batch size: 128
+  Validation accuracy: 0.9825
+
+Iteration 9:
+  Learning rate: 0.006221
+  First layer units: 128
+  Second layer units: 128
+  Dropout rate: 0.180
+  L2 weight: 0.006058
+  Batch size: 64
+  Validation accuracy: 0.9561
+
+Iteration 10:
+  Learning rate: 0.010000
+  First layer units: 128
+  Second layer units: 32
+  Dropout rate: 0.100
+  L2 weight: 0.010000
+  Batch size: 128
+  Validation accuracy: 0.9825
+
+Iteration 11:
+  Learning rate: 0.010000
+  First layer units: 256
+  Second layer units: 16
+  Dropout rate: 0.500
+  L2 weight: 0.010000
+  Batch size: 64
+  Validation accuracy: 0.9737
+
+Iteration 12:
+  Learning rate: 0.009459
+  First layer units: 64
+  Second layer units: 16
+  Dropout rate: 0.495
+  L2 weight: 0.004673
+  Batch size: 128
+  Validation accuracy: 0.9649
+
+Iteration 13:
+  Learning rate: 0.000100
+  First layer units: 64
+  Second layer units: 16
+  Dropout rate: 0.100
+  L2 weight: 0.005009
+  Batch size: 128
+  Validation accuracy: 0.9474
+
+Iteration 14:
+  Learning rate: 0.008734
+  First layer units: 256
+  Second layer units: 32
+  Dropout rate: 0.454
+  L2 weight: 0.001835
+  Batch size: 128
+  Validation accuracy: 0.9825
+
+Iteration 15:
+  Learning rate: 0.003554
+  First layer units: 256
+  Second layer units: 32
+  Dropout rate: 0.166
+  L2 weight: 0.005442
+  Batch size: 128
+  Validation accuracy: 0.9737
+
+Iteration 16:
+  Learning rate: 0.004517
+  First layer units: 256
+  Second layer units: 16
+  Dropout rate: 0.354
+  L2 weight: 0.008571
+  Batch size: 128
+  Validation accuracy: 0.9737
+
+Iteration 17:
+  Learning rate: 0.002588
+  First layer units: 128
+  Second layer units: 16
+  Dropout rate: 0.413
+  L2 weight: 0.006056
+  Batch size: 16
+  Validation accuracy: 0.9737
+
+Iteration 18:
+  Learning rate: 0.010000
+  First layer units: 128
+  Second layer units: 16
+  Dropout rate: 0.100
+  L2 weight: 0.000100
+  Batch size: 16
+  Validation accuracy: 0.9649
+
+Iteration 19:
+  Learning rate: 0.000100
+  First layer units: 256
+  Second layer units: 16
+  Dropout rate: 0.100
+  L2 weight: 0.010000
+  Batch size: 128
+  Validation accuracy: 0.9649
+
+Iteration 20:
+  Learning rate: 0.005193
+  First layer units: 32
+  Second layer units: 32
+  Dropout rate: 0.130
+  L2 weight: 0.007348
+  Batch size: 128
+  Validation accuracy: 0.9912
+
+Iteration 21:
+  Learning rate: 0.003301
+  First layer units: 32
+  Second layer units: 32
+  Dropout rate: 0.402
+  L2 weight: 0.001326
+  Batch size: 128
+  Validation accuracy: 0.9561
+
+Iteration 22:
+  Learning rate: 0.002856
+  First layer units: 32
+  Second layer units: 64
+  Dropout rate: 0.313
+  L2 weight: 0.008438
+  Batch size: 32
+  Validation accuracy: 0.9737
+
+Iteration 23:
+  Learning rate: 0.002539
+  First layer units: 256
+  Second layer units: 64
+  Dropout rate: 0.469
+  L2 weight: 0.008766
+  Batch size: 128
+  Validation accuracy: 0.9825
+
+Iteration 24:
+  Learning rate: 0.004720
+  First layer units: 256
+  Second layer units: 64
+  Dropout rate: 0.151
+  L2 weight: 0.009127
+  Batch size: 128
+  Validation accuracy: 0.9737
+
+Iteration 25:
+  Learning rate: 0.000434
+  First layer units: 32
+  Second layer units: 32
+  Dropout rate: 0.101
+  L2 weight: 0.003526
+  Batch size: 64
+  Validation accuracy: 0.9825
+
+Iteration 26:
+  Learning rate: 0.004142
+  First layer units: 32
+  Second layer units: 32
+  Dropout rate: 0.423
+  L2 weight: 0.005532
+  Batch size: 64
+  Validation accuracy: 0.9649
+
+Iteration 27:
+  Learning rate: 0.004374
+  First layer units: 256
+  Second layer units: 64
+  Dropout rate: 0.319
+  L2 weight: 0.005119
+  Batch size: 16
+  Validation accuracy: 0.9649
+
+Iteration 28:
+  Learning rate: 0.001920
+  First layer units: 256
+  Second layer units: 128
+  Dropout rate: 0.223
+  L2 weight: 0.003248
+  Batch size: 32
+  Validation accuracy: 0.9561
+
+Iteration 29:
+  Learning rate: 0.004247
+  First layer units: 64
+  Second layer units: 32
+  Dropout rate: 0.206
+  L2 weight: 0.003950
+  Batch size: 64
+  Validation accuracy: 0.9912
+
+Iteration 30:
+  Learning rate: 0.005324
+  First layer units: 64
+  Second layer units: 32
+  Dropout rate: 0.454
+  L2 weight: 0.006228
+  Batch size: 64
+  Validation accuracy: 0.9649
+
+Iteration 31:
+  Learning rate: 0.003015
+  First layer units: 256
+  Second layer units: 16
+  Dropout rate: 0.300
+  L2 weight: 0.005251
+  Batch size: 32
+  Validation accuracy: 0.9825
+
+Iteration 32:
+  Learning rate: 0.005646
+  First layer units: 128
+  Second layer units: 32
+  Dropout rate: 0.474
+  L2 weight: 0.003139
+  Batch size: 16
+  Validation accuracy: 0.9737
+
+Iteration 33:
+  Learning rate: 0.010000
+  First layer units: 128
+  Second layer units: 32
+  Dropout rate: 0.100
+  L2 weight: 0.010000
+  Batch size: 16
+  Validation accuracy: 0.9649
+
+Iteration 34:
+  Learning rate: 0.001225
+  First layer units: 256
+  Second layer units: 64
+  Dropout rate: 0.204
+  L2 weight: 0.003833
+  Batch size: 32
+  Validation accuracy: 0.9737
+
+Iteration 35:
+  Learning rate: 0.010000
+  First layer units: 256
+  Second layer units: 16
+  Dropout rate: 0.100
+  L2 weight: 0.000100
+  Batch size: 32
+  Validation accuracy: 0.9737
+
