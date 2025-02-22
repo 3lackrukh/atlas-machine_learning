@@ -16,26 +16,33 @@ def autoencoder(input_dims, hidden_layers, latent_dims, lambtha):
         auto: the full autoencoder model
     """
     # Encoder
-    encoder_inputs = keras.Input(shape=(input_dims,))
+    encoder_inputs = keras.Input(
+        shape=(input_dims,)
+        )
     x = encoder_inputs
     for i in hidden_layers:
-        x = keras.layers.Dense(i,'relu')(x)
-    encoder_outputs = keras.layers.Dense(latent_dims, 'relu',
-                                         keras.regularizers.l1(lambtha))(x)
+        x = keras.layers.Dense(
+            i, activation='relu')(x)
+    encoder_outputs = keras.layers.Dense(
+        latent_dims, activation='relu',
+        activity_regularizer=keras.regularizers.l1(lambtha))(x)
     encoder = keras.Model(encoder_inputs, encoder_outputs)
 
     # Decoder
-    decoder_inputs = keras.Input(shape=(latent_dims,))
+    decoder_inputs = keras.Input(
+        shape=(latent_dims,))
     x = decoder_inputs
     for i in reversed(hidden_layers):
-        x = keras.layers.Dense(i, 'relu')(x)
-    decoder_outputs = keras.layers.Dense(input_dims, 'sigmoid')(x)
+        x = keras.layers.Dense(
+            i, activation='relu')(x)
+    decoder_outputs = keras.layers.Dense(
+        input_dims, activation='sigmoid')(x)
     decoder = keras.Model(decoder_inputs, decoder_outputs)
 
     # Autoencoder
     autoencoder_outputs = decoder(encoder(encoder_inputs))
     auto = keras.Model(encoder_inputs, autoencoder_outputs)
 
-    auto.compile('adam', 'binary_crossentropy')
+    auto.compile(optimizer='adam', loss='binary_crossentropy')
 
     return encoder, decoder, auto
