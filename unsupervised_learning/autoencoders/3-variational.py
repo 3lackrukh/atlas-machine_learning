@@ -31,10 +31,12 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         dims = keras.backend.int_shape(z_mean)[1]
         epsilon = keras.backend.random_normal(shape=(batch, dims))
         return z_mean + keras.backend.exp(0.5 * z_log_var) * epsilon
-    
+
     z = keras.layers.Lambda(sampling, name='z')([z_mean, z_log_var])
-    encoder = keras.Model(encoder_inputs, [z_mean, z_log_var, z], name='encoder')
-    
+    encoder = keras.Model(encoder_inputs,
+                          [z_mean, z_log_var, z],
+                          name='encoder')
+
     # Decoder
     decoder_inputs = keras.Input(shape=(latent_dims,))
     x = decoder_inputs
@@ -48,23 +50,23 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     encoder_outputs = encoder(auto_inputs)
     decoder_outputs = decoder(encoder_outputs[2])
     auto = keras.Model(auto_inputs, decoder_outputs, name='vae')
-    
+
     # Add loss to the model
     reconstruction_loss = keras.backend.sum(
         keras.losses.binary_crossentropy(auto_inputs, decoder_outputs),
         axis=-1
     )
     reconstruction_loss *= input_dims / 784.0  # Normalize for MNIST
-    
+
     kl_loss = -0.5 * keras.backend.sum(
-        1 + encoder_outputs[1] - keras.backend.square(encoder_outputs[0]) - 
+        1 + encoder_outputs[1] - keras.backend.square(encoder_outputs[0]) -
         keras.backend.exp(encoder_outputs[1]),
         axis=-1
     )
-    
+
     vae_loss = keras.backend.mean(reconstruction_loss + kl_loss)
     auto.add_loss(vae_loss)
-    
+
     # Compile model
     auto.compile(optimizer='adam')
 
