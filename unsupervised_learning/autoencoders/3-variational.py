@@ -34,8 +34,8 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
 
     z = keras.layers.Lambda(sampling)([z_mean, z_log_var])
     encoder = keras.Model(encoder_inputs,
-                          [z, z_mean, z_log_var],
-                          name='encoder')
+                          [z, z_mean, z_log_var]
+                          )
 
     # Decoder
     decoder_inputs = keras.Input(shape=(latent_dims,))
@@ -43,13 +43,13 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     for nodes in reversed(hidden_layers):
         x = keras.layers.Dense(nodes, activation='relu')(x)
     decoder_outputs = keras.layers.Dense(input_dims, activation='sigmoid')(x)
-    decoder = keras.Model(decoder_inputs, decoder_outputs, name='decoder')
+    decoder = keras.Model(decoder_inputs, decoder_outputs)
 
     # Autoencoder
     auto_inputs = keras.Input(shape=(input_dims,))
     encoder_outputs = encoder(auto_inputs)
     decoder_outputs = decoder(encoder_outputs[0])
-    auto = keras.Model(auto_inputs, decoder_outputs, name='vae')
+    auto = keras.Model(auto_inputs, decoder_outputs)
 
     # Add KL divergence regularization loss
     kl_loss = -0.5 * keras.backend.sum(
