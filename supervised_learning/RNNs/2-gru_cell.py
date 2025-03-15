@@ -65,6 +65,6 @@ class GRUCell:
         y = np.dot(h_next, self.Wy) + self.by
         # apply softmax to output
         y = np.exp(y - np.max(y, axis=1, keepdims=True))
-        y = y / np.sum(y , axis=1, keepdims=True)
+        y = y / np.sum(y, axis=1, keepdims=True)
 
         return h_next, y
