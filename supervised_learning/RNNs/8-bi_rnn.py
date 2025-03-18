@@ -27,7 +27,6 @@ def bi_rnn(bi_cell, X, h_0, h_T):
     t, m, _ = X.shape
     h = h_0.shape[1]
 
-    H = np.zeros((t, m, h * 2))
     H_f = np.zeros((t, m, h))
     H_b = np.zeros((t, m, h))
 
