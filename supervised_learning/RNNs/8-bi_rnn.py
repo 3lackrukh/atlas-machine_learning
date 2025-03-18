@@ -38,7 +38,7 @@ def bi_rnn(bi_cell, X, h_0, h_T):
         # forward direction
         h_next_f = bi_cell.forward(h_next_f, X[step])
         H_f[step] = h_next_f
-    
+
         # backward direction (reversed indexing)
         b_step = -step - 1
         h_next_b = bi_cell.backward(h_next_b, X[b_step])
