@@ -1,0 +1,362 @@
+#!/usr/bin/env python3
+"""
+Module for forecasting Bitcoin prices using RNN-based models.
+"""
+
+import numpy as np
+import os
+import pickle
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, GRU, SimpleRNN, Dense, Dropout
+import matplotlib.pyplot as plt
+
+
+def load_preprocessed_data(data_dir='preprocessed_data'):
+    """
+    Loads preprocessed data for Bitcoin price forecasting.
+    
+    Args:
+        data_dir: Directory containing preprocessed data
+        
+    Returns:
+        Input sequences, target values, scaler, and feature column names
+    """
+    # Load the sequences and targets
+    X = np.load(os.path.join(data_dir, 'X_btc.npy'))
+    y = np.load(os.path.join(data_dir, 'y_btc.npy'))
+    
+    # Load the scaler and feature columns
+    with open(os.path.join(data_dir, 'scaler.pkl'), 'rb') as f:
+        scaler = pickle.load(f)
+    
+    with open(os.path.join(data_dir, 'feature_cols.pkl'), 'rb') as f:
+        feature_cols = pickle.load(f)
+    
+    print(f"Loaded data: X shape {X.shape}, y shape {y.shape}")
+    
+    return X, y, scaler, feature_cols
+
+
+def split_data(X, y, test_size=0.2, val_size=0.1):
+    """
+    Splits data into training, validation, and test sets.
+    
+    Args:
+        X: Input sequences
+        y: Target values
+        test_size: Proportion of data for testing
+        val_size: Proportion of non-test data for validation
+        
+    Returns:
+        Training, validation, and test data
+    """
+    # Calculate split indices
+    n_samples = len(X)
+    test_idx = int(n_samples * (1 - test_size))
+    val_idx = int(test_idx * (1 - val_size))
+    
+    # Split data chronologically
+    X_train, y_train = X[:val_idx], y[:val_idx]
+    X_val, y_val = X[val_idx:test_idx], y[val_idx:test_idx]
+    X_test, y_test = X[test_idx:], y[test_idx:]
+    
+    print(f"Train set: {X_train.shape}, {y_train.shape}")
+    print(f"Validation set: {X_val.shape}, {y_val.shape}")
+    print(f"Test set: {X_test.shape}, {y_test.shape}")
+    
+    return (X_train, y_train), (X_val, y_val), (X_test, y_test)
+
+
+def create_tf_dataset(X, y, batch_size=32, shuffle_buffer=None):
+    """
+    Creates a TensorFlow Dataset for efficient training.
+    
+    Args:
+        X: Input sequences
+        y: Target values
+        batch_size: Batch size
+        shuffle_buffer: Buffer size for shuffling
+        
+    Returns:
+        TensorFlow Dataset
+    """
+    # Create dataset
+    dataset = tf.data.Dataset.from_tensor_slices((X, y))
+    
+    # Shuffle if specified
+    if shuffle_buffer:
+        dataset = dataset.shuffle(shuffle_buffer)
+    
+    # Batch the dataset
+    dataset = dataset.batch(batch_size)
+    
+    # Prefetch for performance
+    dataset = dataset.prefetch(tf.data.AUTOTUNE)
+    
+    return dataset
+
+
+def build_rnn_model(input_shape, rnn_type='lstm'):
+    """
+    Builds an RNN model for time series forecasting.
+    
+    Args:
+        input_shape: Shape of input sequences (seq_length, n_features)
+        rnn_type: Type of RNN layer ('lstm', 'gru', or 'simple_rnn')
+        
+    Returns:
+        Compiled Keras model
+    """
+    model = Sequential()
+    
+    # First RNN layer
+    if rnn_type == 'lstm':
+        model.add(LSTM(128, activation='relu', return_sequences=True, input_shape=input_shape))
+    elif rnn_type == 'gru':
+        model.add(GRU(128, activation='relu', return_sequences=True, input_shape=input_shape))
+    elif rnn_type == 'simple_rnn':
+        model.add(SimpleRNN(128, activation='relu', return_sequences=True, input_shape=input_shape))
+    else:
+        raise ValueError(f"Unknown RNN type: {rnn_type}")
+    
+    model.add(Dropout(0.2))
+    
+    # Second RNN layer
+    if rnn_type == 'lstm':
+        model.add(LSTM(64, activation='relu'))
+    elif rnn_type == 'gru':
+        model.add(GRU(64, activation='relu'))
+    elif rnn_type == 'simple_rnn':
+        model.add(SimpleRNN(64, activation='relu'))
+    
+    model.add(Dropout(0.2))
+    
+    # Dense layers
+    model.add(Dense(32, activation='relu'))
+    model.add(Dense(1))  # Output layer for price prediction
+    
+    # Compile the model with MSE loss
+    model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+    
+    return model
+
+
+def train_model(model, train_dataset, val_dataset, epochs=50):
+    """
+    Trains the model.
+    
+    Args:
+        model: Compiled Keras model
+        train_dataset: Training dataset
+        val_dataset: Validation dataset
+        epochs: Maximum number of epochs
+        
+    Returns:
+        Training history
+    """
+    # Define callbacks
+    callbacks = [
+        # Early stopping to prevent overfitting
+        tf.keras.callbacks.EarlyStopping(
+            monitor='val_loss',
+            patience=10,
+            restore_best_weights=True
+        ),
+        # Reduce learning rate when training plateaus
+        tf.keras.callbacks.ReduceLROnPlateau(
+            monitor='val_loss',
+            factor=0.5,
+            patience=5,
+            min_lr=1e-6
+        )
+    ]
+    
+    # Train the model
+    history = model.fit(
+        train_dataset,
+        validation_data=val_dataset,
+        epochs=epochs,
+        callbacks=callbacks
+    )
+    
+    return history
+
+
+def evaluate_model(model, X_test, y_test, scaler, feature_cols):
+    """
+    Evaluates the model on test data.
+    
+    Args:
+        model: Trained Keras model
+        X_test: Test input sequences
+        y_test: Test target values
+        scaler: Scaler used to normalize the data
+        feature_cols: Feature column names
+        
+    Returns:
+        Evaluation metrics
+    """
+    # Get predictions
+    y_pred = model.predict(X_test)
+    
+    # Calculate metrics on scaled data
+    mse = np.mean((y_pred.flatten() - y_test) ** 2)
+    rmse = np.sqrt(mse)
+    mae = np.mean(np.abs(y_pred.flatten() - y_test))
+    
+    print(f"Scaled MSE: {mse:.6f}")
+    print(f"Scaled RMSE: {rmse:.6f}")
+    print(f"Scaled MAE: {mae:.6f}")
+    
+    # Inverse transform predictions and actual values
+    # We need to create dummy arrays with all features
+    close_idx = feature_cols.index('Close')
+    dummy_array = np.zeros((len(y_test), len(feature_cols)))
+    
+    # Set the Close column values
+    dummy_array[:, close_idx] = y_test
+    y_test_dummy = dummy_array.copy()
+    
+    dummy_array[:, close_idx] = y_pred.flatten()
+    y_pred_dummy = dummy_array.copy()
+    
+    # Inverse transform
+    y_test_inv = scaler.inverse_transform(y_test_dummy)[:, close_idx]
+    y_pred_inv = scaler.inverse_transform(y_pred_dummy)[:, close_idx]
+    
+    # Calculate metrics on original scale
+    mse_inv = np.mean((y_pred_inv - y_test_inv) ** 2)
+    rmse_inv = np.sqrt(mse_inv)
+    mae_inv = np.mean(np.abs(y_pred_inv - y_test_inv))
+    
+    print(f"Original MSE: {mse_inv:.2f}")
+    print(f"Original RMSE: {rmse_inv:.2f}")
+    print(f"Original MAE: {mae_inv:.2f}")
+    
+    # Visualize predictions
+    plot_predictions(y_test_inv, y_pred_inv)
+    
+    return {
+        'mse': mse,
+        'rmse': rmse,
+        'mae': mae,
+        'mse_inv': mse_inv,
+        'rmse_inv': rmse_inv,
+        'mae_inv': mae_inv
+    }
+
+
+def plot_predictions(y_true, y_pred, n_samples=100):
+    """
+    Plots actual vs predicted values.
+    
+    Args:
+        y_true: True values
+        y_pred: Predicted values
+        n_samples: Number of samples to plot
+        
+    Returns:
+        None
+    """
+    plt.figure(figsize=(12, 6))
+    
+    # Get last n_samples for better visualization
+    n_samples = min(n_samples, len(y_true))
+    
+    plt.plot(y_true[-n_samples:], label='Actual')
+    plt.plot(y_pred[-n_samples:], label='Predicted')
+    
+    plt.title('Bitcoin Price Prediction')
+    plt.xlabel('Time Steps')
+    plt.ylabel('Price (USD)')
+    plt.legend()
+    plt.grid(True)
+    
+    plt.savefig('btc_predictions.png')
+    plt.close()
+
+
+def plot_training_history(history):
+    """
+    Plots training history.
+    
+    Args:
+        history: Training history
+        
+    Returns:
+        None
+    """
+    plt.figure(figsize=(12, 5))
+    
+    # Plot loss
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['loss'], label='Train')
+    plt.plot(history.history['val_loss'], label='Validation')
+    plt.title('Model Loss (MSE)')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True)
+    
+    # Plot MAE
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['mae'], label='Train')
+    plt.plot(history.history['val_mae'], label='Validation')
+    plt.title('Model MAE')
+    plt.xlabel('Epoch')
+    plt.ylabel('MAE')
+    plt.legend()
+    plt.grid(True)
+    
+    plt.tight_layout()
+    plt.savefig('training_history.png')
+    plt.close()
+
+
+def main():
+    """
+    Main function for Bitcoin price forecasting.
+    """
+    print("Bitcoin Price Forecasting with RNNs")
+    print("=================================\n")
+    
+    # Load preprocessed data
+    X, y, scaler, feature_cols = load_preprocessed_data()
+    
+    # Split data
+    (X_train, y_train), (X_val, y_val), (X_test, y_test) = split_data(X, y)
+    
+    # Create TensorFlow datasets
+    train_dataset = create_tf_dataset(X_train, y_train, batch_size=32, shuffle_buffer=1000)
+    val_dataset = create_tf_dataset(X_val, y_val, batch_size=32)
+    
+    # Build model
+    input_shape = (X.shape[1], X.shape[2])  # (seq_length, n_features)
+    model = build_rnn_model(input_shape, rnn_type='lstm')
+    
+    # Print model summary
+    model.summary()
+    
+    # Train model
+    history = train_model(
+        model=model,
+        train_dataset=train_dataset,
+        val_dataset=val_dataset,
+        epochs=50
+    )
+    
+    # Plot training history
+    plot_training_history(history)
+    
+    # Evaluate model
+    evaluate_model(model, X_test, y_test, scaler, feature_cols)
+    
+    # Save model
+    model.save('btc_forecast_model.h5')
+    
+    print("Bitcoin price forecasting completed!")
+
+
+if __name__ == '__main__':
+    main()
