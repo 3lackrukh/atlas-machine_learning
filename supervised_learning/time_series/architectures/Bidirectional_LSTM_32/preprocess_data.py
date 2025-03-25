@@ -8,8 +8,7 @@ import pandas as pd
 import numpy as np
 import os
 import pickle
-from sklearn.preprocessing import MinMaxScaler\
-from statsmodels.tsa.stattools import adfuller
+from sklearn.preprocessing import MinMaxScaler
 
 
 def load_and_merge_data(coinbase_path, bitstamp_path):
@@ -44,32 +43,6 @@ def load_and_merge_data(coinbase_path, bitstamp_path):
     merged_df.sort_values('Timestamp', inplace=True)
     
     return merged_df
-
-
-def check_stationarity(series, name="Series"):
-    """
-    Performs Augmented Dickey-Fuller test to check stationarity.
-    
-    Args:
-        series: Time series to test
-        name: Name of the series for reporting
-        
-    Returns:
-        Boolean indicating if series is stationary
-    """
-    result = adfuller(series.dropna())
-    
-    print(f"ADF Test for {name}")
-    print(f"ADF Statistic: {result[0]}")
-    print(f"p-value: {result[1]}")
-    
-    for key, value in result[4].items():
-        print(f"Critical Value ({key}): {value}")
-    
-    is_stationary = result[1] <= 0.05
-    print(f"Series is {'stationary' if is_stationary else 'non-stationary'}")
-    
-    return is_stationary
 
 
 def clean_data(df):
