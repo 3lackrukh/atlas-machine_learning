@@ -8,7 +8,7 @@ import os
 import pickle
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Bidirectional, LSTM, GRU, SimpleRNN, Dense, Dropout
+from tensorflow.keras.layers import LSTM, GRU, SimpleRNN, Dense, Dropout
 import matplotlib.pyplot as plt
 
 
@@ -112,14 +112,11 @@ def build_rnn_model(input_shape, rnn_type='lstm'):
     
     # First RNN layer
     if rnn_type == 'lstm':
-        model.add(Bidirectional(
-            LSTM(32, activation='relu', return_sequences=False), input_shape=input_shape))
+        model.add(LSTM(32, activation='relu', return_sequences=False, input_shape=input_shape))
     elif rnn_type == 'gru':
-        model.add(Bidirectional(
-            GRU(32, activation='relu', return_sequences=False), input_shape=input_shape))
+        model.add(GRU(32, activation='relu', return_sequences=False, input_shape=input_shape))
     elif rnn_type == 'simple_rnn':
-        model.add(Bidirectional(
-            SimpleRNN(32, activation='relu', return_sequences=False), input_shape=input_shape))
+        model.add(SimpleRNN(32, activation='relu', return_sequences=False, input_shape=input_shape))
     else:
         raise ValueError(f"Unknown RNN type: {rnn_type}")
     

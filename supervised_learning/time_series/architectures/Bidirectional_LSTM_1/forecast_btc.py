@@ -113,13 +113,13 @@ def build_rnn_model(input_shape, rnn_type='lstm'):
     # First RNN layer
     if rnn_type == 'lstm':
         model.add(Bidirectional(
-            LSTM(32, activation='relu', return_sequences=False), input_shape=input_shape))
+            LSTM(1, activation='relu', return_sequences=False), input_shape=input_shape))
     elif rnn_type == 'gru':
         model.add(Bidirectional(
-            GRU(32, activation='relu', return_sequences=False), input_shape=input_shape))
+            GRU(1, activation='relu', return_sequences=False), input_shape=input_shape))
     elif rnn_type == 'simple_rnn':
         model.add(Bidirectional(
-            SimpleRNN(32, activation='relu', return_sequences=False), input_shape=input_shape))
+            SimpleRNN(1, activation='relu', return_sequences=False), input_shape=input_shape))
     else:
         raise ValueError(f"Unknown RNN type: {rnn_type}")
     

@@ -10,7 +10,6 @@ supervised_learning/error_analysis/confusion.npz
 *.npy
 *.npz
 *.csv
-*.log
 *.pkl
 *.pyc
 *.keras
