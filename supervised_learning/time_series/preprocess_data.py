@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import os
 import pickle
-from sklearn.preprocessing import MinMaxScaler\
+from sklearn.preprocessing import MinMaxScaler
 from statsmodels.tsa.stattools import adfuller
 
 
@@ -86,7 +86,7 @@ def clean_data(df):
     print(f"Missing values before cleaning:\n{df.isnull().sum()}")
     
     # Drop rows with missing values
-    df_clean = df.dropna()
+    df_clean = df.dropna().copy()
     
     # Set timestamp as index for time series analysis
     df_clean.set_index('Timestamp', inplace=True)
@@ -111,6 +111,9 @@ def clean_data(df):
         # Filter out extreme outliers
         df_clean = df_clean[~((df_clean[col] < (Q1 - 3 * IQR)) | 
                               (df_clean[col] > (Q3 + 3 * IQR)))]
+    
+    # Check for close prices stationarity
+    check_stationarity(df_clean['Close'], "Original Close Prices")
     
     print(f"Shape after cleaning: {df_clean.shape}")
     
@@ -157,6 +160,11 @@ def engineer_features(df):
     # Verify no infinity values remain (can handle extreme but valid values)
     for col in df_feat.select_dtypes(include=[np.number]).columns:
         df_feat[col] = df_feat[col].clip(lower=-1e15, upper=1e15)
+    
+    # Check engineered features stationarity
+    check_stationarity(df_feat['price_change'], "Price Change")
+    check_stationarity(df_feat['volatility_1hour'], "1-hour Volatility")
+    check_stationarity(df_feat['volume_change'], "Volume Change")
     
     return df_feat
 
