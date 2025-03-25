@@ -112,9 +112,6 @@ def clean_data(df):
         df_clean = df_clean[~((df_clean[col] < (Q1 - 3 * IQR)) | 
                               (df_clean[col] > (Q3 + 3 * IQR)))]
     
-    # Check for close prices stationarity
-    check_stationarity(df_clean['Close'], "Original Close Prices")
-    
     print(f"Shape after cleaning: {df_clean.shape}")
     
     return df_clean
