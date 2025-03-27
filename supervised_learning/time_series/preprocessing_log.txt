@@ -1,0 +1,154 @@
+./preprocess_data.py 
+Loading and merging data...
+Coinbase data shape: (2099760, 8)
+Bitstamp data shape: (4363457, 8)
+Cleaning data...
+Missing values before cleaning:
+Timestamp                  0
+Open                 1346046
+High                 1346046
+Low                  1346046
+Close                1346046
+Volume_(BTC)         1346046
+Volume_(Currency)    1346046
+Weighted_Price       1346046
+exchange                   0
+dtype: int64
+Shape after cleaning: (5117171, 8)
+Engineering features...
+Resampling to hourly frequency...
+ADF Test for Open
+ADF Statistic: -1.5920921220486783
+p-value: 0.4875646855087942
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is non-stationary
+ADF Test for High
+ADF Statistic: -1.5773714047402456
+p-value: 0.49494982458822184
+Critical Value (1%): -3.430445642347584
+Critical Value (5%): -2.861582272203756
+Critical Value (10%): -2.5667925000523915
+Series is non-stationary
+ADF Test for Low
+ADF Statistic: -1.6471308031825604
+p-value: 0.45853722228216853
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is non-stationary
+ADF Test for Close
+ADF Statistic: -1.5846023718355875
+p-value: 0.49132348336269244
+Critical Value (1%): -3.430445642347584
+Critical Value (5%): -2.861582272203756
+Critical Value (10%): -2.5667925000523915
+Series is non-stationary
+ADF Test for Volume_(BTC)
+ADF Statistic: -17.417105071045025
+p-value: 4.849183812167548e-30
+Critical Value (1%): -3.430445642347584
+Critical Value (5%): -2.861582272203756
+Critical Value (10%): -2.5667925000523915
+Series is stationary
+ADF Test for Volume_(Currency)
+ADF Statistic: -10.717977484930516
+p-value: 3.2047840809673724e-19
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is stationary
+ADF Test for Weighted_Price
+ADF Statistic: -1.5861974171155049
+p-value: 0.4905232125391586
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is non-stationary
+ADF Test for ma_1hour
+ADF Statistic: -1.5829895414102688
+p-value: 0.4921325516036022
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is non-stationary
+ADF Test for volatility_1hour
+ADF Statistic: -10.266796856549082
+p-value: 4.099102594707682e-18
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is stationary
+Hourly resampled data shape: (68437, 13)
+Scaling data...
+Checking for infinite values before scaling: False
+Checking for NaN values before scaling: False
+ADF Test for Open
+ADF Statistic: -1.5622772166869938
+p-value: 0.5025100293644252
+Critical Value (1%): -3.430445642347584
+Critical Value (5%): -2.861582272203756
+Critical Value (10%): -2.5667925000523915
+Series is non-stationary
+ADF Test for High
+ADF Statistic: -1.5469464458350757
+p-value: 0.510173124331675
+Critical Value (1%): -3.430445642347584
+Critical Value (5%): -2.861582272203756
+Critical Value (10%): -2.5667925000523915
+Series is non-stationary
+ADF Test for Low
+ADF Statistic: -1.601579251471729
+p-value: 0.48280011165605174
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is non-stationary
+ADF Test for Close
+ADF Statistic: -1.53325656080458
+p-value: 0.517000374439029
+Critical Value (1%): -3.430445642347584
+Critical Value (5%): -2.861582272203756
+Critical Value (10%): -2.5667925000523915
+Series is non-stationary
+ADF Test for Volume_(BTC)
+ADF Statistic: -17.012435131713698
+p-value: 8.572098313849035e-30
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is stationary
+ADF Test for Volume_(Currency)
+ADF Statistic: -10.0358110825912
+p-value: 1.541813481555497e-17
+Critical Value (1%): -3.430445642347584
+Critical Value (5%): -2.861582272203756
+Critical Value (10%): -2.5667925000523915
+Series is stationary
+ADF Test for Weighted_Price
+ADF Statistic: -1.5472807481657107
+p-value: 0.5100062111747464
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is non-stationary
+ADF Test for ma_1hour
+ADF Statistic: -1.544132693870477
+p-value: 0.5115776432632047
+Critical Value (1%): -3.4304456437464483
+Critical Value (5%): -2.8615822728220186
+Critical Value (10%): -2.5667925003814736
+Series is non-stationary
+ADF Test for volatility_1hour
+ADF Statistic: -9.64153950068473
+p-value: 1.516242006911784e-16
+Critical Value (1%): -3.430445640948761
+Critical Value (5%): -2.861582271585511
+Critical Value (10%): -2.566792499723319
+Series is stationary
+Creating sequences for time series forecasting...
+Saving preprocessed data...
+Saved preprocessed data to preprocessed_data
+Input shape: (68412, 24, 13), Target shape: (68412,)
+Preprocessing completed!
