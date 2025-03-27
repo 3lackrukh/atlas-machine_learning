@@ -117,6 +117,64 @@ def clean_data(df):
     return df_clean
 
 
+def engineer_features(df):
+    """
+    Creates new features to improve time series forecasting.
+    
+    Args:
+        df: Cleaned DataFrame with Bitcoin data
+        
+    Returns:
+        DataFrame with engineered features
+    """
+    # Create a copy instead of modifying the original
+    df_feat = df.copy()
+    
+    # Extract time-based features
+    df_feat['hour'] = df_feat.index.hour
+    df_feat['day_of_week'] = df_feat.index.dayofweek
+    
+    # Calculate price changes - fill with 0 (no change) for first row
+    df_feat['price_change'] = df_feat['Close'].pct_change().fillna(0)
+    
+    # Calculate rolling statistics (moving averages) with min_periods=1 to minimize NaN values
+    df_feat['ma_10min'] = df_feat['Close'].rolling('10min', min_periods=1).mean()
+    df_feat['ma_30min'] = df_feat['Close'].rolling('30min', min_periods=1).mean()
+    df_feat['ma_1hour'] = df_feat['Close'].rolling('1h', min_periods=1).mean()
+    
+    # Calculate volatility with min_periods=1 to minimize NaN values
+    df_feat['volatility_1hour'] = df_feat['Close'].rolling('1h', min_periods=1).std()
+    
+    # Calculate volume features - fill with 0 for first row
+    df_feat['volume_change_(BTC)'] = df_feat['Volume_(BTC)'].pct_change().fillna(0)
+    df_feat['volume_change_(Currency)'] = df_feat['Volume_(Currency)'].pct_change().fillna(0)
+    
+    # Check shape after feature engineering
+    print(f"Shape after feature engineering: {df_feat.shape}")
+    
+    # Replace inf/-inf with NaN
+    df_feat.replace([np.inf, -np.inf], np.nan, inplace=True)
+    
+    # Verify no infinity values remain (can handle extreme but valid values)
+    for col in df_feat.select_dtypes(include=[np.number]).columns:
+        df_feat[col] = df_feat[col].clip(lower=-1e15, upper=1e15)
+    
+    # Check for remaining NaNs after all transformations
+    nan_counts = df_feat.isna().sum()
+    print("Columns with remaining NaN values:")
+    print(nan_counts[nan_counts > 0])
+    
+    # For remaining NaNs, use forward fill followed by backward fill
+    df_feat = df_feat.fillna(method='ffill').fillna(method='bfill')
+    
+    # Verify no NaNs remain after filling
+    print(f"NaN values after filling: {df_feat.isna().sum().sum()}")
+    
+    print(f"Final shape after feature engineering: {df_feat.shape}")
+    
+    return df_feat
+
+
 def resample_hourly(df):
     """
     Resamples data to hourly frequency for the forecasting task.
@@ -135,7 +193,16 @@ def resample_hourly(df):
         'Close': 'last',
         'Volume_(BTC)': 'sum',
         'Volume_(Currency)': 'sum',
-        'Weighted_Price': 'mean'
+        'Weighted_Price': 'mean',
+        'ma_10min': 'last',
+        'ma_30min': 'last',
+        'ma_1hour': 'last',
+        'volatility_1hour': 'last',
+        'price_change': 'sum',
+        'volume_change_(BTC)': 'sum',
+        'volume_change_(Currency)': 'sum',
+        'hour': 'last',
+        'day_of_week': 'last'
     }
     
     # Resample to hourly frequency
@@ -145,14 +212,15 @@ def resample_hourly(df):
     df_hourly.dropna(inplace=True)
     
     # Stationarity checks
-    for col in [
-        'Open', 'High', 'Low', 'Close',
-        'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price']:
-        check_stationarity(df_hourly[col], col)
+    #for col in [
+    #    'Open', 'High', 'Low', 'Close',
+    #    'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price']:
+    #    check_stationarity(df_hourly[col], col)
     
     print(f"Hourly resampled data shape: {df_hourly.shape}")
     
     return df_hourly
+
 
 def make_stationary_features(df_hourly):
     """Transform non-stationary series into stationary ones"""
@@ -176,54 +244,6 @@ def make_stationary_features(df_hourly):
     return df_stationary
 
 
-def engineer_features(df):
-    """
-    Creates new features to improve time series forecasting.
-    
-    Args:
-        df: Cleaned DataFrame with Bitcoin data
-        
-    Returns:
-        DataFrame with engineered features
-    """
-    # Create a copy instead of modifying the original
-    df_feat = df.copy()
-    
-    # Extract time-based features
-    df_feat['hour'] = df_feat.index.hour
-    df_feat['day_of_week'] = df_feat.index.dayofweek
-    
-    # Calculate price changes
-    df_feat['price_change'] = df_feat['Close'].pct_change()
-    df_feat['stationary_price_change'] = df_feat['Close_log_ret'].pct_change()
-    
-    # Calculate rolling statistics (moving averages)
-    #df_feat['ma_10min'] = df_feat['Close'].rolling('10min').mean()
-    #df_feat['ma_30min'] = df_feat['Close'].rolling('30min').mean()
-    df_feat['ma_1hour'] = df_feat['Close'].rolling('1h').mean()
-    df_feat['stationary_ma_1hour'] = df_feat['Close_log_ret'].rolling('1h').mean()
-    
-    # Calculate volatility
-    df_feat['volatility_1hour'] = df_feat['Close'].rolling('1h').std()
-    df_feat['stationary_volatility_1hour'] = df_feat['Close_log_ret'].rolling('1h').std()
-    
-    # Calculate volume features
-    df_feat['volume_change_(BTC)'] = df_feat['Volume_(BTC)'].pct_change()
-    df_feat['volume_change_(Currency)'] = df_feat['Volume_(Currency)'].pct_change()
-    
-    # Replace inf/-inf with NaN
-    df_feat.replace([np.inf, -np.inf], np.nan, inplace=True)
-    
-    # Drop rows with NaN values created by the calculations
-    df_feat.dropna(inplace=True)
-    
-    # Verify no infinity values remain (can handle extreme but valid values)
-    for col in df_feat.select_dtypes(include=[np.number]).columns:
-        df_feat[col] = df_feat[col].clip(lower=-1e15, upper=1e15)
-    
-    return df_feat
-
-
 def scale_data(df):
     """
     Scales the numerical features using MinMaxScaler.
@@ -241,9 +261,15 @@ def scale_data(df):
     # Make a copy of the data instead of modifying the original
     df_copy = df.copy()
     
+    # Check shape before scaling
+    print(f"Shape before scaling: {df_copy.shape}")
+    
     # Check for any remaining infinity or extreme values
     df_copy.replace([np.inf, -np.inf], np.nan, inplace=True)
     df_copy.dropna(inplace=True)
+    
+    # Check shape after scaling
+    print(f"Shape after scaling: {df_copy.shape}")
     
     # Clip values to prevent extreme outliers from affecting scaling
     for col in numerical_cols:
@@ -363,20 +389,20 @@ def main():
     print("Cleaning data...")
     df_clean = clean_data(df)
     
+    print("Engineering features...")
+    df_feat = engineer_features(df_clean)
+    
     print("Resampling to hourly frequency...")
-    df_hourly = resample_hourly(df_clean)
+    df_hourly = resample_hourly(df_feat)
     
     print("Transforming non-stationary series...")
     df_stationary = make_stationary_features(df_hourly)
     
-    print("Engineering features...")
-    df_feat = engineer_features(df_stationary)
-    
     print("Scaling data...")
-    df_scaled, scaler, feature_cols = scale_data(df_feat)
+    df_scaled, scaler, feature_cols = scale_data(df_stationary)
     
     print("Creating sequences for time series forecasting...")
-    X, y = create_sequences(df_scaled, seq_length=24, target_col='Close')
+    X, y = create_sequences(df_scaled, seq_length=24, target_col='Close_log_ret')
     
     print("Saving preprocessed data...")
     save_preprocessed_data(X, y, scaler, feature_cols)
