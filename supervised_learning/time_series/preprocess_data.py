@@ -158,11 +158,6 @@ def engineer_features(df):
     for col in df_feat.select_dtypes(include=[np.number]).columns:
         df_feat[col] = df_feat[col].clip(lower=-1e15, upper=1e15)
     
-    # Check engineered features stationarity
-    check_stationarity(df_feat['price_change'], "Price Change")
-    check_stationarity(df_feat['volatility_1hour'], "1-hour Volatility")
-    check_stationarity(df_feat['volume_change'], "Volume Change")
-    
     return df_feat
 
 
@@ -198,6 +193,13 @@ def resample_hourly(df):
     
     # Drop any remaining NaN values
     df_hourly.dropna(inplace=True)
+    
+    # Stationarity checks
+    for col in [
+        'Open', 'High', 'Low', 'Close',
+        'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price',
+        'ma_1hour', 'volatility_1hour']:
+        check_stationarity(df_hourly[col], col)
     
     print(f"Hourly resampled data shape: {df_hourly.shape}")
     
@@ -248,6 +250,13 @@ def scale_data(df):
         columns=numerical_cols,
         index=df_copy.index
     )
+    
+    # Stationarity check after scaling
+    for col in [
+        'Open', 'High', 'Low', 'Close',
+        'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price',
+        'ma_1hour', 'volatility_1hour']:
+        check_stationarity(df_scaled[col], col)
     
     # Add non-scaled columns back
     for col in df_copy.columns:
