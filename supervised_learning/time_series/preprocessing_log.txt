@@ -16,139 +16,112 @@ exchange                   0
 dtype: int64
 Shape after cleaning: (5117171, 8)
 Engineering features...
+Shape after feature engineering: (5117171, 17)
+Columns with remaining NaN values:
+volatility_1hour            2122
+volume_change_(BTC)           16
+volume_change_(Currency)      16
+dtype: int64
+/home/blackrukh/atlas-machine_learning/supervised_learning/time_series/./preprocess_data.py:168: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  df_feat = df_feat.fillna(method='ffill').fillna(method='bfill')
+NaN values after filling: 0
+Final shape after feature engineering: (5117171, 17)
 Resampling to hourly frequency...
-ADF Test for Open
-ADF Statistic: -1.5920921220486783
-p-value: 0.4875646855087942
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
-Series is non-stationary
-ADF Test for High
-ADF Statistic: -1.5773714047402456
-p-value: 0.49494982458822184
-Critical Value (1%): -3.430445642347584
-Critical Value (5%): -2.861582272203756
-Critical Value (10%): -2.5667925000523915
-Series is non-stationary
-ADF Test for Low
-ADF Statistic: -1.6471308031825604
-p-value: 0.45853722228216853
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
-Series is non-stationary
-ADF Test for Close
-ADF Statistic: -1.5846023718355875
-p-value: 0.49132348336269244
-Critical Value (1%): -3.430445642347584
-Critical Value (5%): -2.861582272203756
-Critical Value (10%): -2.5667925000523915
-Series is non-stationary
-ADF Test for Volume_(BTC)
-ADF Statistic: -17.417105071045025
-p-value: 4.849183812167548e-30
-Critical Value (1%): -3.430445642347584
-Critical Value (5%): -2.861582272203756
-Critical Value (10%): -2.5667925000523915
+Hourly resampled data shape: (69315, 16)
+Transforming non-stationary series...
+
+--- CHECKING STATIONARITY OF TRANSFORMED SERIES ---
+ADF Test for Open (Log Returns)
+ADF Statistic: -36.16196016488017
+p-value: 0.0
+Critical Value (1%): -3.4304444283709197
+Critical Value (5%): -2.861581735656361
+Critical Value (10%): -2.566792214465025
 Series is stationary
-ADF Test for Volume_(Currency)
-ADF Statistic: -10.717977484930516
-p-value: 3.2047840809673724e-19
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
+ADF Test for High (Log Returns)
+ADF Statistic: -34.611608501000006
+p-value: 0.0
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
 Series is stationary
-ADF Test for Weighted_Price
-ADF Statistic: -1.5861974171155049
-p-value: 0.4905232125391586
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
-Series is non-stationary
-ADF Test for ma_1hour
-ADF Statistic: -1.5829895414102688
-p-value: 0.4921325516036022
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
-Series is non-stationary
-ADF Test for volatility_1hour
-ADF Statistic: -10.266796856549082
-p-value: 4.099102594707682e-18
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
+ADF Test for Low (Log Returns)
+ADF Statistic: -77.33724136931416
+p-value: 0.0
+Critical Value (1%): -3.4304443724981057
+Critical Value (5%): -2.861581710961966
+Critical Value (10%): -2.566792201320973
 Series is stationary
-Hourly resampled data shape: (68437, 13)
+ADF Test for Close (Log Returns)
+ADF Statistic: -35.73043072172699
+p-value: 0.0
+Critical Value (1%): -3.430444431098115
+Critical Value (5%): -2.8615817368617136
+Critical Value (10%): -2.566792215106596
+Series is stationary
+ADF Test for Weighted_Price (Log Returns)
+ADF Statistic: -34.81439965492024
+p-value: 0.0
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
+Series is stationary
 Scaling data...
+Shape before scaling: (69314, 21)
+Shape after scaling: (69314, 21)
 Checking for infinite values before scaling: False
 Checking for NaN values before scaling: False
-ADF Test for Open
-ADF Statistic: -1.5622772166869938
-p-value: 0.5025100293644252
-Critical Value (1%): -3.430445642347584
-Critical Value (5%): -2.861582272203756
-Critical Value (10%): -2.5667925000523915
-Series is non-stationary
-ADF Test for High
-ADF Statistic: -1.5469464458350757
-p-value: 0.510173124331675
-Critical Value (1%): -3.430445642347584
-Critical Value (5%): -2.861582272203756
-Critical Value (10%): -2.5667925000523915
-Series is non-stationary
-ADF Test for Low
-ADF Statistic: -1.601579251471729
-p-value: 0.48280011165605174
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
-Series is non-stationary
-ADF Test for Close
-ADF Statistic: -1.53325656080458
-p-value: 0.517000374439029
-Critical Value (1%): -3.430445642347584
-Critical Value (5%): -2.861582272203756
-Critical Value (10%): -2.5667925000523915
-Series is non-stationary
+ADF Test for Open_log_ret
+ADF Statistic: -34.89480063584322
+p-value: 0.0
+Critical Value (1%): -3.430444431098115
+Critical Value (5%): -2.8615817368617136
+Critical Value (10%): -2.566792215106596
+Series is stationary
+ADF Test for High_log_ret
+ADF Statistic: -34.09483628691012
+p-value: 0.0
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
+Series is stationary
+ADF Test for Low_log_ret
+ADF Statistic: -34.210338064573314
+p-value: 0.0
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
+Series is stationary
+ADF Test for Close_log_ret
+ADF Statistic: -35.34058325897593
+p-value: 0.0
+Critical Value (1%): -3.430444431098115
+Critical Value (5%): -2.8615817368617136
+Critical Value (10%): -2.566792215106596
+Series is stationary
 ADF Test for Volume_(BTC)
-ADF Statistic: -17.012435131713698
-p-value: 8.572098313849035e-30
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
+ADF Statistic: -16.986308517980223
+p-value: 8.936124438335035e-30
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
 Series is stationary
 ADF Test for Volume_(Currency)
-ADF Statistic: -10.0358110825912
-p-value: 1.541813481555497e-17
-Critical Value (1%): -3.430445642347584
-Critical Value (5%): -2.861582272203756
-Critical Value (10%): -2.5667925000523915
+ADF Statistic: -10.073060810912073
+p-value: 1.2442358421377563e-17
+Critical Value (1%): -3.430444431098115
+Critical Value (5%): -2.8615817368617136
+Critical Value (10%): -2.566792215106596
 Series is stationary
 ADF Test for Weighted_Price
-ADF Statistic: -1.5472807481657107
-p-value: 0.5100062111747464
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
+ADF Statistic: -1.545365033986535
+p-value: 0.510962583858553
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
 Series is non-stationary
-ADF Test for ma_1hour
-ADF Statistic: -1.544132693870477
-p-value: 0.5115776432632047
-Critical Value (1%): -3.4304456437464483
-Critical Value (5%): -2.8615822728220186
-Critical Value (10%): -2.5667925003814736
-Series is non-stationary
-ADF Test for volatility_1hour
-ADF Statistic: -9.64153950068473
-p-value: 1.516242006911784e-16
-Critical Value (1%): -3.430445640948761
-Critical Value (5%): -2.861582271585511
-Critical Value (10%): -2.566792499723319
-Series is stationary
 Creating sequences for time series forecasting...
 Saving preprocessed data...
 Saved preprocessed data to preprocessed_data
-Input shape: (68412, 24, 13), Target shape: (68412,)
+Input shape: (69289, 24, 21), Target shape: (69289,)
 Preprocessing completed!
