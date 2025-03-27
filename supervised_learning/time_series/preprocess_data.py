@@ -92,7 +92,7 @@ def clean_data(df):
     df_clean.set_index('Timestamp', inplace=True)
     
     # Check for and replace infinity values with NaN
-    numerical_cols = ['Open', 'High', 'Low', 'Close', 'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price']
+    #numerical_cols = ['Open', 'High', 'Low', 'Close', 'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price']
     
     # Replace inf/-inf with NaN
     df_clean.replace([np.inf, -np.inf], np.nan, inplace=True)
@@ -117,6 +117,65 @@ def clean_data(df):
     return df_clean
 
 
+def resample_hourly(df):
+    """
+    Resamples data to hourly frequency for the forecasting task.
+    
+    Args:
+        df: DataFrame with engineered features
+        
+    Returns:
+        Hourly resampled DataFrame
+    """
+    # Define aggregation functions for different columns
+    agg_dict = {
+        'Open': 'first',
+        'High': 'max',
+        'Low': 'min',
+        'Close': 'last',
+        'Volume_(BTC)': 'sum',
+        'Volume_(Currency)': 'sum',
+        'Weighted_Price': 'mean'
+    }
+    
+    # Resample to hourly frequency
+    df_hourly = df.resample('1h').agg(agg_dict)
+    
+    # Drop any remaining NaN values
+    df_hourly.dropna(inplace=True)
+    
+    # Stationarity checks
+    for col in [
+        'Open', 'High', 'Low', 'Close',
+        'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price']:
+        check_stationarity(df_hourly[col], col)
+    
+    print(f"Hourly resampled data shape: {df_hourly.shape}")
+    
+    return df_hourly
+
+def make_stationary_features(df_hourly):
+    """Transform non-stationary series into stationary ones"""
+    df_stationary = df_hourly.copy()
+    
+    # Transform price series - these all need similar treatments
+    price_cols = ['Open', 'High', 'Low', 'Close', 'Weighted_Price']
+    
+    for col in price_cols:
+        # Log returns (recommended for price data)
+        df_stationary[f'{col}_log_ret'] = np.log(df_stationary[col]).diff()
+    
+    # Drop NaN values created by differencing
+    df_stationary.dropna(inplace=True)
+    
+    # Verify transformations worked
+    print("\n--- CHECKING STATIONARITY OF TRANSFORMED SERIES ---")
+    for col in price_cols:
+        check_stationarity(df_stationary[f'{col}_log_ret'], f"{col} (Log Returns)")
+    
+    return df_stationary
+
+
 def engineer_features(df):
     """
     Creates new features to improve time series forecasting.
@@ -136,17 +195,21 @@ def engineer_features(df):
     
     # Calculate price changes
     df_feat['price_change'] = df_feat['Close'].pct_change()
+    df_feat['stationary_price_change'] = df_feat['Close_log_ret'].pct_change()
     
     # Calculate rolling statistics (moving averages)
-    df_feat['ma_10min'] = df_feat['Close'].rolling('10min').mean()
-    df_feat['ma_30min'] = df_feat['Close'].rolling('30min').mean()
+    #df_feat['ma_10min'] = df_feat['Close'].rolling('10min').mean()
+    #df_feat['ma_30min'] = df_feat['Close'].rolling('30min').mean()
     df_feat['ma_1hour'] = df_feat['Close'].rolling('1h').mean()
+    df_feat['stationary_ma_1hour'] = df_feat['Close_log_ret'].rolling('1h').mean()
     
     # Calculate volatility
     df_feat['volatility_1hour'] = df_feat['Close'].rolling('1h').std()
+    df_feat['stationary_volatility_1hour'] = df_feat['Close_log_ret'].rolling('1h').std()
     
     # Calculate volume features
-    df_feat['volume_change'] = df_feat['Volume_(BTC)'].pct_change()
+    df_feat['volume_change_(BTC)'] = df_feat['Volume_(BTC)'].pct_change()
+    df_feat['volume_change_(Currency)'] = df_feat['Volume_(Currency)'].pct_change()
     
     # Replace inf/-inf with NaN
     df_feat.replace([np.inf, -np.inf], np.nan, inplace=True)
@@ -159,51 +222,6 @@ def engineer_features(df):
         df_feat[col] = df_feat[col].clip(lower=-1e15, upper=1e15)
     
     return df_feat
-
-
-def resample_hourly(df):
-    """
-    Resamples data to hourly frequency for the forecasting task.
-    
-    Args:
-        df: DataFrame with engineered features
-        
-    Returns:
-        Hourly resampled DataFrame
-    """
-    # Define aggregation functions for different columns
-    agg_dict = {
-        'Open': 'first',
-        'High': 'max',
-        'Low': 'min',
-        'Close': 'last',
-        'Volume_(BTC)': 'sum',
-        'Volume_(Currency)': 'sum',
-        'Weighted_Price': 'mean',
-        'ma_1hour': 'last',
-        'volatility_1hour': 'last',
-        'price_change': 'sum',
-        'volume_change': 'sum',
-        'hour': 'last',
-        'day_of_week': 'last'
-    }
-    
-    # Resample to hourly frequency
-    df_hourly = df.resample('1h').agg(agg_dict)
-    
-    # Drop any remaining NaN values
-    df_hourly.dropna(inplace=True)
-    
-    # Stationarity checks
-    for col in [
-        'Open', 'High', 'Low', 'Close',
-        'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price',
-        'ma_1hour', 'volatility_1hour']:
-        check_stationarity(df_hourly[col], col)
-    
-    print(f"Hourly resampled data shape: {df_hourly.shape}")
-    
-    return df_hourly
 
 
 def scale_data(df):
@@ -253,9 +271,8 @@ def scale_data(df):
     
     # Stationarity check after scaling
     for col in [
-        'Open', 'High', 'Low', 'Close',
-        'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price',
-        'ma_1hour', 'volatility_1hour']:
+        'Open_log_ret', 'High_log_ret', 'Low_log_ret', 'Close_log_ret',
+        'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price']:
         check_stationarity(df_scaled[col], col)
     
     # Add non-scaled columns back
@@ -346,14 +363,17 @@ def main():
     print("Cleaning data...")
     df_clean = clean_data(df)
     
-    print("Engineering features...")
-    df_feat = engineer_features(df_clean)
-    
     print("Resampling to hourly frequency...")
-    df_hourly = resample_hourly(df_feat)
+    df_hourly = resample_hourly(df_clean)
+    
+    print("Transforming non-stationary series...")
+    df_stationary = make_stationary_features(df_hourly)
+    
+    print("Engineering features...")
+    df_feat = engineer_features(df_stationary)
     
     print("Scaling data...")
-    df_scaled, scaler, feature_cols = scale_data(df_hourly)
+    df_scaled, scaler, feature_cols = scale_data(df_feat)
     
     print("Creating sequences for time series forecasting...")
     X, y = create_sequences(df_scaled, seq_length=24, target_col='Close')
