@@ -46,32 +46,6 @@ def load_and_merge_data(coinbase_path, bitstamp_path):
     return merged_df
 
 
-def check_stationarity(series, name="Series"):
-    """
-    Performs Augmented Dickey-Fuller test to check stationarity.
-    
-    Args:
-        series: Time series to test
-        name: Name of the series for reporting
-        
-    Returns:
-        Boolean indicating if series is stationary
-    """
-    result = adfuller(series.dropna())
-    
-    print(f"ADF Test for {name}")
-    print(f"ADF Statistic: {result[0]}")
-    print(f"p-value: {result[1]}")
-    
-    for key, value in result[4].items():
-        print(f"Critical Value ({key}): {value}")
-    
-    is_stationary = result[1] <= 0.05
-    print(f"Series is {'stationary' if is_stationary else 'non-stationary'}")
-    
-    return is_stationary
-
-
 def clean_data(df):
     """
     Cleans the data by handling missing values and outliers.
@@ -239,9 +213,35 @@ def make_stationary_features(df_hourly):
     # Verify transformations worked
     print("\n--- CHECKING STATIONARITY OF TRANSFORMED SERIES ---")
     for col in price_cols:
-        check_stationarity(df_stationary[f'{col}_log_ret'], f"{col} (Log Returns)")
+        check_stationarity(df_stationary[f'{col}_log_ret'], f"{col}_log_ret")
     
     return df_stationary
+
+
+def check_stationarity(series, name="Series"):
+    """
+    Performs Augmented Dickey-Fuller test to check stationarity.
+    
+    Args:
+        series: Time series to test
+        name: Name of the series for reporting
+        
+    Returns:
+        Boolean indicating if series is stationary
+    """
+    result = adfuller(series.dropna())
+    
+    print(f"\nADF Test for {name}")
+    print(f"ADF Statistic: {result[0]}")
+    print(f"p-value: {result[1]}")
+    
+    for key, value in result[4].items():
+        print(f"Critical Value ({key}): {value}")
+    
+    is_stationary = result[1] <= 0.05
+    print(f"Series is {'stationary' if is_stationary else 'non-stationary'}")
+    
+    return is_stationary
 
 
 def scale_data(df):
@@ -298,7 +298,7 @@ def scale_data(df):
     # Stationarity check after scaling
     for col in [
         'Open_log_ret', 'High_log_ret', 'Low_log_ret', 'Close_log_ret',
-        'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price']:
+        'Volume_(BTC)', 'Volume_(Currency)', 'Weighted_Price_log_ret']:
         check_stationarity(df_scaled[col], col)
     
     # Add non-scaled columns back
