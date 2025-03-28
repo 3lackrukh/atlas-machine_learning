@@ -186,7 +186,7 @@ def train_model(model, train_dataset, val_dataset, epochs=50):
     return history
 
 
-def evaluate_model(model, X_test, y_test, scaler, feature_cols):
+def evaluate_model(model, X_test, y_test, scaler, feature_cols, target_col):
     """
     Evaluates the model on test data.
     
@@ -196,6 +196,7 @@ def evaluate_model(model, X_test, y_test, scaler, feature_cols):
         y_test: Test target values
         scaler: Scaler used to normalize the data
         feature_cols: Feature column names
+        target_col: Target column name for evaluation
         
     Returns:
         Evaluation metrics
@@ -208,45 +209,78 @@ def evaluate_model(model, X_test, y_test, scaler, feature_cols):
     rmse = np.sqrt(mse)
     mae = np.mean(np.abs(y_pred.flatten() - y_test))
     
-    print(f"Scaled MSE: {mse:.6f}")
-    print(f"Scaled RMSE: {rmse:.6f}")
-    print(f"Scaled MAE: {mae:.6f}")
+    print(f"Scaled MSE (on log returns): {mse:.6f}")
+    print(f"Scaled RMSE (on log returns): {rmse:.6f}")
+    print(f"Scaled MAE (on log returns): {mae:.6f}")
     
     # Inverse transform predictions and actual values
     # We need to create dummy arrays with all features
+    target_idx = feature_cols.index(target_col)
     close_idx = feature_cols.index('Close')
     dummy_array = np.zeros((len(y_test), len(feature_cols)))
     
     # Set the Close column values
-    dummy_array[:, close_idx] = y_test
+    dummy_array[:, target_idx] = y_test
     y_test_dummy = dummy_array.copy()
     
-    dummy_array[:, close_idx] = y_pred.flatten()
+    dummy_array[:, target_idx] = y_pred.flatten()
     y_pred_dummy = dummy_array.copy()
     
-    # Inverse transform
-    y_test_inv = scaler.inverse_transform(y_test_dummy)[:, close_idx]
-    y_pred_inv = scaler.inverse_transform(y_pred_dummy)[:, close_idx]
+    # Inverse transform to get original log returns
+    y_test_log_ret = scaler.inverse_transform(y_test_dummy)[:, target_idx]
+    y_pred_log_ret = scaler.inverse_transform(y_pred_dummy)[:, target_idx]
+    
+    # Convert from log returns to actual prices
+    last_price = None
+    last_scaled_close = X_test[0, -1, close_idx]
+    dummy = np.zeros((1, len(feature_cols)))
+    dummy[0, close_idx] = last_scaled_close
+    last_price = scaler.inverse_transform(dummy)[0, close_idx]
+    
+    print(f"Starting price for conversion: ${last_price:.2f}")
+    
+    # Convert log returns to actual prices
+    y_test_prices = []
+    y_pred_prices = []
+    
+    current_price = last_price
+    for i in range(len(y_test_log_ret)):
+        # Convert actual log returns to prices
+        next_true_price = current_price * np.exp(y_test_log_ret[i])
+        y_test_prices.append(next_true_price)
+        
+        # Convert predicted log returns to prices
+        next_pred_price = current_price * np.exp(y_pred_log_ret[i])
+        y_pred_prices.append(next_pred_price)
+        
+        # Use true price for next prediction to prevent error accumulation
+        current_price = next_true_price
     
     # Calculate metrics on original scale
-    mse_inv = np.mean((y_pred_inv - y_test_inv) ** 2)
-    rmse_inv = np.sqrt(mse_inv)
-    mae_inv = np.mean(np.abs(y_pred_inv - y_test_inv))
+    price_mse = np.mean((np.array(y_pred_prices) - np.array(y_test_prices)) ** 2)
+    price_rmse = np.sqrt(price_mse)
+    price_mae = np.mean(np.abs(np.array(y_pred_prices) - np.array(y_test_prices)))
     
-    print(f"Original MSE: {mse_inv:.2f}")
-    print(f"Original RMSE: {rmse_inv:.2f}")
-    print(f"Original MAE: {mae_inv:.2f}")
+    print("\nMetrics on actual prices:")
+    print(f"MSE: {price_mse:.2f}")
+    print(f"RMSE: {price_rmse:.2f}")
+    print(f"MAE: {price_mae:.2f}")
+    
+    # Calculate percentage metrics
+    mape = np.mean(np.abs((np.array(y_test_prices) - np.array(y_pred_prices)) / np.array(y_test_prices))) * 100
+    print(f"MAPE: {mape:.2f}%")
     
     # Visualize predictions
-    plot_predictions(y_test_inv, y_pred_inv)
+    plot_predictions(y_test_prices, y_pred_prices)
     
     return {
         'mse': mse,
         'rmse': rmse,
         'mae': mae,
-        'mse_inv': mse_inv,
-        'rmse_inv': rmse_inv,
-        'mae_inv': mae_inv
+        'price_mse': price_mse,
+        'price_rmse': price_rmse,
+        'price_mae': price_mae,
+        'mape': mape
     }
 
 
@@ -327,6 +361,10 @@ def main():
     # Load preprocessed data
     X, y, scaler, feature_cols = load_preprocessed_data()
     
+    # Define target column
+    target_col = 'Close_log_ret'
+    print(f"Using target column: {target_col} for evaluation")
+    
     # Split data
     (X_train, y_train), (X_val, y_val), (X_test, y_test) = split_data(X, y)
     
@@ -353,7 +391,7 @@ def main():
     plot_training_history(history)
     
     # Evaluate model
-    evaluate_model(model, X_test, y_test, scaler, feature_cols)
+    evaluate_model(model, X_test, y_test, scaler, feature_cols, target_col=target_col)
     
     # Save model
     model.save('btc_forecast_model.h5')
