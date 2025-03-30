@@ -1,0 +1,104 @@
+./forecast_btc.py 
+2025-03-30 06:46:20.561479: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2025-03-30 06:46:20.561563: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2025-03-30 06:46:20.711769: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-03-30 06:46:20.961871: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-03-30 06:46:22.910766: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+Bitcoin Price Forecasting with RNNs
+=================================
+
+Loaded data: X shape (69289, 24, 21), y shape (69289,)
+Using target column: Close_log_ret for evaluation
+Train set: (49887, 24, 21), (49887,)
+Validation set: (5544, 24, 21), (5544,)
+Test set: (13858, 24, 21), (13858,)
+Model: "sequential"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ bidirectional (Bidirection  (None, 24, 256)           153600    
+ al)                                                             
+                                                                 
+ bidirectional_1 (Bidirecti  (None, 128)               164352    
+ onal)                                                           
+                                                                 
+ dense (Dense)               (None, 32)                4128      
+                                                                 
+ dense_1 (Dense)             (None, 1)                 33        
+                                                                 
+=================================================================
+Total params: 322113 (1.23 MB)
+Trainable params: 322113 (1.23 MB)
+Non-trainable params: 0 (0.00 Byte)
+_________________________________________________________________
+Epoch 1/50
+1559/1559 [==============================] - 80s 49ms/step - loss: 0.0107 - mae: 0.0448 - val_loss: 0.0029 - val_mae: 0.0357 - lr: 0.0010
+Epoch 2/50
+1559/1559 [==============================] - 81s 52ms/step - loss: 0.0045 - mae: 0.0392 - val_loss: 0.0039 - val_mae: 0.0479 - lr: 0.0010
+Epoch 3/50
+1559/1559 [==============================] - 76s 49ms/step - loss: 0.0044 - mae: 0.0383 - val_loss: 0.0026 - val_mae: 0.0317 - lr: 0.0010
+Epoch 4/50
+1559/1559 [==============================] - 76s 49ms/step - loss: 0.0044 - mae: 0.0384 - val_loss: 0.0027 - val_mae: 0.0333 - lr: 0.0010
+Epoch 5/50
+1559/1559 [==============================] - 81s 52ms/step - loss: 0.0043 - mae: 0.0380 - val_loss: 0.0028 - val_mae: 0.0348 - lr: 0.0010
+Epoch 6/50
+1559/1559 [==============================] - 78s 50ms/step - loss: 0.0043 - mae: 0.0378 - val_loss: 0.0026 - val_mae: 0.0316 - lr: 0.0010
+Epoch 7/50
+1559/1559 [==============================] - 77s 49ms/step - loss: 0.0043 - mae: 0.0373 - val_loss: 0.0026 - val_mae: 0.0321 - lr: 0.0010
+Epoch 8/50
+1559/1559 [==============================] - 82s 53ms/step - loss: 0.0042 - mae: 0.0371 - val_loss: 0.0027 - val_mae: 0.0323 - lr: 0.0010
+Epoch 9/50
+1559/1559 [==============================] - 86s 55ms/step - loss: 0.0042 - mae: 0.0367 - val_loss: 0.0027 - val_mae: 0.0328 - lr: 5.0000e-04
+Epoch 10/50
+1559/1559 [==============================] - 85s 54ms/step - loss: 0.0042 - mae: 0.0366 - val_loss: 0.0027 - val_mae: 0.0329 - lr: 5.0000e-04
+Epoch 11/50
+1559/1559 [==============================] - 90s 58ms/step - loss: 0.0042 - mae: 0.0366 - val_loss: 0.0026 - val_mae: 0.0306 - lr: 5.0000e-04
+Epoch 12/50
+1559/1559 [==============================] - 88s 56ms/step - loss: 0.0042 - mae: 0.0367 - val_loss: 0.0026 - val_mae: 0.0306 - lr: 5.0000e-04
+Epoch 13/50
+1559/1559 [==============================] - 84s 54ms/step - loss: 0.0041 - mae: 0.0366 - val_loss: 0.0026 - val_mae: 0.0310 - lr: 5.0000e-04
+Epoch 14/50
+1559/1559 [==============================] - 86s 55ms/step - loss: 0.0041 - mae: 0.0363 - val_loss: 0.0026 - val_mae: 0.0303 - lr: 2.5000e-04
+Epoch 15/50
+1559/1559 [==============================] - 85s 55ms/step - loss: 0.0041 - mae: 0.0363 - val_loss: 0.0026 - val_mae: 0.0305 - lr: 2.5000e-04
+Epoch 16/50
+1559/1559 [==============================] - 87s 56ms/step - loss: 0.0041 - mae: 0.0363 - val_loss: 0.0026 - val_mae: 0.0303 - lr: 2.5000e-04
+Epoch 17/50
+1559/1559 [==============================] - 88s 57ms/step - loss: 0.0041 - mae: 0.0363 - val_loss: 0.0026 - val_mae: 0.0302 - lr: 2.5000e-04
+Epoch 18/50
+1559/1559 [==============================] - 89s 57ms/step - loss: 0.0041 - mae: 0.0363 - val_loss: 0.0025 - val_mae: 0.0303 - lr: 2.5000e-04
+Epoch 19/50
+1559/1559 [==============================] - 90s 58ms/step - loss: 0.0040 - mae: 0.0361 - val_loss: 0.0026 - val_mae: 0.0304 - lr: 1.2500e-04
+Epoch 20/50
+1559/1559 [==============================] - 83s 53ms/step - loss: 0.0040 - mae: 0.0360 - val_loss: 0.0026 - val_mae: 0.0304 - lr: 1.2500e-04
+Epoch 21/50
+1559/1559 [==============================] - 81s 52ms/step - loss: 0.0040 - mae: 0.0360 - val_loss: 0.0026 - val_mae: 0.0305 - lr: 1.2500e-04
+Epoch 22/50
+1559/1559 [==============================] - 80s 51ms/step - loss: 0.0040 - mae: 0.0360 - val_loss: 0.0026 - val_mae: 0.0304 - lr: 1.2500e-04
+Epoch 23/50
+1559/1559 [==============================] - 85s 55ms/step - loss: 0.0040 - mae: 0.0360 - val_loss: 0.0026 - val_mae: 0.0323 - lr: 1.2500e-04
+Epoch 24/50
+1559/1559 [==============================] - 102s 65ms/step - loss: 0.0039 - mae: 0.0359 - val_loss: 0.0026 - val_mae: 0.0306 - lr: 6.2500e-05
+Epoch 25/50
+1559/1559 [==============================] - 119s 76ms/step - loss: 0.0039 - mae: 0.0359 - val_loss: 0.0026 - val_mae: 0.0303 - lr: 6.2500e-05
+Epoch 26/50
+1559/1559 [==============================] - 108s 69ms/step - loss: 0.0039 - mae: 0.0358 - val_loss: 0.0026 - val_mae: 0.0304 - lr: 6.2500e-05
+Epoch 27/50
+1559/1559 [==============================] - 101s 64ms/step - loss: 0.0039 - mae: 0.0358 - val_loss: 0.0026 - val_mae: 0.0306 - lr: 6.2500e-05
+Epoch 28/50
+1559/1559 [==============================] - 94s 60ms/step - loss: 0.0039 - mae: 0.0358 - val_loss: 0.0026 - val_mae: 0.0313 - lr: 6.2500e-05
+434/434 [==============================] - 11s 23ms/step
+Scaled MSE (on log returns): 0.002051
+Scaled RMSE (on log returns): 0.045289
+Scaled MAE (on log returns): 0.024774
+Traceback (most recent call last):
+  File "/home/blackrukh/atlas-machine_learning/supervised_learning/time_series/./forecast_btc.py", line 419, in <module>
+    main()
+  File "/home/blackrukh/atlas-machine_learning/supervised_learning/time_series/./forecast_btc.py", line 410, in main
+    evaluate_model(model, X_test, y_test, scaler, feature_cols, target_col=target_col)
+  File "/home/blackrukh/atlas-machine_learning/supervised_learning/time_series/./forecast_btc.py", line 233, in evaluate_model
+    y_test_unscaled = scaler.inverse_transform(y_test_features)
+  File "/home/blackrukh/.local/lib/python3.9/site-packages/sklearn/preprocessing/_data.py", line 572, in inverse_transform
+    X -= self.min_
+ValueError: operands could not be broadcast together with shapes (13858,21) (19,) (13858,21) 

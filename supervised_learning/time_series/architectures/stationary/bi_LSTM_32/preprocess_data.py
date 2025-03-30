@@ -402,7 +402,7 @@ def main():
     df_scaled, scaler, feature_cols = scale_data(df_stationary)
     
     print("Creating sequences for time series forecasting...")
-    X, y = create_sequences(df_scaled, seq_length=24, target_col='Close')
+    X, y = create_sequences(df_scaled, seq_length=24, target_col='Close_log_ret')
     
     print("Saving preprocessed data...")
     save_preprocessed_data(X, y, scaler, feature_cols)

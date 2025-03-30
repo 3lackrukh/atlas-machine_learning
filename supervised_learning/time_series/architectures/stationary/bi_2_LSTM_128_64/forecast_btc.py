@@ -186,15 +186,14 @@ def train_model(model, train_dataset, val_dataset, epochs=50):
     return history
 
 
-def evaluate_model(model, X_test, y_test, scaler, feature_cols, target_col='Close'):
+def evaluate_model(model, X_test, y_test, scaler, feature_cols, target_col):
     """
-    Evaluates the model on test data.
-    This version is simplified to evaluate directly on Close prices.
+    Evaluates the model on test data with improved inverse transformation.
     
     Args:
         model: Trained Keras model
         X_test: Test input sequences
-        y_test: Test target values (scaled Close prices)
+        y_test: Test target values
         scaler: Scaler used to normalize the data
         feature_cols: Feature column names
         target_col: Target column name for evaluation
@@ -202,7 +201,7 @@ def evaluate_model(model, X_test, y_test, scaler, feature_cols, target_col='Clos
     Returns:
         Evaluation metrics
     """
-    # Get predictions (scaled Close prices)
+    # Get predictions
     y_pred = model.predict(X_test)
     
     # Calculate metrics on scaled data
@@ -210,31 +209,67 @@ def evaluate_model(model, X_test, y_test, scaler, feature_cols, target_col='Clos
     rmse = np.sqrt(mse)
     mae = np.mean(np.abs(y_pred.flatten() - y_test))
     
-    print(f"Scaled MSE: {mse:.6f}")
-    print(f"Scaled RMSE: {rmse:.6f}")
-    print(f"Scaled MAE: {mae:.6f}")
+    print(f"Scaled MSE (on log returns): {mse:.6f}")
+    print(f"Scaled RMSE (on log returns): {rmse:.6f}")
+    print(f"Scaled MAE (on log returns): {mae:.6f}")
     
-    # Get index of the Close column
-    target_idx = feature_cols.index(f'{target_col}')
+    # Get indices for important columns
+    target_idx = feature_cols.index(target_col)
+    close_idx = feature_cols.index('Close')
     
-    # Create dummy arrays for inverse transformation
-    dummy_array = np.zeros((len(y_test), len(feature_cols)))
+    # IMPROVED APPROACH: Use last timestep features from each sequence
+    # This preserves feature relationships during inverse transformation
+    last_timestep_features = X_test[:, -1, :].copy()  # Shape: (samples, features)
     
-    # Set Close column values
-    dummy_array[:, target_idx] = y_test
-    y_test_dummy = dummy_array.copy()
+    # Create copies for actual and predicted values
+    y_test_features = last_timestep_features.copy()
+    y_pred_features = last_timestep_features.copy()
     
-    dummy_array[:, target_idx] = y_pred.flatten()
-    y_pred_dummy = dummy_array.copy()
+    # Replace only the target column with actual and predicted values
+    y_test_features[:, target_idx] = y_test
+    y_pred_features[:, target_idx] = y_pred.flatten()
     
-    # Inverse transform to get original Close prices
-    y_test_prices = scaler.inverse_transform(y_test_dummy)[:, target_idx]
-    y_pred_prices = scaler.inverse_transform(y_pred_dummy)[:, target_idx]
+    # Inverse transform complete feature vectors
+    y_test_unscaled = scaler.inverse_transform(y_test_features)
+    y_pred_unscaled = scaler.inverse_transform(y_pred_features)
     
-    # Calculate metrics on actual prices
-    price_mse = np.mean((y_pred_prices - y_test_prices) ** 2)
+    # Extract only the target column values after inverse transform
+    y_test_log_ret = y_test_unscaled[:, target_idx]
+    y_pred_log_ret = y_pred_unscaled[:, target_idx]
+    
+    # Get the last actual price from the test data
+    # We need to inverse transform a complete feature vector from the first sequence
+    first_sequence_features = X_test[0, -1, :].copy()
+    unscaled_features = scaler.inverse_transform(first_sequence_features.reshape(1, -1))
+    last_price = unscaled_features[0, close_idx]
+    
+    print(f"Starting price for conversion: ${last_price:.2f}")
+    
+    # Convert log returns to actual prices
+    y_test_prices = []
+    y_pred_prices = []
+    
+    # Initialize with actual price
+    current_actual_price = last_price
+    current_pred_price = last_price
+    
+    for i in range(len(y_test_log_ret)):
+        # Convert actual log returns to prices
+        # For actual prices, use the previous actual price as base
+        next_true_price = current_actual_price * np.exp(y_test_log_ret[i])
+        y_test_prices.append(next_true_price)
+        current_actual_price = next_true_price
+        
+        # Convert predicted log returns to prices
+        # For predictions, use the previous predicted price as base
+        next_pred_price = current_pred_price * np.exp(y_pred_log_ret[i])
+        y_pred_prices.append(next_pred_price)
+        current_pred_price = next_pred_price
+    
+    # Calculate metrics on original scale
+    price_mse = np.mean((np.array(y_pred_prices) - np.array(y_test_prices)) ** 2)
     price_rmse = np.sqrt(price_mse)
-    price_mae = np.mean(np.abs(y_pred_prices - y_test_prices))
+    price_mae = np.mean(np.abs(np.array(y_pred_prices) - np.array(y_test_prices)))
     
     print("\nMetrics on actual prices:")
     print(f"MSE: {price_mse:.2f}")
@@ -242,17 +277,17 @@ def evaluate_model(model, X_test, y_test, scaler, feature_cols, target_col='Clos
     print(f"MAE: {price_mae:.2f}")
     
     # Calculate percentage metrics
-    mape = np.mean(np.abs((y_test_prices - y_pred_prices) / y_test_prices)) * 100
+    mape = np.mean(np.abs((np.array(y_test_prices) - np.array(y_pred_prices)) / np.array(y_test_prices))) * 100
     print(f"MAPE: {mape:.2f}%")
-    
-    # Calculate directional accuracy
-    direction_actual = np.diff(y_test_prices) > 0
-    direction_pred = np.diff(y_pred_prices) > 0
-    directional_accuracy = np.mean(direction_actual == direction_pred) * 100
-    print(f"Directional Accuracy: {directional_accuracy:.2f}%")
     
     # Visualize predictions
     plot_predictions(y_test_prices, y_pred_prices)
+    
+    # Additional analysis: calculate directional accuracy
+    direction_actual = np.diff(np.array(y_test_prices)) > 0
+    direction_pred = np.diff(np.array(y_pred_prices)) > 0
+    directional_accuracy = np.mean(direction_actual == direction_pred) * 100
+    print(f"Directional Accuracy: {directional_accuracy:.2f}%")
     
     return {
         'mse': mse,
@@ -264,7 +299,6 @@ def evaluate_model(model, X_test, y_test, scaler, feature_cols, target_col='Clos
         'mape': mape,
         'directional_accuracy': directional_accuracy
     }
-
 
 def plot_predictions(y_true, y_pred, n_samples=100):
     """
@@ -344,7 +378,7 @@ def main():
     X, y, scaler, feature_cols = load_preprocessed_data()
     
     # Define target column
-    target_col = 'Close'
+    target_col = 'Close_log_ret'
     print(f"Using target column: {target_col} for evaluation")
     
     # Split data

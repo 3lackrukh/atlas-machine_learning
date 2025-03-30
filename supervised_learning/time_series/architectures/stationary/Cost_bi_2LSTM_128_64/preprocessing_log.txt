@@ -1,0 +1,139 @@
+blackrukh@3lackrukh:~/atlas-machine_learning/supervised_learning/time_series$ ./preprocess_data.py 
+Loading and merging data...
+Coinbase data shape: (2099760, 8)
+Bitstamp data shape: (4363457, 8)
+Cleaning data...
+Missing values before cleaning:
+Timestamp                  0
+Open                 1346046
+High                 1346046
+Low                  1346046
+Close                1346046
+Volume_(BTC)         1346046
+Volume_(Currency)    1346046
+Weighted_Price       1346046
+exchange                   0
+dtype: int64
+Shape after cleaning: (5117171, 8)
+Engineering features...
+Shape after feature engineering: (5117171, 17)
+Columns with remaining NaN values:
+volatility_1hour            2122
+volume_change_(BTC)           16
+volume_change_(Currency)      16
+dtype: int64
+/home/blackrukh/atlas-machine_learning/supervised_learning/time_series/./preprocess_data.py:142: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  df_feat = df_feat.fillna(method='ffill').fillna(method='bfill')
+NaN values after filling: 0
+Final shape after feature engineering: (5117171, 17)
+Resampling to hourly frequency...
+Hourly resampled data shape: (69315, 16)
+Transforming non-stationary series...
+
+--- CHECKING STATIONARITY OF TRANSFORMED SERIES ---
+
+ADF Test for Open_log_ret
+ADF Statistic: -36.16196016488017
+p-value: 0.0
+Critical Value (1%): -3.4304444283709197
+Critical Value (5%): -2.861581735656361
+Critical Value (10%): -2.566792214465025
+Series is stationary
+
+ADF Test for High_log_ret
+ADF Statistic: -34.611608501000006
+p-value: 0.0
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
+Series is stationary
+
+ADF Test for Low_log_ret
+ADF Statistic: -77.33724136931416
+p-value: 0.0
+Critical Value (1%): -3.4304443724981057
+Critical Value (5%): -2.861581710961966
+Critical Value (10%): -2.566792201320973
+Series is stationary
+
+ADF Test for Close_log_ret
+ADF Statistic: -35.73043072172699
+p-value: 0.0
+Critical Value (1%): -3.430444431098115
+Critical Value (5%): -2.8615817368617136
+Critical Value (10%): -2.566792215106596
+Series is stationary
+
+ADF Test for Weighted_Price_log_ret
+ADF Statistic: -34.81439965492024
+p-value: 0.0
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
+Series is stationary
+Scaling data...
+Shape before scaling: (69314, 21)
+Shape after scaling: (69314, 21)
+Checking for infinite values before scaling: False
+Checking for NaN values before scaling: False
+
+ADF Test for Open_log_ret
+ADF Statistic: -34.89480063584322
+p-value: 0.0
+Critical Value (1%): -3.430444431098115
+Critical Value (5%): -2.8615817368617136
+Critical Value (10%): -2.566792215106596
+Series is stationary
+
+ADF Test for High_log_ret
+ADF Statistic: -34.09483628691012
+p-value: 0.0
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
+Series is stationary
+
+ADF Test for Low_log_ret
+ADF Statistic: -34.210338064573314
+p-value: 0.0
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
+Series is stationary
+
+ADF Test for Close_log_ret
+ADF Statistic: -35.34058325897593
+p-value: 0.0
+Critical Value (1%): -3.430444431098115
+Critical Value (5%): -2.8615817368617136
+Critical Value (10%): -2.566792215106596
+Series is stationary
+
+ADF Test for Volume_(BTC)
+ADF Statistic: -16.986308517980223
+p-value: 8.936124438335035e-30
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
+Series is stationary
+
+ADF Test for Volume_(Currency)
+ADF Statistic: -10.073060810912073
+p-value: 1.2442358421377563e-17
+Critical Value (1%): -3.430444431098115
+Critical Value (5%): -2.8615817368617136
+Critical Value (10%): -2.566792215106596
+Series is stationary
+
+ADF Test for Weighted_Price_log_ret
+ADF Statistic: -34.180394559125794
+p-value: 0.0
+Critical Value (1%): -3.4304444324617718
+Critical Value (5%): -2.861581737464416
+Critical Value (10%): -2.566792215427396
+Series is stationary
+Creating sequences for time series forecasting...
+Saving preprocessed data...
+Saved preprocessed data to preprocessed_data
+Input shape: (69289, 24, 21), Target shape: (69289,)
+Preprocessing completed!
