@@ -34,7 +34,7 @@ def bag_of_words(sentences, vocab=None):
         for word in sentence.split():
             embeddings[i, vocab.index(word)] += 1
 
-    return embeddings, vocab
+    return embeddings, np.array(vocab)
 
 
 def strip(sentence):
