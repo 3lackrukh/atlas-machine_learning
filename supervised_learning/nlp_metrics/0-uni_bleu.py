@@ -17,9 +17,19 @@ def uni_bleu(references, sentence):
     """
     # Get total number of candidate words
     len_sen = len(sentence)
+    
+    # Get effective reference length
+    ref_lens = [len(reference) for reference in references]
+    closest_ref_len = min(ref_lens, key=lambda ref_len: abs(ref_len - len_sen))
+    
+    # Calculate brevity penalty
+    if len_sen >= closest_ref_len:
+        brevity_penalty = 1
+    else:
+        brevity_penalty = np.exp(1 - (closest_ref_len / len_sen))
 
 
-    # Initialize a dictionary to store the count of each word in the sentence
+    # Dictionary to store count for each word in sentence
     sentence_dict = {}
 
     # Iterate over each word in the sentence
@@ -33,7 +43,7 @@ def uni_bleu(references, sentence):
     print(f'sentence_dict: {sentence_dict}')
     
     # Dictionary to store max count of any word in any reference
-    refs_dict = {}
+    ref_max_dict = {}
 
     # Iterate over each word in each reference
     for reference in references:
@@ -44,10 +54,20 @@ def uni_bleu(references, sentence):
                 ref_dict[word] = 0
             # Update the maximum count of the word
             ref_dict[word] += 1
+            
         # Update the maximum count of the word in refs_dict
         for word, count in ref_dict.items():
-            refs_dict[word] = max(refs_dict.get(word, 0), count)
+            ref_max_dict[word] = max(ref_max_dict.get(word, 0), count)
         print(f'ref_dict: {ref_dict}')
-        print(f'refs_dict: {refs_dict}')
+        print(f'ref_max_dict: {ref_max_dict}')
 
+    # Calculate and store clipped counts
+    clipped_count = 0
+    for word, count in sentence_dict.items():
+        # Clip count to maximum references count (or 0 if not in refs_dict)
+        clipped_count += min(count, ref_max_dict.get(word, 0))
 
+    # Calculate precision
+    precision = clipped_count / len_sen
+    
+    return brevity_penalty * precision
