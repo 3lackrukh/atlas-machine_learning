@@ -55,10 +55,10 @@ def ngram_bleu(references, sentence, n):
     # Count n-grams in candidate sentence
     sentence_counts = Counter(sentence_ngrams)
 
-    # Dictionary to store max count of any word in any reference
+    # Dictionary to store max count of any ngram in any reference
     ref_max_counts = {}
 
-    # Get max word counts across references
+    # Get max ngram counts across references
     for reference in ref_ngrams:
         ref_counts = Counter(reference)
         for ngram, count in ref_counts.items():
