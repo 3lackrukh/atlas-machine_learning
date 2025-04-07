@@ -77,6 +77,6 @@ def ngram_bleu(references, sentence, n):
     print(f'clipped_count: {clipped_count}')
 
     # Calculate precision
-    precision = clipped_count / len_sen
+    precision = clipped_count / len(sentence_ngrams) if len(sentence_ngrams) > 0 else 0
 
     return brevity_penalty * precision
