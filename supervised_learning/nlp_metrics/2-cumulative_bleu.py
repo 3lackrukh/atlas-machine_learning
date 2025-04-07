@@ -21,7 +21,7 @@ def get_ngrams(sentence, n):
     return ngrams
 
 
-def cumulative_bleu(references, sentence, n):
+def ngram_bleu(references, sentence, n):
     """
     Calculates the n-gram BLEU score for a sentence
 
@@ -29,10 +29,10 @@ def cumulative_bleu(references, sentence, n):
         references: list of reference translations
             each reference translation is a list of words in the translation
         sentence: list containing the model proposed sentence
-        n: size of largest n-gram to use for evaluation
+        n: size n-gram to use for evaluation
 
     Returns:
-        the cumulative n-gram BLEU score
+        the n-gram BLEU score
     """
     # Get candidate length and reference lengths
     len_sen = len(sentence)
@@ -72,3 +72,28 @@ def cumulative_bleu(references, sentence, n):
     precision = clipped_count / len(sentence_ngrams)
 
     return brevity_penalty * precision
+
+
+def cumulative_bleu(references, sentence, n):
+    """
+    Calculates the cumulative n-gram BLEU score for a list of sentences
+
+    Parameters:
+        references: list of reference translations
+            each reference translation is a list of words in the translation
+        sentence: list containint model proposed sentence
+            each sentence is a list of words
+        n: size of largest n-gram to use for evaluation
+
+    Returns:
+        the cumulative n-gram BLEU score
+    """
+    # Calculate n-gram BLEU score for each sentence
+    bleu_scores = [ngram_bleu(references, sentence, i)
+                   for i in range(1, n + 1)]
+
+    # Calculate cumulative score
+    cumulative_score = np.sum(bleu_scores) / n
+
+    return cumulative_score
+
