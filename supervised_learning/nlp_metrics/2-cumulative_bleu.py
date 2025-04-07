@@ -91,7 +91,7 @@ def cumulative_bleu(references, sentence, n):
     # Calculate n-gram BLEU score for each sentence
     bleu_scores = [ngram_bleu(references, sentence, i)
                    for i in range(1, n + 1)]
-    
+
     # Equally weight each n-gram score
     weighted_scores = [score ** (1 / n) for score in bleu_scores]
 
@@ -99,4 +99,3 @@ def cumulative_bleu(references, sentence, n):
     cumulative_score = np.prod(weighted_scores)
 
     return cumulative_score
-
