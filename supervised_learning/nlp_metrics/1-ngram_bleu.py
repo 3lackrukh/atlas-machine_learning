@@ -32,7 +32,7 @@ def ngram_bleu(references, sentence, n):
         n: size of n-gram to use for evaluation
 
     Returns:
-        the unigram BLEU score
+        the n-gram BLEU score
     """
     # Get candidate length and reference lengths
     len_sen = len(sentence)
