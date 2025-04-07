@@ -48,21 +48,33 @@ def ngram_bleu(references, sentence, n):
     else:
         brevity_penalty = np.exp(1 - (closest_ref_len / len_sen))
 
-    # Count words in candidate sentence``
-    sentence_counts = Counter(sentence)
+    # Count n-grams in candidate sentence and references    
+    sentence_ngrams = get_ngrams(sentence, n)
+    ref_ngrams = [get_ngrams(reference, n) for reference in references]
+    print(f'sentence_ngrams: {sentence_ngrams}')
+    print(f'ref_ngrams: {ref_ngrams}')
+    
+    # Count n-grams in candidate sentence
+    sentence_counts = Counter(sentence_ngrams)
+    print(f'sentence_counts: {sentence_counts}')
 
     # Dictionary to store max count of any word in any reference
     ref_max_counts = {}
 
     # Get max word counts across references
-    for reference in references:
+    for reference in ref_ngrams:
         ref_counts = Counter(reference)
-        for word, count in ref_counts.items():
-            ref_max_counts[word] = max(ref_max_counts.get(word, 0), count)
+        print(f'ref_counts: {ref_counts}')
+        for ngram, count in ref_counts.items():
+            ref_max_counts[ngram] = max(ref_max_counts.get(ngram, 0), count)
+    
+    print(f'ref_max_counts: {ref_max_counts}')
 
     # Calculate and store clipped counts
-    clipped_count = sum(min(count, ref_max_counts.get(word, 0))
-                        for word, count in sentence_counts.items())
+    clipped_count = sum(min(count, ref_max_counts.get(ngram, 0))
+                        for ngram, count in sentence_counts.items())
+    
+    print(f'clipped_count: {clipped_count}')
 
     # Calculate precision
     precision = clipped_count / len_sen
