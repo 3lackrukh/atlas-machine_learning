@@ -1,0 +1,1 @@
+This folder contains project files created to practice leveraging transformers for machine translation tasks using Tensorflow Datasets and MLOps in Keras. This project is structured to facilitate the development and testing of transformer models for machine translation tasks. It includes modules for dataset preparation, model training, and evaluation.
