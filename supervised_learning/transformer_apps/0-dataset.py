@@ -36,7 +36,7 @@ class Dataset:
         # Initialize pretrained tokenizers
         tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             "neuralmind/bert-base-portuguese-cased",
-            vocab_size=2**15,
+            vocab_size=2**13,
             language="pt")
         tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             "bert-base-uncased",
