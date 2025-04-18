@@ -40,7 +40,7 @@ class Dataset:
             language="pt")
         tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             "bert-base-uncased",
-            vocab_size=2**15,
+            vocab_size=2**13,
             language="en")
 
         return tokenizer_pt, tokenizer_en
