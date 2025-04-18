@@ -33,7 +33,7 @@ class Dataset:
             tokenizer_pt: the tokenizer used for the Portuguese sentences
             tokenizer_en: the tokenizer used for the English sentences
         """
-        # Initialize pretrained tokenizers
+        # Initialize pretrained tokenizers with limited vocab size
         tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             "neuralmind/bert-base-portuguese-cased",
             vocab_size=2**13,
