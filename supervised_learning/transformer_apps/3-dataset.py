@@ -37,8 +37,8 @@ class Dataset:
         self.data_train = self.data_train.map(self.tf_encode)
         self.data_train = self.data_train.filter(
             lambda pt, en: tf.logical_and(
-                tf.shape(pt) <= max_len,
-                tf.shape(en) <= max_len
+                tf.size(pt) <= max_len,
+                tf.size(en) <= max_len
             )
         )
         self.data_train = self.data_train.cache()
@@ -55,8 +55,8 @@ class Dataset:
         self.data_valid = self.data_valid.map(self.tf_encode)
         self.data_valid = self.data_valid.filter(
             lambda pt, en: tf.logical_and(
-                tf.shape(pt) <= max_len,
-                tf.shape(en) <= max_len
+                tf.size(pt) <= max_len,
+                tf.size(en) <= max_len
             )
         )
         self.data_valid = self.data_valid.padded_batch(
