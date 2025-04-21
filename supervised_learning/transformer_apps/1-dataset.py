@@ -39,7 +39,7 @@ class Dataset:
         # Set vocab size according to specified parameters
         vocab_size = 2**13
 
-        # Initialize pretrained tokenizers
+        # Initialize and train pretrained tokenizers
         tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             "neuralmind/bert-base-portuguese-cased"
             ).train_new_from_iterator(pt_sentences, vocab_size=vocab_size)
@@ -49,3 +49,24 @@ class Dataset:
             ).train_new_from_iterator(en_sentences, vocab_size=vocab_size)
 
         return tokenizer_pt, tokenizer_en
+
+    def encode(self, pt, en):
+        """
+        Encodes a translation into tokens
+
+        Parameters:
+            pt: tf.Tensor containing the Portuguese sentence
+            en: tf.Tensor containing the corresponding English sentence
+        Returns:
+            pt_tokens: np.ndarray containing the Portuguese tokens
+            en_tokens: np.ndarray containing the English tokens
+        """
+        # Decode tensors into strings
+        pt = pt.numpy().decode('utf-8')
+        en = en.numpy().decode('utf-8')
+
+        # Encode sentences into tokens
+        pt_tokens = self.tokenizer_pt.encode(pt, return_tensors='np').squeeze()
+        en_tokens = self.tokenizer_en.encode(en, return_tensors='np').squeeze()
+
+        return pt_tokens, en_tokens
