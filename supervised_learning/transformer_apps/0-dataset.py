@@ -35,15 +35,15 @@ class Dataset:
         # Extract and decode sentences into lists
         pt_sentences = [pt.numpy().decode('utf-8') for pt, _ in data]
         en_sentences = [en.numpy().decode('utf-8') for _, en in data]
-        
+
         # Set vocab size according to specified parameters
         vocab_size = 2**13
-        
+
         # Initialize pretrained tokenizers
         tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             "neuralmind/bert-base-portuguese-cased"
             ).train_new_from_iterator(pt_sentences, vocab_size=vocab_size)
-        
+
         tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             "bert-base-uncased"
             ).train_new_from_iterator(en_sentences, vocab_size=vocab_size)
