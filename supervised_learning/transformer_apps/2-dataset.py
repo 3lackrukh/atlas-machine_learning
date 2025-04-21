@@ -21,7 +21,7 @@ class Dataset:
 
         self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
             self.data_train)
-        
+
         self.data_train = self.data_train.map(self.tf_encode)
         self.data_valid = self.data_valid.map(self.tf_encode)
 
@@ -76,11 +76,11 @@ class Dataset:
         en_tokens[0] = self.vocab_size
         pt_tokens[-1] = self.vocab_size + 1
         en_tokens[-1] = self.vocab_size + 1
-        
+
         # Convert to lists for compatibility
         return list(pt_tokens), list(en_tokens)
 
-    def tf_encode (self, pt, en):
+    def tf_encode(self, pt, en):
         """
         Acts as a tensorflow wrapper for the encode instance method
 
