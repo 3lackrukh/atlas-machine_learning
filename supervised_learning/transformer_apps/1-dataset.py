@@ -2,6 +2,7 @@
 """Module defines the Dataset class"""
 import transformers
 import tensorflow_datasets as tfds
+import numpy as np
 
 
 class Dataset:
@@ -9,6 +10,7 @@ class Dataset:
 
     def __init__(self):
         """class consrtuctor"""
+        self.vocab_size = 2**13
         self.data_train = tfds.load(
             'ted_hrlr_translate/pt_to_en',
             split='train', as_supervised=True)
@@ -36,17 +38,14 @@ class Dataset:
         pt_sentences = [pt.numpy().decode('utf-8') for pt, _ in data]
         en_sentences = [en.numpy().decode('utf-8') for _, en in data]
 
-        # Set vocab size according to specified parameters
-        vocab_size = 2**13
-
         # Initialize and train pretrained tokenizers
         tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             "neuralmind/bert-base-portuguese-cased"
-            ).train_new_from_iterator(pt_sentences, vocab_size=vocab_size)
+            ).train_new_from_iterator(pt_sentences, vocab_size=self.vocab_size)
 
         tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             "bert-base-uncased"
-            ).train_new_from_iterator(en_sentences, vocab_size=vocab_size)
+            ).train_new_from_iterator(en_sentences, vocab_size=self.vocab_size)
 
         return tokenizer_pt, tokenizer_en
 
@@ -69,4 +68,10 @@ class Dataset:
         pt_tokens = self.tokenizer_pt.encode(pt, return_tensors='np').squeeze()
         en_tokens = self.tokenizer_en.encode(en, return_tensors='np').squeeze()
 
+        # Replace the start and end tokens
+        pt_tokens[0] = self.vocab_size
+        en_tokens[0] = self.vocab_size
+        pt_tokens[-1] = self.vocab_size + 1
+        en_tokens[-1] = self.vocab_size + 1
+        
         return pt_tokens, en_tokens
