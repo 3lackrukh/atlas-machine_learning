@@ -22,6 +22,9 @@ class Dataset:
 
         self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
             self.data_train)
+        
+        self.data_train = self.data_train.map(self.tf_encode)
+        self.data_valid = self.data_valid.map(self.tf_encode)
 
     def tokenize_dataset(self, data):
         """
@@ -77,3 +80,24 @@ class Dataset:
         
         # Convert to lists for compatibility
         return list(pt_tokens), list(en_tokens)
+
+    def tf_encode (self, pt, en):
+        """
+        Acts as a tensorflow wrapper for the encode instance method
+
+        Parameters:
+            pt: tf.Tensor containing the Portuguese sentence
+            en: tf.Tensor containing the corresponding English sentence
+        Returns:
+            pt_tokens: tf.Tensor containing the Portuguese tokens
+            en_tokens: tf.Tensor containing the English tokens
+        """
+        # Encode the Portuguese and English sentences
+        pt_tokens, en_tokens = tf.py_function(
+            self.encode, [pt, en], [tf.int64, tf.int64])
+
+        # Set tensor shapes
+        pt_tokens.set_shape([None])
+        en_tokens.set_shape([None])
+
+        return pt_tokens, en_tokens
