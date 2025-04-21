@@ -2,7 +2,6 @@
 """Module defines the Dataset class"""
 import transformers
 import tensorflow_datasets as tfds
-import numpy as np
 import tensorflow as tf
 
 
