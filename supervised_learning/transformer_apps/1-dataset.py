@@ -74,4 +74,5 @@ class Dataset:
         pt_tokens[-1] = self.vocab_size + 1
         en_tokens[-1] = self.vocab_size + 1
         
-        return pt_tokens, en_tokens
+        # Convert to lists for compatibility
+        return list(pt_tokens), list(en_tokens)
