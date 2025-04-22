@@ -17,33 +17,41 @@ def question_answer(question, reference):
         answer: (str) the answer to the question 
     """
     # Load the pre-trained BERT model and tokenizer
-    bert_model = hub.load("https://tfhub.dev/see--/bert-uncased-tf2-qa/1")
+    bert_model = hub.load("https://www.kaggle.com/models/seesee/bert/TensorFlow2/uncased-tf2-qa/1")
     tokenizer = BertTokenizer.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
     
     # Preprocess the input and reference
-    inputs = tokenizer(question, reference, add_special_tokens=True, return_tensors="tf")
+    q_tokens = tokenizer.tokenize(question)
+    r_tokens = tokenizer.tokenize(reference)
+    
+    # Build full token sequence with special tokens
+    tokens = ["[CLS]"] + q_tokens + ["[SEP]"] + r_tokens + ["[SEP]"]
+    
+    # Convert tokens to IDs
+    input_word_ids = tokenizer.convert_tokens_to_ids(tokens)
+    
+    # Create input mask (1 for real tokens, 0 for padding)
+    input_mask = [1] * len(input_word_ids)
+    
+    # Create token type IDs (0 for question, 1 for reference)
+    input_type_ids = [0] * (len(q_tokens) + 2) + [1] * (len(r_tokens) + 1)
+    
+    # Convert to tensors and add batch dimension
+    input_word_ids, input_mask, input_type_ids = map(
+        lambda t: tf.expand_dims(tf.convert_to_tensor(t, dtype=tf.int32), 0),
+        (input_word_ids, input_mask, input_type_ids)
+    )
 
-    # Get the input IDs, attention mask, and token type IDs
-    # Note: The tokenizer returns a dictionary with input_ids, attention_mask, and token_type_ids
-    input_ids = inputs["input_ids"]
-    attention_mask = inputs["attention_mask"]
-    token_type_ids = inputs["token_type_ids"]
+    # Get the model's output
+    outputs = bert_model([input_word_ids, input_mask, input_type_ids])
     
-    # Pass inputs through the BERT model
-    outputs = bert_model([input_ids, attention_mask, token_type_ids])
-    start_logits = outputs[0]
-    end_logits = outputs[1]
+    # Find start and end positions
+    # don't forget the [CLS] token
+    short_start = tf.argmax(outputs[0][0, 1:]) + 1
+    short_end = tf.argmax(outputs[1][0, 1:]) + 1
     
-    # Find the highest probability start and end indices
-    start_idx = tf.argmax(start_logits, axis=1).numpy()[0]
-    end_idx = tf.argmax(end_logits, axis=1).numpy()[0]
+    #Extract answer tokens and convert to string
+    answer_tokens = tokens[short_start: short_end + 1]
+    answer = tokenizer.convert_tokens_to_string(answer_tokens)
     
-    # Get tokens from these indices
-    tokens = input_ids[0]
-    answer_tokens = tokens[start_idx:end_idx + 1]
-    
-    # Convert tokens to string
-    answer = tokenizer.decode(answer_tokens, skip_special_tokens=True)
-    print(type(answer))
-    print(answer)
     return answer
