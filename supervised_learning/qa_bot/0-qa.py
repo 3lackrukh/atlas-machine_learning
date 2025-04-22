@@ -50,6 +50,11 @@ def question_answer(question, reference):
     short_start = tf.argmax(outputs[0][0, 1:]) + 1
     short_end = tf.argmax(outputs[1][0, 1:]) + 1
     
+    # Handle case where no answer is found
+    if short_start >= short_end:
+        print("Sorry, I couldn't find an answer to your question.")
+        return None
+    
     #Extract answer tokens and convert to string
     answer_tokens = tokens[short_start: short_end + 1]
     answer = tokenizer.convert_tokens_to_string(answer_tokens)
