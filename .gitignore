@@ -6,6 +6,7 @@ supervised_learning/optimization/MNIST.npz
 supervised_learning/optimization/Binary_train.npz
 supervised_learning/error_analysis/labels_logits.npz
 supervised_learning/error_analysis/confusion.npz
+supervised_learning/qa_bot/ZendeskArticles
 *.h5
 *.npy
 *.npz
