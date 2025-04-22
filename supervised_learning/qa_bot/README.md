@@ -1,0 +1,1 @@
+This folder contains utility functions for creating masks used in transformer models for sequence-to-sequence tasks. The primary function create_masks() generates padding and lookahead masks required for efficient attention mechanisms in transformer architectures.
