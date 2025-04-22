@@ -17,7 +17,7 @@ def question_answer(question, reference):
         answer: (str) the answer to the question 
     """
     # Load the pre-trained BERT model and tokenizer
-    bert_model = hub.load("https://www.kaggle.com/models/seesee/bert/TensorFlow2/uncased-tf2-qa/1")
+    bert_model = hub.load("https://tfhub.dev/see--/bert-uncased-tf2-qa/1")
     tokenizer = BertTokenizer.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
     
     # Preprocess the input and reference
@@ -31,9 +31,8 @@ def question_answer(question, reference):
     
     # Pass inputs through the BERT model
     outputs = bert_model([input_ids, attention_mask, token_type_ids])
-    
-    print(type(outputs))
-    print(outputs)
+    start_logits = outputs[0]
+    end_logits = outputs[1]
     
     # Find the highest probability start and end indices
     start_idx = tf.argmax(start_logits, axis=1).numpy()[0]
@@ -45,5 +44,6 @@ def question_answer(question, reference):
     
     # Convert tokens to string
     answer = tokenizer.decode(answer_tokens, skip_special_tokens=True)
-    
+    print(type(answer))
+    print(answer)
     return answer
