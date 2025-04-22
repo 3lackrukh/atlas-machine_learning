@@ -21,4 +21,29 @@ def question_answer(question, reference):
     tokenizer = BertTokenizer.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
     
     # Preprocess the input and reference
-    inputs = tokenizer.encode_plus(question, reference, add_special_tokens=True, return_tensors="tf")
+    inputs = tokenizer(question, reference, add_special_tokens=True, return_tensors="tf")
+
+    # Get the input IDs, attention mask, and token type IDs
+    # Note: The tokenizer returns a dictionary with input_ids, attention_mask, and token_type_ids
+    input_ids = inputs["input_ids"]
+    attention_mask = inputs["attention_mask"]
+    token_type_ids = inputs["token_type_ids"]
+    
+    # Pass inputs through the BERT model
+    outputs = bert_model([input_ids, attention_mask, token_type_ids])
+    
+    print(type(outputs))
+    print(outputs)
+    
+    # Find the highest probability start and end indices
+    start_idx = tf.argmax(start_logits, axis=1).numpy()[0]
+    end_idx = tf.argmax(end_logits, axis=1).numpy()[0]
+    
+    # Get tokens from these indices
+    tokens = input_ids[0]
+    answer_tokens = tokens[start_idx:end_idx + 1]
+    
+    # Convert tokens to string
+    answer = tokenizer.decode(answer_tokens, skip_special_tokens=True)
+    
+    return answer
