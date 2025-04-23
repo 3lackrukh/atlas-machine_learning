@@ -40,7 +40,7 @@ def semantic_search(corpus_path, sentence):
             doc_text = f.read()
             
             # Split document into sentences with regex pattern
-            s_pattern = r'(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s+(?=[A-Z])'
+            s_pattern = r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s+(?=[A-Z])'
             sentences = re.split(s_pattern, doc_text)
             
             # Filter sentences shorter than 10 characters
@@ -59,15 +59,22 @@ def semantic_search(corpus_path, sentence):
                 )
                 s_similarities.append(float(similarity))
                 
-            # Get mean similarity for the document
-            similarity = np.mean(s_similarities)
-            print(f"Similarity to query: {similarity}")
+            # Weighted similarity scoring
+            # best match (60% weight)
+            # top 3 average (30% weight)
+            # total average (10% weight)
+            sorted_similarities = sorted(s_similarities, reverse=True)
+            
+            best_match = sorted_similarities[0]
+            top_3_avg = np.mean(sorted_similarities[:3]) if len(sorted_similarities) >= 3 else best_match
+            total_avg = np.mean(sorted_similarities)
+            similarity = (0.6 * best_match) + (0.3 * top_3_avg) + (0.1 * total_avg)
+            print(f"Weighted similarity to query: {similarity}")
+            
             # Update most similar document if similarity is higher
             if similarity > max_similarity:
                 max_similarity = similarity
                 most_similar_doc = doc_text
                 print(f"New most similar doc: {doc}")
-    
-    print(f" Most similar document: {most_similar_doc}")
                 
     return most_similar_doc
