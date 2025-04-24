@@ -192,16 +192,16 @@ def question_answer(corpus_path):
             break
 
         # Measure performance
-        import time
-        start_time = time.time()
+        #import time
+        #start_time = time.time()
 
         # Find most relevant document and extract answer
         document = semantic_search(corpus_path, question)
         answer = document_search(question, document)
 
         # Print performance metrics
-        total_time = time.time() - start_time
-        print("Query time:", total_time, "seconds")
+        #total_time = time.time() - start_time
+        #print("Query time:", total_time, "seconds")
 
         if answer is not None:
             print("A:", answer)
