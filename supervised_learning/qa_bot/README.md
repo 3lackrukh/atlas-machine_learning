@@ -36,7 +36,7 @@ pip install --user numpy==1.25.2
 
 ### Dataset
 
-The project uses a collection of Holberton USA Zendesk Articles. You should extract the `ZendeskArticles.zip` file in the project directory.
+The project uses a collection of Holberton USA Zendesk Articles located in the ZendeskArticles folder in the project directory.
 
 ## 📁 Project Structure
 
