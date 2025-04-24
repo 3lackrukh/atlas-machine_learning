@@ -10,9 +10,9 @@ from transformers import BertTokenizer
 _s_encoder = None
 _bert_model = None
 _tokenizer = None
-_doc_embeddings = None
+_doc_embeds = None
 _doc_texts = []
-_embeddings_loaded = False
+_embeds_loaded = False
 
 
 def load_models():
@@ -21,16 +21,15 @@ def load_models():
     for semantic_search and document_search.
     """
     global _s_encoder, _bert_model, _tokenizer
-    
-    
+
     _s_encoder = hub.load("https://tfhub.dev/google/"
                           "universal-sentence-encoder-large/5")
-    
+
     _bert_model = hub.load("https://www.kaggle.com/models/seesee/bert/"
-                          "TensorFlow2/uncased-tf2-qa/1")
-    
+                           "TensorFlow2/uncased-tf2-qa/1")
+
     _tokenizer = BertTokenizer.from_pretrained("bert-large-uncased-whole-word-"
-                                              "masking-finetuned-squad")
+                                               "masking-finetuned-squad")
 
 
 def load_embeddings(corpus_path):
@@ -40,48 +39,49 @@ def load_embeddings(corpus_path):
     Parameters
         corpus_path: (str) the path to the corpus file
     """
-    global _doc_embeddings, _doc_texts, _embeddings_loaded
-    
-    if _embeddings_loaded:
+    global _doc_embeds, _doc_texts, _embeds_loaded
+
+    if _embeds_loaded:
         return
 
     cache_dir = os.path.join(corpus_path, ".cache")
-    doc_embeddings_cache = os.path.join(cache_dir, "doc_embeddings.npy")
+    doc_embeds_cache = os.path.join(cache_dir, "doc_embeddings.npy")
     doc_texts_cache = os.path.join(cache_dir, "doc_texts.npy")
-    
+
     # Create cache directory if it doesn't exist
     if not os.path.exists(cache_dir):
         os.makedirs(cache_dir)
-        
-    if os.path.exists(doc_embeddings_cache) and os.path.exists(doc_texts_cache):
+
+    if os.path.exists(doc_embeds_cache) and os.path.exists(doc_texts_cache):
         # Load embeddings from cache
-        _doc_embeddings = np.load(doc_embeddings_cache, allow_pickle=True)
+        _doc_embeds = np.load(doc_embeds_cache, allow_pickle=True)
         _doc_texts = np.load(doc_texts_cache, allow_pickle=True).tolist()
-    else: # Extract embeddings from corpus
-        doc_texts = []
+    else:  # Extract embeddings from corpus
         for doc in os.listdir(corpus_path):
-            if doc.endswith(".md"):
-                with open(os.path.join(corpus_path, doc), "r", encoding="utf-8") as f:
-                    doc_texts.append(f.read())
-                    
+            if not doc.endswith(".md"):
+                continue
+
+            with open(os.path.join(corpus_path, doc),
+                      "r", encoding="utf-8") as f:
+                _doc_texts.append(f.read())
+
     # Encode documents in batches
     batch_size = 16
-    doc_embeddings = []
-        
-    for i in range(0, len(doc_texts), batch_size):
-        batch = doc_texts[i:i + batch_size]
-        batch_embeddings = _s_encoder(batch)
-        doc_embeddings.append(batch_embeddings.numpy())
-        
+    doc_embeds = []
+
+    for i in range(0, len(_doc_texts), batch_size):
+        batch = _doc_texts[i:i + batch_size]
+        batch_embeds = _s_encoder(batch)
+        doc_embeds.append(batch_embeds.numpy())
+
     # Concatenate all batch embeddings
-    _doc_embeddings = np.vstack(doc_embeddings)
-    _doc_texts = doc_texts
-    
+    _doc_embeds = np.vstack(doc_embeds)
+
     # Save embeddings to cache
-    np.save(doc_embeddings_cache, _doc_embeddings)
+    np.save(doc_embeds_cache, _doc_embeds)
     np.save(doc_texts_cache, np.array(_doc_texts, dtype=object))
-    
-    _embeddings_loaded = True
+
+    _embeds_loaded = True
 
 
 def semantic_search(corpus_path, sentence):
@@ -94,24 +94,24 @@ def semantic_search(corpus_path, sentence):
     Returns
         (str) the reference text of the document most similar to the sentence
     """
-    global _s_encoder, _doc_embeddings, _doc_texts
-    
+    global _s_encoder, _doc_embeds, _doc_texts
+
     # Load models if not loaded yet
     if _s_encoder is None:
         load_models()
-        
+
     # Load or create document embeddings
     load_embeddings(corpus_path)
-    
+
     # Encode the query sentence
     q_embedding = _s_encoder([sentence]).numpy()
-    
+
     # Compute similarities (vectorized)
-    similarities = np.inner(q_embedding, _doc_embeddings)[0]
-    
+    similarities = np.inner(q_embedding, _doc_embeds)[0]
+
     # Find the document with highest similarity
     max_idx = np.argmax(similarities)
-    
+
     return _doc_texts[max_idx]
 
 
@@ -127,7 +127,7 @@ def document_search(question, reference):
     """
     # Load the pre-trained BERT model and tokenizer
     global _bert_model, _tokenizer
-    
+
     if _bert_model is None:
         load_models()
 
@@ -190,19 +190,19 @@ def question_answer(corpus_path):
         if question.lower() in ["exit", "quit", "goodbye", "bye"]:
             print("A: Goodbye")
             break
-        
+
         # Measure performance
         import time
         start_time = time.time()
-        
+
         # Find most relevant document and extract answer
         document = semantic_search(corpus_path, question)
         answer = document_search(question, document)
-        
+
         # Print performance metrics
         total_time = time.time() - start_time
         print("Query time:", total_time, "seconds")
-        
+
         if answer is not None:
             print("A:", answer)
 
