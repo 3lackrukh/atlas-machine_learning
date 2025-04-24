@@ -19,7 +19,8 @@ def semantic_search(corpus_path, sentence):
         (str) the reference text of the document most similar to the sentence
     """
     # Load sentence encoder model
-    s_encoder = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
+    # large version optimized for greater-than-word length text
+    s_encoder = hub.load("https://tfhub.dev/google/universal-sentence-encoder-large/5")
     
     # Encode the query sentence
     q_embedding = s_encoder([sentence])
