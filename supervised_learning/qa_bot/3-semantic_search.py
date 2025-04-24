@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Module defines the 3-semantic_search method"""
 import os
-import regex as re
 import numpy as np
 import tensorflow_hub as hub
 
