@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Module defines the 1-q_init method"""
 import numpy as np
-import gymnasium as gym
 
 
 def q_init(env):
