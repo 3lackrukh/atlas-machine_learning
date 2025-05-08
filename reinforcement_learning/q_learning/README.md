@@ -1,0 +1,1 @@
+This folder contains a series of Python implementations for Q-learning reinforcement learning algorithms, where an agent learns to navigate the FrozenLake environment from Gymnasium through progressive tasks including environment loading, Q-table initialization, epsilon-greedy strategy implementation, training, and visualization of the trained agent's performance.
