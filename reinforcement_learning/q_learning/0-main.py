@@ -18,3 +18,5 @@ print(env.unwrapped.desc)
 
 env = load_frozen_lake(map_name='4x4')
 print(env.unwrapped.desc)
+
+env.close()
