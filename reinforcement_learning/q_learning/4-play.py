@@ -44,4 +44,4 @@ def play(env, Q, max_steps=100):
             break
 
     total_rewards.append(ep_reward)
-    return total_rewards, outputs
+    return ep_reward, outputs
