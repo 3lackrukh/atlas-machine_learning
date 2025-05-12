@@ -12,21 +12,21 @@ def train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
 
     Parameters:
         env: The FrozenLakeEnv instance
-        Q: numpy.ndarray, The Q-table
-        episodes: int, The total number of episodes to train over
-        max_steps: int, The maximum number of steps per episode
-        alpha: float, The learning rate
-        gamma: float, The discount rate
-        epsilon: float, The initial epsilon value for exploration vs. exploitation
-        min_epsilon: float, The minimum value that epsilon should decay to
-        epsilon_decay: float, The decay rate for updating epsilon between episodes
+        Q: numpy.ndarray, Q-table
+        episodes: int, total number of episodes to train over
+        max_steps: int, maximum number of steps per episode
+        alpha: float, learning rate
+        gamma: float, discount rate
+        epsilon: float, initial epsilon value for exploration vs. exploitation
+        min_epsilon: float, minimum value that epsilon should decay to
+        epsilon_decay: float, decay rate for updating epsilon between episodes
 
-    Returns: 
+    Returns:
         Q: The updated Q-table
         total_rewards: list, containing the rewards per episode
     """
     total_rewards = []
-    
+
     for episode in range(episodes):
         state, _ = env.reset()
         ep_reward = 0
@@ -44,8 +44,8 @@ def train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
             ep_reward += reward
 
             # Update Q-table - handle terminal state
-            td_target = reward if done else reward + gamma * np.max(Q[next_state])
-            Q[state, action] += alpha * (td_target - Q[state, action])
+            target = reward if done else reward + gamma * np.max(Q[next_state])
+            Q[state, action] += alpha * (target - Q[state, action])
 
             # Update state
             state = next_state
