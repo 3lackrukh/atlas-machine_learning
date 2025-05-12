@@ -6,12 +6,12 @@ import numpy as np
 def play(env, Q, max_steps=100):
     """
     Plays an episode with the trained agent
-    
+
     Parameters:
         env: the FrozenLakeEnv instance
         Q: numpy.ndarray, the Q-table
         max_steps: the maximum number of steps in the episode
-        
+
     Returns:
         total_rewards: list total rewards for the episode
         outputs: list of rendered board states at each step
