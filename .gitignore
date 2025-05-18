@@ -6,6 +6,7 @@ supervised_learning/optimization/MNIST.npz
 supervised_learning/optimization/Binary_train.npz
 supervised_learning/error_analysis/labels_logits.npz
 supervised_learning/error_analysis/confusion.npz
+reinforcement_learning/deep_q_learning/Anaconda3-2023.09-0-Linux-x86_64.sh
 *.h5
 *.npy
 *.npz

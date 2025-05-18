@@ -1,0 +1,16 @@
+name: atari_dqn
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+    - numpy==1.25.2
+    - gymnasium[atari]==0.29.1
+    - tensorflow==2.15.0
+    - keras==2.15.0
+    - keras-rl2==1.0.4
+    - pillow==10.3.0
+    - h5py==3.11.0
+    - autorom[accept-rom-license]
