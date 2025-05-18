@@ -19,4 +19,5 @@ setup.sh
 !reinforcement_learning/deep_q_learning/policy.h5
 !reinforcement_learning/deep_q_learning/notebook/V1/*.h5
 !reinforcement_learning/deep_q_learning/notebook/V2/*.h5
+!reinforcement_learning/deep_q_learning/notebook/V3/*.h5
 !reinforcement_learning/deep_q_learning/notebook/*.ipynb
