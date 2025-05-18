@@ -1,0 +1,7 @@
+step_count: 100000
+episodes_completed: 2546
+avg_reward_recent: -0.228856
+max_reward_all_time: 4.3145999999999995
+avg_episode_length: 98296.87
+steps_per_second: 54.412513438404275
+time_elapsed_minutes: 30.630209143956503
