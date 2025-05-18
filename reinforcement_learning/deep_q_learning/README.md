@@ -1,16 +1,16 @@
-🎮 Deep Q-Learning for Atari's Breakout
+# Deep Q-Learning for Atari's Breakout 🎮
 
 This project implements a Deep Q-Network (DQN) agent that can play Atari's Breakout. The implementation features scaled reward shaping, frame stacking, and episodic target network updates to accelerate learning.
-Environment Setup
-Prerequisites
+## Environment Setup
+### Prerequisites
 
     Ubuntu 20.04 LTS
     Anaconda or Miniconda (Python package manager)
     VSCode (optional, for development)
 
-⚙️ Setting up the Conda Environment
+### Setting up the Conda Environment ⚙️
 
-    Install Anaconda (if not already installed):
+     Install Anaconda (if not already installed):
 ```
     bash
 
@@ -19,21 +19,21 @@ Prerequisites
     source ~/.bashrc
 ```
 
-    Create the environment from the provided YAML file:
+   ### Create the environment from the provided YAML file:
 ```
     bash
 
     conda env create -f environment.yml
 ```
 
-    Activate the environment:
+   ### Activate the environment:
 ```
     bash
 
     conda activate atari-dqn
 ```
 
-Key Dependencies
+## Key Dependencies
 
     Python 3.9: Base programming language 🐍
     gymnasium[atari]==0.29.1: OpenAI's Gymnasium library with Atari environments
@@ -41,19 +41,19 @@ Key Dependencies
     keras-rl2==1.0.4: Reinforcement learning library for Keras
     autorom[accept-rom-license]: Package for Atari ROM management
 
-NOTE:
+### NOTE:
 
-   After setting and entering the conda environment
-   please take care to run the fix_keras-rl.py script to
-   patch an attribute bug in Keras 2.15.0
+   ### After setting and entering the conda environment
+   ### please take care to run the fix_keras-rl.py script to
+   ### patch an attribute bug in Keras 2.15.0
 
-🔧 Troubleshooting
+## Troubleshooting 🔧
 
     If encountering ROM licensing issues, run: AutoROM --accept-license
     For visualization problems, ensure you have the appropriate display drivers
     If tensorflow has compatibility issues, verify CUDA and cuDNN versions (if using GPU)
 
-Project Structure
+## Project Structure
 
 
 ├── environment.yml       # Conda environment config file
@@ -69,9 +69,9 @@ Project Structure
     ├── processors.py     # Observation and reward processors
     └── wrappers.py       # Environment wrappers for Gymnasium compatibility
 
-🚀 Usage
+## Usage 🚀
 
-    Train the agent:
+   ### Train the agent:
 ```
     bash
 
@@ -80,7 +80,7 @@ Project Structure
     This will train the DQN agent and save the model weights as policy.h5.
     Training may take several hours depending on your hardware.
 
-    Watch the trained agent play:
+   ### Watch the trained agent play:
 ```
 # Default usage (uses policy.h5 in the current directory)
 python play.py
@@ -93,7 +93,7 @@ python play.py --weights notebook/V2/policy_200000.h5 --episodes 10
 ```
     This loads the trained policy and visualizes the agent playing Breakout.
 
-🧠 Implementation Details
+## Implementation Details 🧠
 
 This project implements a Deep Q-Network (DQN) agent with several training enhancement features:
 Core DQN Components
@@ -103,24 +103,36 @@ Core DQN Components
     Frame Stacking: Combines multiple frames to capture motion information
     Target Network: Stabilizes training by updating the target network episodically rather than continuously
 
-Advanced Features
+## Features
 
-    Adaptive Reward Shaping: Dynamically scales rewards based on the best performance seen so far
-    Terminal State Handling: Provides appropriate negative feedback at episode termination
-    Survival Bonus: Encourages the agent to stay alive longer, creating a more varied reward landscape
-    Episodic Target Updates: Updates the target network after a fixed number of episodes rather than steps
-    Continuous Training Support: Allows training to resume without redoing warmup steps
+   ### Adaptive Reward Shaping:
+      Dynamically scales rewards based on the best performance seen so far
 
-📊 Colab Notebook and Experiments
+   ### Terminal State Handling:
+      Provides appropriate negative feedback at episode termination
+
+   ### Survival Bonus:
+      Encourages the agent to stay alive longer, creating a more varied reward landscape
+
+   ### Episodic Target Updates:
+      Updates the target network after a fixed number of episodes rather than steps
+
+   ### Continuous Training Support:
+      Allows training to resume without redoing warmup steps
+
+## Colab Notebook and Experiments 📊
 
 The complete implementation is available in a Colab notebook. 
 The notebook includes:
 
-    Training Monitoring: Real-time visualization of rewards, Q-values, and episode lengths
-    Analytics Dashboard: Tools for analyzing training performance
+   ### Training Monitoring: 
+      Real-time visualization of rewards, Q-values, and episode lengths
+   
+   ### Analytics Dashboard:
+      Tools for analyzing training performance
 
-
-    Multiple Versions: Different iterations (V1-V5) with progressive improvements:
+   ### Multiple Versions:
+      Different iterations (V1-V5) with progressive improvements:
         V1: Baseline DQN implementation
         V2: Implements adaptive reward shaping
         V3: Target network updates every 100 episodes
@@ -128,26 +140,25 @@ The notebook includes:
         V5: Episodic weight update reduced from 100 to 7
             - Scaled rewards, negative rewards clipped to -1.0
 
-Each version folder contains:
+   ### Each version folder contains:
 
-   - A PDF copy of the notebook configuration it was trained in
+      - A PDF copy of the notebook configuration it was trained in
 
-   - Trained network weights 
-      -- naming convention for weights files is:
-         policy_100000.h5
-            Where the number specifies the
-            number of steps that model was trained for
-      -- Each experiment was trained at least 100000 steps
-         to get a sense of the strength of the training dynamics
+      - Trained network weights 
+         -- naming convention for weights files is:
+            policy_100000.h5
+               Where the number specifies the number of steps that model was trained for
+         -- Each experiment was trained at least 100000 steps
+               to get a sense of the strength of the training dynamics
 
-   - logs/
-      -- A folder containing training stats and progress visualizations
+      - logs/
+         -- A folder containing training stats and progress visualizations
          for each 100000 step training session
       
 
        
 
-📚 References
+### References 📚
 
     Deep Q-Learning - Combining Neural Networks and Reinforcement Learning
     Human-level control through deep reinforcement learning - Original DQN paper
