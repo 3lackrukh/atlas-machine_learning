@@ -2,7 +2,6 @@
 """
 TD(λ) algorithm implementation for reinforcement learning
 """
-
 import numpy as np
 
 
