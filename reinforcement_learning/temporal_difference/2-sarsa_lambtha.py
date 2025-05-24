@@ -7,7 +7,7 @@ for reinforcement learning
 import numpy as np
 
 
-def epsilon_greedy_action(state, Q, epsilon, env):
+def epsilon_greedy_action(state, Q, epsilon):
     """
     Choose action using epsilon-greedy policy.
     
@@ -15,18 +15,20 @@ def epsilon_greedy_action(state, Q, epsilon, env):
         state: current state
         Q: Q-table of shape (states, actions)
         epsilon: exploration probability
-        env: environment for action space sampling
         
     Returns:
         action: selected action
     """
-    if np.random.random() < epsilon:
-        return env.action_space.sample()
+    if np.random.uniform() < epsilon:
+        return np.random.randint(Q.shape[1])
     else:
-        return np.argmax(Q[state])
+        return np.argmax(Q[state, :])
 
 
-def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99, epsilon=1, min_epsilon=0.1, epsilon_decay=0.05):
+def sarsa_lambtha(
+                    env, Q, lambtha, episodes=5000, max_steps=100,
+                    alpha=0.1, gamma=0.99, epsilon=1, min_epsilon=0.1,
+                    epsilon_decay=0.05):
     """
     Performs the SARSA(λ) algorithm for Q-value estimation.
     
@@ -52,7 +54,7 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1, gamm
         e_traces = np.zeros_like(Q)
         
         # Choose initial action using epsilon-greedy
-        action = epsilon_greedy_action(state, Q, epsilon, env)
+        action = epsilon_greedy_action(state, Q, epsilon)
         
         # Run episode
         for _ in range(max_steps):
@@ -60,16 +62,26 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1, gamm
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
             
+            # Penalize for falling into a hole
+            if done and reward == 0:
+                reward = -1
+            
             # Choose next action using epsilon-greedy
-            next_action = epsilon_greedy_action(next_state, Q, epsilon, env)
+            next_action = epsilon_greedy_action(next_state, Q, epsilon)
+            
+            # Calculate TD error
+            if done or truncated:
+                td_target = reward
+            else:
+                td_target = reward + gamma * Q[next_state, next_action]
             
             # Calculate TD error (SARSA update rule)
-            td_error = reward + gamma * Q[next_state, next_action] - Q[state, action]
+            td_error = td_target - Q[state, action]
             
             # Update eligibility traces (accumulating traces)
             e_traces[state, action] += 1
             
-            # Update all Q-values using vectorized operation
+            # Update all Q-values
             Q += alpha * td_error * e_traces
             
             # Decay eligibility traces AFTER update
@@ -79,7 +91,7 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100, alpha=0.1, gamm
             state = next_state
             action = next_action
             
-            if done:
+            if done or truncated:
                 break
         
         # Decay epsilon
