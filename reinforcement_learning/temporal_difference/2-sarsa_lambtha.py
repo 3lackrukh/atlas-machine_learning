@@ -7,7 +7,7 @@ for reinforcement learning
 import numpy as np
 
 
-def epsilon_greedy_action(state, Q, epsilon):
+def epsilon_greedy_action(state, Q, epsilon, env):
     """
     Choose action using epsilon-greedy policy.
     
@@ -20,7 +20,7 @@ def epsilon_greedy_action(state, Q, epsilon):
         action: selected action
     """
     if np.random.uniform() < epsilon:
-        return np.random.randint(Q.shape[1])
+        return np.random.randint(0, env.action_space.n)
     else:
         return np.argmax(Q[state, :])
 
@@ -54,7 +54,7 @@ def sarsa_lambtha(
         e_traces = np.zeros_like(Q)
         
         # Choose initial action using epsilon-greedy
-        action = epsilon_greedy_action(state, Q, epsilon)
+        action = epsilon_greedy_action(state, Q, epsilon, env)
         
         # Run episode
         for _ in range(max_steps):
@@ -62,12 +62,8 @@ def sarsa_lambtha(
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
             
-            # Penalize for falling into a hole
-            if done and reward == 0:
-                reward = -1
-            
             # Choose next action using epsilon-greedy
-            next_action = epsilon_greedy_action(next_state, Q, epsilon)
+            next_action = epsilon_greedy_action(next_state, Q, epsilon, env)
             
             # Calculate TD error
             if done or truncated:
