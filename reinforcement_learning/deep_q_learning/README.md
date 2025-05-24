@@ -55,7 +55,7 @@ This project implements a Deep Q-Network (DQN) agent that can play Atari's Break
 
 ## Project Structure
 
-
+```
 ├── environment.yml       # Conda environment config file
 ├── fix_keras_rl.py       # A patch to help Keras play well with Gymnasium
 ├── train.py              # Script to train the Deep Q-learning agent
@@ -68,7 +68,7 @@ This project implements a Deep Q-Network (DQN) agent that can play Atari's Break
     ├── patching.py       # Utilities for patching DQNAgent for continuous training
     ├── processors.py     # Observation and reward processors
     └── wrappers.py       # Environment wrappers for Gymnasium compatibility
-
+```
 ## Usage 🚀
 
    ### Train the agent:
