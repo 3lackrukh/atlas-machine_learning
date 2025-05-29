@@ -1,0 +1,33 @@
+
+REINFORCE TRAINING ANALYTICS
+
+PERFORMANCE SUMMARY
+• Total Episodes: 10,000
+• Training Time: 3.5 minutes (209.1s)
+• Final Score: 316.0
+• Best Score: 500.0
+• Final 100-Episode Average: 460.6
+
+HIGH SCORE PROGRESSION
+• Total Records Set: 14
+• Record Episodes: [0, 1, 11, 46, 91, 562, 814, 1133, 1462, 1591]...
+• Average Gap Between Records: 167.2 episodes
+• Longest Gap: 471 episodes
+
+MILESTONE ACHIEVEMENTS
+• Score 100: Episode 46 (0.5% through training)
+• Score 200: Episode 814 (8.1% through training)
+• Score 300: Episode 1,462 (14.6% through training)
+• Score 400: Episode 2,087 (20.9% through training)
+• Score 500: Episode 2,174 (21.7% through training)
+
+LEARNING PATTERN ANALYSIS
+• Early Records (0-25%): 14
+• Late Records (75-100%): 0
+• Learning Velocity: Fast early, slow late
+
+PERFORMANCE PHASES
+• Episodes 0-2500: Avg 94.1
+• Episodes 2500-5000: Avg 273.2
+• Episodes 5000-7500: Avg 358.5
+• Episodes 7500-10000: Avg 414.4
