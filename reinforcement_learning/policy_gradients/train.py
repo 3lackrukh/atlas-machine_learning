@@ -4,7 +4,7 @@ import numpy as np
 policy_gradient = __import__('policy_gradient').policy_gradient
 
 
-def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
+def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
     """
     Implements full training using REINFORCE algorithm
 
@@ -13,6 +13,7 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         nb_episodes: int, number of episodes used for training
         alpha: float, the learning rate (default: 0.000045)
         gamma: float, the discount factor (default: 0.98)
+        show_result: bool, whether to render environment every 1000 episodes (default: False)
 
     Returns:
         list of all values of the score (sum of all rewards during one episode)
@@ -35,6 +36,9 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
         rewards = []
         gradients = []
 
+        # Check if we should render this episode
+        render_episode = show_result and (episode % 1000 == 0)
+
         # Run one episode until termination
         done = False
         while not done:
@@ -44,6 +48,16 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98):
             # Take action in environment
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
+
+            # Render if requested for this episode
+            if render_episode:
+                try:
+                    env.render()
+                except Exception as e:
+                    # Handle rendering errors gracefully (e.g., no display in WSL2)
+                    if episode == 0:  # Only print once
+                        print(f"Rendering not available: {e}")
+                        print("Continuing training without visualization...")
 
             # Store trajectory data
             states.append(state)
