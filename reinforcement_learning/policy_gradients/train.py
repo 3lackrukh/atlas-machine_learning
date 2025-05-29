@@ -13,7 +13,7 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
         nb_episodes: int, number of episodes used for training
         alpha: float, the learning rate (default: 0.000045)
         gamma: float, the discount factor (default: 0.98)
-        show_result: bool, whether to render environment every 1000 episodes (default: False)
+        show_result: bool, render env every 1000 episodes (default: False)
 
     Returns:
         list of all values of the score (sum of all rewards during one episode)
@@ -54,7 +54,7 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
                 try:
                     env.render()
                 except Exception as e:
-                    # Handle rendering errors gracefully (e.g., no display in WSL2)
+                    # Handle rendering errors gracefully (no display in WSL2)
                     if episode == 0:  # Only print once
                         print(f"Rendering not available: {e}")
                         print("Continuing training without visualization...")
