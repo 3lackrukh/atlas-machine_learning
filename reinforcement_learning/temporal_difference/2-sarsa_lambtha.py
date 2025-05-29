@@ -30,60 +30,55 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
         Q: the updated Q table
     """
     
-    def epsilon_greedy(state, Q, epsilon):
-        """Choose action using ε-greedy policy"""
-        if np.random.random() < epsilon:
-            return np.random.randint(env.action_space.n)
-        else:
-            return np.argmax(Q[state])
-    
     for episode in range(episodes):
-        # Initialize eligibility traces for this episode
-        E = np.zeros_like(Q)
-        
-        # Reset environment and get initial state
+        # Reset environment and initialize eligibility traces
         state, _ = env.reset()
-        
-        # Choose initial action using ε-greedy policy
-        action = epsilon_greedy(state, Q, epsilon)
-        
-        # Episode loop
+        e_traces = np.zeros_like(Q)
+
+        # Choose initial action using epsilon-greedy
+        if np.random.random() < epsilon:
+            action = np.random.randint(0, env.action_space.n)
+        else:
+            action = np.argmax(Q[state, :])
+
+        # Run episode
         for step in range(max_steps):
-            # Take action and observe next state and reward
+            # Take action
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
-            
-            # Choose next action using ε-greedy policy (even if done)
-            next_action = epsilon_greedy(next_state, Q, epsilon)
-            
-            # Calculate TD target based on SARSA update rule
+
+            # Choose next action using epsilon-greedy
+            if np.random.random() < epsilon:
+                next_action = np.random.randint(0, env.action_space.n)
+            else:
+                next_action = np.argmax(Q[next_state, :])
+
+            # Calculate TD target
             if done:
-                # Terminal state: no future Q-value
                 td_target = reward
             else:
-                # Non-terminal: include discounted future Q-value
                 td_target = reward + gamma * Q[next_state, next_action]
-            
-            # Calculate TD error: δ = r + γQ(s',a') - Q(s,a)
+
+            # Calculate TD error (SARSA update rule)
             td_error = td_target - Q[state, action]
-            
-            # Update eligibility trace for current state-action pair
-            E[state, action] += 1.0
-            
-            # Update all Q-values using eligibility traces
-            Q += alpha * td_error * E
-            
-            # Decay eligibility traces
-            E *= gamma * lambtha
-            
-            # Move to next state-action pair
-            if done:
-                break
-                
+
+            # Update eligibility traces (accumulating traces)
+            e_traces[state, action] += 1
+
+            # Update all Q-values
+            Q += alpha * td_error * e_traces
+
+            # Decay eligibility traces AFTER update
+            e_traces *= gamma * lambtha
+
+            # Move to next state and action
             state = next_state
             action = next_action
-        
+
+            if done:
+                break
+
         # Decay epsilon after each episode
         epsilon = max(min_epsilon, epsilon - epsilon_decay)
-    
+
     return Q
