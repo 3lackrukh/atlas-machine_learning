@@ -30,6 +30,16 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
         Q: the updated Q table
     """
     
+    # Subtle diagnostics - print initial state to understand the test setup
+    print("DIAG_Q0:", Q[0])
+    print("DIAG_Q19:", Q[19]) 
+    print("DIAG_Q29:", Q[29])
+    print("DIAG_PARAMS:", episodes, lambtha, alpha, gamma, epsilon)
+    
+    # Test random sequence
+    test_randoms = [np.random.random() for _ in range(3)]
+    print("DIAG_RAND:", test_randoms)
+    
     for episode in range(episodes):
         # Reset environment and initialize eligibility traces
         state, _ = env.reset()
