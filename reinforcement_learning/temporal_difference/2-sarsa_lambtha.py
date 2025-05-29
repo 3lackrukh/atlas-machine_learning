@@ -29,6 +29,7 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
     Returns:
         Q: the updated Q table
     """
+    og_epsilon = epsilon
 
     for episode in range(episodes):
         # Reset environment and initialize eligibility traces
@@ -53,23 +54,18 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
             else:
                 next_action = np.argmax(Q[next_state, :])
 
-            # Calculate TD target
-            if done:
-                td_target = reward
-            else:
-                td_target = reward + gamma * Q[next_state, next_action]
-
             # Calculate TD error (SARSA update rule)
-            td_error = td_target - Q[state, action]
+            td_error = reward + gamma * Q[next_state, next_action] - \
+                Q[state, action]
+
+            # Decay eligibility traces from previous steps
+            e_traces *= gamma * lambtha
 
             # Update eligibility traces (accumulating traces)
             e_traces[state, action] += 1
 
             # Update all Q-values
             Q += alpha * td_error * e_traces
-
-            # Decay eligibility traces
-            e_traces *= gamma * lambtha
 
             # Move to next state and action
             state = next_state
@@ -78,7 +74,8 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
             if done:
                 break
 
-        # Decay epsilon after each episode
-        epsilon = max(min_epsilon, epsilon - epsilon_decay)
+        # Decay epsilon after each episode (exponential decay)
+        epsilon = min_epsilon + (og_epsilon - min_epsilon) * \
+            np.exp(-epsilon_decay * episode)
 
     return Q
