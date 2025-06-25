@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Module for creating pandas DataFrame from numpy array"""
 import pandas as pd
-import numpy as np
 
 
 def from_numpy(array):
