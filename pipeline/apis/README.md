@@ -1,6 +1,6 @@
 # Data Collection - APIs Project
 
-This project demonstrates how to collect and manipulate data from public APIs using Python, focusing on the SWAPI (Star Wars API), GitHub API, SpaceX API, and Coinbase API. The scripts showcase best practices for HTTP requests, pagination, rate limiting, and data transformation.
+This project demonstrates how to collect and manipulate data from public APIs using Python, focusing on the SWAPI (Star Wars API), GitHub API, and SpaceX API. The scripts showcase best practices for HTTP requests, pagination, rate limiting, and data transformation.
 
 ## Description
 
@@ -42,16 +42,14 @@ For other tasks, import and use the functions directly in your code.
 - `1-sentience.py` - Returns a list of names of the home planets of all sentient species
 - `1-main.py` - Test file for `1-sentience.py`
 - `2-user_location.py` - Returns the location of a specific user using the GitHub API
-- `3-spacex.py` - Returns the number of launches for a given rocket using the SpaceX API
-- `4-company.py` - Returns the number of employees for a given company using the GitHub API
-- `5-coinbase.py` - Returns the current price of a given cryptocurrency using the Coinbase API
+- `3-spacex.py` - Returns the next upcoming SpaceX launch in the required format
+- `4-rocket_frequency.py` - Displays the number of launches per rocket using the SpaceX API
 
 ## APIs Used
 
 - **SWAPI (Star Wars API)**: `https://swapi-api.hbtn.io/`
 - **GitHub API**: `https://api.github.com/`
 - **SpaceX API**: `https://api.spacexdata.com/v4/`
-- **Coinbase API**: `https://api.coinbase.com/v2/`
 
 ## Documentation
 
