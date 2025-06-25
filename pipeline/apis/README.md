@@ -26,15 +26,13 @@ pip install --user requests
 
 ## Usage
 
-All scripts are executable. Run them directly from the command line:
+Test files are provided for tasks 0 and 1:
 ```bash
 ./0-main.py
 ./1-main.py
-./2-main.py
-./3-main.py
-./4-main.py
-./5-main.py
 ```
+
+For other tasks, import and use the functions directly in your code.
 
 ## Files
 
@@ -44,13 +42,9 @@ All scripts are executable. Run them directly from the command line:
 - `1-sentience.py` - Returns a list of names of the home planets of all sentient species
 - `1-main.py` - Test file for `1-sentience.py`
 - `2-user_location.py` - Returns the location of a specific user using the GitHub API
-- `2-main.py` - Test file for `2-user_location.py`
 - `3-spacex.py` - Returns the number of launches for a given rocket using the SpaceX API
-- `3-main.py` - Test file for `3-spacex.py`
 - `4-company.py` - Returns the number of employees for a given company using the GitHub API
-- `4-main.py` - Test file for `4-company.py`
 - `5-coinbase.py` - Returns the current price of a given cryptocurrency using the Coinbase API
-- `5-main.py` - Test file for `5-coinbase.py`
 
 ## APIs Used
 
