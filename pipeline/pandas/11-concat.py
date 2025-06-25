@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Module for concatenating DataFrames with specific conditions"""
 import pandas as pd
-index = __import__('10-index')
+index = __import__('10-index').index
 
 
 def concat(df1, df2):
@@ -22,8 +22,8 @@ def concat(df1, df2):
         The concatenated pd.DataFrame
     """
     # Index dataframes on Timestamp
-    df1_indexed = df1.set_index('Timestamp')
-    df2_indexed = df2.set_index('Timestamp')
+    df1_indexed = index(df1)
+    df2_indexed = index(df2)
 
     # Include timestamps from df2 up to 1417411920 INCLUSIVE
     df2_filtered = df2_indexed[df2_indexed.index <= 1417411920]
