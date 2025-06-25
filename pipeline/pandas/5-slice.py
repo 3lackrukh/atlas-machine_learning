@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Module for slicing DataFrame columns and rows"""
-import pandas as pd
 
 
 def slice(df):
